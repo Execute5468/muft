@@ -14,6 +14,7 @@ public interface MxTooltipComponent {
     @Inject(
         method = "of(Lnet/minecraft/item/tooltip/TooltipData;)Lnet/minecraft/client/gui/tooltip/TooltipComponent;",
         at = @At("HEAD"),
+        order = 1,
         cancellable = true
     )
     private static void onOf(TooltipData data, CallbackInfoReturnable<TooltipComponent> cir) {

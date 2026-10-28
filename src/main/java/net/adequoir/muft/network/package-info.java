@@ -1,4 +1,4 @@
 @NotNullByDefault
-package net.adequoir.muft.network.packet;
+package net.adequoir.muft.network;
 
 import org.jetbrains.annotations.NotNullByDefault;

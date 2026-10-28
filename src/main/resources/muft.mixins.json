@@ -3,7 +3,6 @@
     "package": "net.adequoir.muft.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
-        "network.state.MxPlayStateFactories",
         "screen.MxSHandler"
     ],
     "injectors": {

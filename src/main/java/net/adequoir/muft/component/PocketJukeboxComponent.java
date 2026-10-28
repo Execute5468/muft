@@ -2,7 +2,9 @@ package net.adequoir.muft.component;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.registry.MuftComponentTypes;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipData;
@@ -63,6 +65,10 @@ public class PocketJukeboxComponent implements TooltipData {
         return stack.getOrDefault(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, DEFAULT);
     }
 
+    public static void set(ItemStack stack, PocketJukeboxComponent component) {
+        stack.set(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, component);
+    }
+
     public static @Nullable PocketJukeboxComponent getOrNull(ItemStack stack) {
         return stack.get(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS);
     }
@@ -77,13 +83,6 @@ public class PocketJukeboxComponent implements TooltipData {
         return component.size() >= MAX_SLOT_COUNT ? FULL_ITEM_BAR_COLOR : ITEM_BAR_COLOR;
     }
 
-    public static void select(ItemStack stack, int stackIndex) {
-        var component = stack.get(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS);
-        if (component == null) return;
-        var normalizedIndex = component.normalizeStackIndex(stackIndex);
-        var newComponent = new PocketJukeboxComponent(component.stacks, normalizedIndex);
-        stack.set(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, newComponent);
-    }
 
     public static ItemStack getSelected(ItemStack stack) {
         var component = stack.getOrDefault(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, DEFAULT);
@@ -91,7 +90,7 @@ public class PocketJukeboxComponent implements TooltipData {
     }
 
     private int normalizeStackIndex(int stackIndex) {
-        return inBounds(stackIndex) ? stacks.length - 1 : stackIndex % stacks.length;
+        return stackIndex <= 0 ? stacks.length - 1 : stackIndex % stacks.length;
     }
 
     private static DataResult<PocketJukeboxComponent> serialize(List<ItemStack> stacks) {
@@ -100,7 +99,7 @@ public class PocketJukeboxComponent implements TooltipData {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean canInsert(ItemStack stack) {
-        return !stack.isEmpty() && stack.getItem().getComponents().contains(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS);
+        return !stack.isEmpty() && stack.getItem().getComponents().contains(DataComponentTypes.JUKEBOX_PLAYABLE);
     }
 
     public PocketJukeboxComponent withAdded(ItemStack stack) {
@@ -124,7 +123,7 @@ public class PocketJukeboxComponent implements TooltipData {
 
     public PocketJukeboxComponent withSelected(int slotIndex) {
         slotIndex = inBounds(slotIndex) ? slotIndex : -1;
-        return new PocketJukeboxComponent(stacks, slotIndex);
+        return slotIndex != this.selectedIndex ? new PocketJukeboxComponent(stacks, slotIndex) : this;
     }
 
     public Pair<PocketJukeboxComponent, @Nullable ItemStack> withRemoved() {
@@ -144,7 +143,7 @@ public class PocketJukeboxComponent implements TooltipData {
         return newStacks;
     }
 
-    private boolean inBounds(int stackIndex) { return stackIndex >= 0 && stackIndex < stacks.length; }
+    public boolean inBounds(int stackIndex) { return stackIndex >= 0 && stackIndex < stacks.length; }
 
     private static void throwFull() { throw new IllegalStateException("Pocket Jukebox is full"); }
     private static void throwUnsupportedStack(ItemStack stack) {

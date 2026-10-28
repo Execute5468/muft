@@ -7,8 +7,8 @@ public class Scroller {
     private double cumulVertical;
 
     public Vector2i update(double horizontal, double vertical) {
-        if (isOpposite(cumulHorizontal, horizontal)) this.cumulHorizontal = 0.0;
-        if (isOpposite(cumulVertical, vertical)) this.cumulVertical = 0.0;
+        if (cumulHorizontal != 0.0 && Math.signum(horizontal) != Math.signum(cumulHorizontal)) cumulHorizontal = 0.0;
+        if (cumulVertical != 0.0 && Math.signum(vertical) != Math.signum(cumulVertical)) cumulVertical = 0.0;
 
         int i = (int) (this.cumulHorizontal += horizontal);
         int j = (int) (this.cumulVertical += vertical);
@@ -20,12 +20,9 @@ public class Scroller {
     }
 
     public static int scrollCycling(double amount, int selectedIndex, int total) {
-        int i = (int) Math.signum(amount);
+        int i = (int)Math.signum(amount);
         selectedIndex -= i;
         return selectedIndex < 0 ? total - 1 : selectedIndex % total;
     }
 
-    private static boolean isOpposite(double cumulScalar, double scalar) {
-        return cumulScalar != 0.0 && Math.signum(cumulScalar) != Math.signum(scalar);
-    }
 }

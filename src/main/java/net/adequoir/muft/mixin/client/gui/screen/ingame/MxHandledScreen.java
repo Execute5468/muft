@@ -1,6 +1,7 @@
 package net.adequoir.muft.mixin.client.gui.screen.ingame;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.gui.tooltip.PocketJukeboxTooltipComponent;
 import net.adequoir.muft.client.gui.tooltip.PocketJukeboxTooltipSubmenu;
 import net.adequoir.muft.client.gui.tooltip.TooltipSubmenu;
@@ -17,6 +18,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,7 +34,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Mixin(HandledScreen.class)
-public abstract class MxHandledScreen extends Screen implements MuftHandledScreen, ParentElement {
+public abstract class MxHandledScreen extends Screen implements MuftHandledScreen {
     @Shadow protected @Nullable Slot focusedSlot;
 
     @Shadow protected @Final ScreenHandler handler;
@@ -57,13 +59,13 @@ public abstract class MxHandledScreen extends Screen implements MuftHandledScree
 
     @Inject(method = "render", at = @At("TAIL"))
     private void onRenderTail(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (lastFocusedSlot == null || lastFocusedSlot == focusedSlot) return;
-        resetTooltipSubmenus(lastFocusedSlot);
+        if (lastFocusedSlot != null && lastFocusedSlot != focusedSlot) {
+            resetTooltipSubmenus(lastFocusedSlot);
+        }
         lastFocusedSlot = null;
     }
 
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+    public @Override boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (focusedSlot == null || !focusedSlot.hasStack()) return false;
         for (int i = 0; i < tooltipSubmenus.size(); i++) {
             var submenu = tooltipSubmenus.get(i);

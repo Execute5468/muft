@@ -35,7 +35,7 @@ public class PocketJukeboxItem extends Item {
         var itemStack = slot.getStack();
 
         if (clickType == ClickType.LEFT && !itemStack.isEmpty()) {
-            if (!component.isFull() && PocketJukeboxComponent.canInsert(stack)) {
+            if (!component.isFull() && PocketJukeboxComponent.canInsert(itemStack)) {
                 playInsertSound(player);
                 var newComponent = component.withAdded(slot, player);
                 stack.set(POCKET_JUKEBOX_CONTENTS, newComponent);
@@ -66,7 +66,8 @@ public class PocketJukeboxItem extends Item {
         StackReference cursorStackReference
     ) {
         if (clickType == ClickType.LEFT && otherStack.isEmpty()) {
-            PocketJukeboxComponent.select(stack, -1);
+            var newComponent = PocketJukeboxComponent.get(stack).withSelected(-1);
+            PocketJukeboxComponent.set(stack, newComponent);
             return false;
         }
         var component = stack.get(POCKET_JUKEBOX_CONTENTS);
@@ -75,7 +76,7 @@ public class PocketJukeboxItem extends Item {
         if (clickType == ClickType.LEFT && !otherStack.isEmpty()) {
             if (slot.canTakePartial(player) && PocketJukeboxComponent.canInsert(otherStack)) {
                 playInsertSound(player);
-                stack.set(POCKET_JUKEBOX_CONTENTS, component.withAdded(otherStack));
+                stack.set(POCKET_JUKEBOX_CONTENTS, component.withAdded(otherStack.split(1)));
                 onContentChanged(player);
             } else playInsertFailSound(player);
             return true;
@@ -95,7 +96,8 @@ public class PocketJukeboxItem extends Item {
             return true;
         }
 
-        PocketJukeboxComponent.select(stack, -1);
+        var newComponent = PocketJukeboxComponent.get(stack).withSelected(-1);
+        PocketJukeboxComponent.set(stack, newComponent);
         return false;
     }
 
@@ -104,7 +106,7 @@ public class PocketJukeboxItem extends Item {
     public @Override int getItemBarColor(ItemStack stack) { return PocketJukeboxComponent.colorItemBar(stack); }
 
     public @Override Optional<TooltipData> getTooltipData(ItemStack stack) {
-        return !stack.contains(DataComponentTypes.HIDE_TOOLTIP) && !stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)
+        return stack.contains(DataComponentTypes.HIDE_TOOLTIP) || stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)
                 ? Optional.empty()
                 : Optional.ofNullable(PocketJukeboxComponent.getOrNull(stack));
     }

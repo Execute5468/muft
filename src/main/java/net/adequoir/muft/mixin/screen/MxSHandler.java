@@ -17,6 +17,7 @@ public class MxSHandler implements MuftSHandler {
     public void muft_selectPocketJukeboxStack(int slotId, int stackIndex) {
         if (slotId < 0 || slotId >= slots.size()) return;
         var stack = slots.get(slotId).getStack();
-        PocketJukeboxComponent.select(stack, stackIndex);
+        var newComponents = PocketJukeboxComponent.get(stack).withSelected(stackIndex);
+        PocketJukeboxComponent.set(stack, newComponents);
     }
 }

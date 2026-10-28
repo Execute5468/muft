@@ -60,7 +60,7 @@ public final class PocketJukeboxRenderer {
         renderModel(matrices, vertexProvider, stack, renderMode, leftHanded, backModel, renderer, light, overlay);
 
         var itemModel = renderer.getModel(selectedStack, null, null, 0);
-        renderer.renderItem(stack, renderMode, leftHanded, matrices, vertexProvider, light, overlay, itemModel);
+        renderer.renderItem(selectedStack, renderMode, leftHanded, matrices, vertexProvider, light, overlay, itemModel);
 
         renderModel(matrices, vertexProvider, stack, renderMode, leftHanded, frontModel, renderer, light, overlay);
         return true;
