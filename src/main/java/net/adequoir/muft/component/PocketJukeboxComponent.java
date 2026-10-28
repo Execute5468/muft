@@ -54,7 +54,11 @@ public class PocketJukeboxComponent implements TooltipData {
 
     public int selectedIndex() { return this.selectedIndex; }
 
-    public ItemStack getSelected() { return hasSelected() ? ItemStack.EMPTY : get(selectedIndex).copy(); }
+    public ItemStack getSelected() { return hasSelected() ? get(selectedIndex) : ItemStack.EMPTY; }
+
+    public static ItemStack _unsafe_getSelected(PocketJukeboxComponent component) {
+        return component.hasSelected() ? component.stacks[component.selectedIndex] : ItemStack.EMPTY;
+    }
 
     public ItemStack get(int index) {
         if (inBounds(index)) return stacks[index].copy();
@@ -122,7 +126,7 @@ public class PocketJukeboxComponent implements TooltipData {
     }
 
     public PocketJukeboxComponent withSelected(int slotIndex) {
-        slotIndex = inBounds(slotIndex) ? slotIndex : -1;
+        slotIndex = slotIndex < -1 || slotIndex >= size() ? -1: slotIndex;
         return slotIndex != this.selectedIndex ? new PocketJukeboxComponent(stacks, slotIndex) : this;
     }
 
@@ -132,6 +136,26 @@ public class PocketJukeboxComponent implements TooltipData {
         var removedStack = stacks[i].copy();
         if (stacks.length == 1) return new Pair<>(DEFAULT, removedStack);
         return new Pair<>(new PocketJukeboxComponent(copyOmit(stacks, i), -1), removedStack);
+    }
+
+    public @Override boolean equals(Object obj) {
+        if (this == obj) return true;
+        return obj instanceof PocketJukeboxComponent jukeboxComponent
+                && stacksEqual(stacks, jukeboxComponent.stacks);
+    }
+
+    public @Override int hashCode() {
+        int h = 0;
+        for (ItemStack stack: stacks) h = h * 31 + ItemStack.hashCode(stack);
+        return h;
+    }
+
+    public @Override String toString() { return "PocketJukeboxContents" + Arrays.toString(stacks); }
+
+    private static boolean stacksEqual(ItemStack[] left, ItemStack[] right) {
+        if (left.length != right.length) return false;
+        for (int i = 0; i < left.length; i++) { if (!ItemStack.areEqual(left[i], right[i])) return false; }
+        return true;
     }
 
     private static ItemStack[] copyOmit(ItemStack[] stacks, int omittedIndex) {

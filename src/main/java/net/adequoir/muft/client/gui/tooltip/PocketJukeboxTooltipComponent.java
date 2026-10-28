@@ -89,7 +89,6 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
             drawItem(l, n, o, l, textRenderer, context);
         }
 
-
         drawSelectedItemTooltip(textRenderer, context, x, y, width);
         drawProgressBar(x + getXMargin(width), y + getRowsHeight() + Y_MARGIN, textRenderer, context);
     }

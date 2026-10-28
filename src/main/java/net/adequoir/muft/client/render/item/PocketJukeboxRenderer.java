@@ -1,6 +1,6 @@
 package net.adequoir.muft.client.render.item;
 
-import com.mojang.logging.LogUtils;
+import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.adequoir.muft.mixin.client.render.item.AxItemRenderer;
@@ -15,15 +15,15 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
-import org.slf4j.Logger;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import static net.adequoir.muft.MusicalFeature.LOGGER;
+
 public final class PocketJukeboxRenderer {
     private static final Map<Item, JukeboxModelPair> modelPairs = new IdentityHashMap<>();
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     static {
         LOGGER.info("Loading {} Pocket Jukebox model pairs", PocketJukeboxItem.POCKET_JUKEBOXES.size());
@@ -56,11 +56,10 @@ public final class PocketJukeboxRenderer {
         if (modelPair == null) return false;
         var backModel = models.getModelManager().getModel(modelPair.back);
         var frontModel = models.getModelManager().getModel(modelPair.front);
-        var selectedStack = component.getSelected();
         renderModel(matrices, vertexProvider, stack, renderMode, leftHanded, backModel, renderer, light, overlay);
 
-        var itemModel = renderer.getModel(selectedStack, null, null, 0);
-        renderer.renderItem(selectedStack, renderMode, leftHanded, matrices, vertexProvider, light, overlay, itemModel);
+        var selectedStack = PocketJukeboxComponent._unsafe_getSelected(component);
+        renderer.renderItem(selectedStack, renderMode, light, overlay, matrices, vertexProvider, null, 0);
 
         renderModel(matrices, vertexProvider, stack, renderMode, leftHanded, frontModel, renderer, light, overlay);
         return true;
@@ -77,7 +76,7 @@ public final class PocketJukeboxRenderer {
 
         var renderLayer = RenderLayers.getItemLayer(stack, true);
         var vertices = ItemRenderer.getDirectItemGlintConsumer(provider, renderLayer, true, stack.hasGlint());
-        ((AxItemRenderer) renderer).axRenderBackedItemModel(model, stack, light, overlay, matrices, vertices);
+        ((AxItemRenderer) renderer).axRenderBakedItemModel(model, stack, light, overlay, matrices, vertices);
         matrices.pop();
     }
 

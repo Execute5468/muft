@@ -1,6 +1,5 @@
 package net.adequoir.muft.client.gui.tooltip;
 
-import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.input.Scroller;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
@@ -44,8 +43,9 @@ public class PocketJukeboxTooltipSubmenu implements TooltipSubmenu {
     }
 
     private void sendPacket(ItemStack item, int slotId, int selectedIndex) {
-        if (selectedIndex >= PocketJukeboxComponent.get(item).size()) return;
-        var newComponent = PocketJukeboxComponent.get(item).withSelected(selectedIndex);
+        var component = PocketJukeboxComponent.get(item);
+        if (selectedIndex >= component.size()) return;
+        var newComponent = component.withSelected(selectedIndex);
         PocketJukeboxComponent.set(item, newComponent);
         var payload = new PocketJukeboxItemSelectedPayload(slotId, selectedIndex);
         ClientPlayNetworking.send(payload);

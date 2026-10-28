@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static net.adequoir.muft.registry.MuftComponentTypes.POCKET_JUKEBOX_CONTENTS;
-
 public class PocketJukeboxItem extends Item {
     private static final List<PocketJukeboxItem> pocketJukeboxes = new ArrayList<>();
     public static final List<PocketJukeboxItem> POCKET_JUKEBOXES = Collections.unmodifiableList(pocketJukeboxes);
@@ -38,7 +36,7 @@ public class PocketJukeboxItem extends Item {
             if (!component.isFull() && PocketJukeboxComponent.canInsert(itemStack)) {
                 playInsertSound(player);
                 var newComponent = component.withAdded(slot, player);
-                stack.set(POCKET_JUKEBOX_CONTENTS, newComponent);
+                PocketJukeboxComponent.set(stack, newComponent);
             } else playInsertFailSound(player);
             return true;
         }
@@ -50,7 +48,7 @@ public class PocketJukeboxItem extends Item {
                 if (outStack != null) {
                     slot.insertStack(outStack);
                     playRemoveOneSound(player);
-                    stack.set(POCKET_JUKEBOX_CONTENTS, pair.getLeft());
+                    PocketJukeboxComponent.set(stack, pair.getLeft());
                     onContentChanged(player);
                 }
             }
@@ -70,13 +68,13 @@ public class PocketJukeboxItem extends Item {
             PocketJukeboxComponent.set(stack, newComponent);
             return false;
         }
-        var component = stack.get(POCKET_JUKEBOX_CONTENTS);
+        var component = PocketJukeboxComponent.getOrNull(stack);
         if (component == null) return false;
 
         if (clickType == ClickType.LEFT && !otherStack.isEmpty()) {
-            if (slot.canTakePartial(player) && PocketJukeboxComponent.canInsert(otherStack)) {
+            if (slot.canTakePartial(player) && !component.isFull() && PocketJukeboxComponent.canInsert(otherStack)) {
                 playInsertSound(player);
-                stack.set(POCKET_JUKEBOX_CONTENTS, component.withAdded(otherStack.split(1)));
+                PocketJukeboxComponent.set(stack, component.withAdded(otherStack.split(1)));
                 onContentChanged(player);
             } else playInsertFailSound(player);
             return true;
@@ -89,7 +87,7 @@ public class PocketJukeboxItem extends Item {
                 if (removedStack != null) {
                     playRemoveOneSound(player);
                     cursorStackReference.set(removedStack);
-                    stack.set(POCKET_JUKEBOX_CONTENTS, pair.getLeft());
+                    PocketJukeboxComponent.set(stack, pair.getLeft());
                     onContentChanged(player);
                 }
             }
