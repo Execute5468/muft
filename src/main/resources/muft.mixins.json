@@ -1,0 +1,24 @@
+{
+    "required": true,
+    "package": "net.adequoir.muft.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "network.state.MxPlayStateFactories",
+        "screen.MxSHandler"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "overwrites": {
+        "requireAnnotations": true
+    },
+    "client": [
+        "client.gui.AxDrawContext",
+        "client.gui.MxDrawContext",
+        "client.gui.render.model.MxModelLoader",
+        "client.gui.screen.ingame.MxHandledScreen",
+        "client.gui.tooltip.MxTooltipComponent",
+        "client.render.item.AxItemRenderer",
+        "client.render.item.MxItemRenderer"
+    ]
+}

@@ -1,0 +1,7 @@
+{
+    "item.muft.pocket_jukebox": "Pocket Jukebox",
+    "item.muft.pocket_jukebox.empty": "Empty",
+    "item.muft.pocket_jukebox.empty.description": "Can hold music discs",
+    "item.muft.pocket_jukebox.full": "Full",
+    "item.muft.pocket_jukebox.fullness": "%s/%s"
+}
