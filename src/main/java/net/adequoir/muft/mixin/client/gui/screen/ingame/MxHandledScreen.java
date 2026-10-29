@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.adequoir.muft.client.gui.tooltip.PocketJukeboxTooltipComponent;
 import net.adequoir.muft.client.gui.tooltip.PocketJukeboxTooltipSubmenu;
 import net.adequoir.muft.client.gui.tooltip.TooltipSubmenu;
-import net.adequoir.muft.mixutils.client.gui.screen.ingame.MuftHandledScreen;
+import net.adequoir.muft.mixutils.client.gui.screen.ingame.IHandledScreen;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Mixin(HandledScreen.class)
-public abstract class MxHandledScreen extends Screen implements MuftHandledScreen {
+public abstract class MxHandledScreen extends Screen implements IHandledScreen {
     @Shadow protected @Nullable Slot focusedSlot;
 
     @Shadow protected @Final ScreenHandler handler;
