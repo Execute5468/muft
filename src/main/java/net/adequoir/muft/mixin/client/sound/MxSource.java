@@ -1,5 +1,6 @@
 package net.adequoir.muft.mixin.client.sound;
 
+import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.mixutils.client.sound.ISource;
 import net.minecraft.client.sound.Source;
 import org.lwjgl.openal.AL10;

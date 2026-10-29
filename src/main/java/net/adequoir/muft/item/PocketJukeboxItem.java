@@ -3,7 +3,6 @@ package net.adequoir.muft.item;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -106,11 +105,12 @@ public class PocketJukeboxItem extends Item {
     }
 
     public @Override TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        var stack = user.getStackInHand(hand);
         if (world.isClient) {
             var player = MinecraftClient.getInstance().player;
-            if (player != null) ((IClientPE) player).muft_pocketJukeboxManager().togglePlaying();
+            if (player != null) ((IClientPE) player).muft_pocketJukeboxManager().togglePlaying(stack, 0);
         }
-        return TypedActionResult.success(user.getStackInHand(hand));
+        return TypedActionResult.success(stack);
     }
 
     public @Override boolean isItemBarVisible(ItemStack stack) { return !PocketJukeboxComponent.get(stack).isEmpty(); }

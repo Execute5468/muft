@@ -2,7 +2,6 @@ package net.adequoir.muft.component;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.registry.MuftComponentTypes;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,13 +23,14 @@ public class PocketJukeboxComponent implements TooltipData {
     public static final int MAX_ROW_LENGTH = 5;
     public static final int MAX_SLOT_COUNT = MAX_COLUMN_LENGTH * MAX_ROW_LENGTH;
     private static final ItemStack[] EMPTY_STACKS = new ItemStack[0];
+    private static final List<ItemStack> EMPTY_LIST = List.of();
     private static final int FULL_ITEM_BAR_COLOR = 0xFFFF5454;
     private static final int ITEM_BAR_COLOR = 0xFF7188FF;
 
     public static final PocketJukeboxComponent DEFAULT = new PocketJukeboxComponent(EMPTY_STACKS);
     public static final Codec<PocketJukeboxComponent> CODEC = ItemStack.CODEC.listOf().flatXmap(
          PocketJukeboxComponent::serialize,
-         component -> DataResult.success(Arrays.asList(component.stacks))
+         component -> DataResult.success(component.isEmpty() ? EMPTY_LIST : Arrays.asList(component.stacks))
     );
     public static final PacketCodec<RegistryByteBuf, PocketJukeboxComponent> PACKET_CODEC = ItemStack.PACKET_CODEC.collect(PacketCodecs.toList()).xmap(
         list -> new PocketJukeboxComponent(list.toArray(EMPTY_STACKS)),
@@ -59,6 +59,8 @@ public class PocketJukeboxComponent implements TooltipData {
     public static ItemStack _unsafe_getSelected(PocketJukeboxComponent component) {
         return component.hasSelected() ? component.stacks[component.selectedIndex] : ItemStack.EMPTY;
     }
+
+    public static ItemStack _unsafe_get(PocketJukeboxComponent component, int index) { return component.stacks[index]; }
 
     public ItemStack get(int index) {
         if (inBounds(index)) return stacks[index].copy();
@@ -93,11 +95,8 @@ public class PocketJukeboxComponent implements TooltipData {
         return component.inBounds(component.selectedIndex) ? component.stacks[component.selectedIndex] : ItemStack.EMPTY;
     }
 
-    private int normalizeStackIndex(int stackIndex) {
-        return stackIndex <= 0 ? stacks.length - 1 : stackIndex % stacks.length;
-    }
-
     private static DataResult<PocketJukeboxComponent> serialize(List<ItemStack> stacks) {
+        if (stacks.isEmpty()) return DataResult.success(DEFAULT);
         return DataResult.success(new PocketJukeboxComponent(stacks.toArray(EMPTY_STACKS)));
     }
 

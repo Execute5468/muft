@@ -1,6 +1,5 @@
 package net.adequoir.muft.client.render.item;
 
-import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.adequoir.muft.mixin.client.render.item.AxItemRenderer;
