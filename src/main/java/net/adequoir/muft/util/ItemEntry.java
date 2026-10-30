@@ -1,7 +1,8 @@
-package net.adequoir.muft.client.util;
+package net.adequoir.muft.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.adequoir.muft.mixin.item.AxItemStack;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.ComponentMapImpl;
 import net.minecraft.component.ComponentType;
@@ -79,8 +80,7 @@ public final class ItemEntry {
     public int id() { return id; }
     public <T> @Nullable T get(ComponentType<? extends T> type) { return components.get(type); }
 
-    @SuppressWarnings("deprecation")
-    public ItemStack toItemStack() { return new ItemStack(item.getRegistryEntry(), count, components.getChanges()); }
+    public ItemStack toItemStack() { return AxItemStack.axInit(item, count, components); }
 
     public @Override boolean equals(Object other) {
         if (other == this) return true;
@@ -93,12 +93,12 @@ public final class ItemEntry {
     public @Override String toString() { return item + " x " + count; }
 
     private static final class Manager {
-        static final Manager INSTANCE = new Manager();
-
         private static final int INIT_FREE_SLOTS_CAPACITY = 8;
         private static final int INIT_REFS_CAPACITY = 16;
         private static final EntryRef[] EMPTY_REFS = new EntryRef[0];
         private static final int[] EMPTY_INTS = new int[0];
+
+        static final Manager INSTANCE = new Manager();
 
         private final ReferenceQueue<ItemEntry> queue = new ReferenceQueue<>();
 

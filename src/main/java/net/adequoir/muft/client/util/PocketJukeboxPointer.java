@@ -39,11 +39,11 @@ public record PocketJukeboxPointer(
         PocketJukeboxComponent component = PocketJukeboxComponent.getOrNull(stack);
         if (component == jukeboxContent) return true;
         if (component == null) return false;
-        var currentDisc = PocketJukeboxComponent._unsafe_get(jukeboxContent, discIndex);
-        if (PocketJukeboxComponent._unsafe_get(component, discIndex) == currentDisc) return true;
+        var currentDisc = PocketJukeboxComponent.getEntry(jukeboxContent, discIndex);
+        if (PocketJukeboxComponent.getEntry(component, discIndex) == currentDisc) return true;
         if (component.size() <= 1) return false;
         for (int i = 0; i < component.size(); i++) {
-            if (PocketJukeboxComponent._unsafe_get(component, i) == currentDisc) return true;
+            if (PocketJukeboxComponent.getEntry(component, i) == currentDisc) return true;
         }
         return false;
     }
@@ -108,13 +108,13 @@ public record PocketJukeboxPointer(
 
         var otherComponent = PocketJukeboxComponent.getOrNull(other);
         if (otherComponent == null) return Equality.NONE;
-        if (otherComponent == jukeboxContent) return Equality.COMPONENT;
+        if (PocketJukeboxComponent.fastEquals(otherComponent, jukeboxContent)) return Equality.COMPONENT;
 
-        var currentDisc = PocketJukeboxComponent._unsafe_get(jukeboxContent, discIndex);
-        if (otherComponent.inBounds(discIndex) && PocketJukeboxComponent._unsafe_get(otherComponent, discIndex) == currentDisc) return Equality.disc(discIndex);
+        var currentDisc = PocketJukeboxComponent.getEntry(jukeboxContent, discIndex);
+        if (otherComponent.inBounds(discIndex) && PocketJukeboxComponent.getEntry(otherComponent, discIndex) == currentDisc) return Equality.disc(discIndex);
 
         for (int i = 0; i < otherComponent.size(); i++) {
-            var otherDisc = PocketJukeboxComponent._unsafe_get(otherComponent, i);
+            var otherDisc = PocketJukeboxComponent.getEntry(otherComponent, i);
             if (otherDisc == currentDisc) return Equality.disc(i);
         }
 

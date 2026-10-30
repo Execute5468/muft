@@ -4,6 +4,7 @@
     "compatibilityLevel": "JAVA_21",
     "mixins": [
         "client.entity.player.AxPlayerInventory",
+        "item.AxItemStack",
         "screen.MxSHandler"
     ],
     "injectors": {
