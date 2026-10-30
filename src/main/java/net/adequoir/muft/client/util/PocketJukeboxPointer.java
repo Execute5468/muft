@@ -1,6 +1,5 @@
 package net.adequoir.muft.client.util;
 
-import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -8,7 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public record PocketJukeboxPtr(
+public record PocketJukeboxPointer(
     Item item,
     PocketJukeboxComponent component,
     int cachedType,
@@ -20,7 +19,7 @@ public record PocketJukeboxPtr(
 
     public boolean test(ItemStack stack) { return testEquality(stack) != Equality.NONE; }
 
-    public @Nullable PocketJukeboxPtr update(ClientPlayerEntity player) {
+    public @Nullable PocketJukeboxPointer update(ClientPlayerEntity player) {
         if (cachedType != T_CURSOR_STACK) {
             var combinedInventory = ((AxPlayerInventory) player.getInventory()).axCombinedInventory();
             var pointedStack = combinedInventory.get(cachedType).get(cachedSlot);
@@ -32,7 +31,7 @@ public record PocketJukeboxPtr(
         }
     }
 
-    private @Nullable PocketJukeboxPtr updateStack(ClientPlayerEntity player, ItemStack stack, boolean testCursor) {
+    private @Nullable PocketJukeboxPointer updateStack(ClientPlayerEntity player, ItemStack stack, boolean testCursor) {
         var equality = testEquality(stack);
         if (equality != Equality.NONE) return fromEquality(equality, stack, cachedType, cachedSlot);
 
@@ -54,7 +53,7 @@ public record PocketJukeboxPtr(
         return null;
     }
 
-    private PocketJukeboxPtr fromEquality(
+    private PocketJukeboxPointer fromEquality(
         Equality equality,
         ItemStack stack,
         int invType,
@@ -62,8 +61,8 @@ public record PocketJukeboxPtr(
     ) {
         if (equality == Equality.COMPONENT) return invType == cachedType && invSlot == cachedSlot
                 ? this
-                : new PocketJukeboxPtr(item, component, invType, invSlot);
-        if (equality == Equality.ID) return new PocketJukeboxPtr(item, PocketJukeboxComponent.get(stack), invType, invSlot);
+                : new PocketJukeboxPointer(item, component, invType, invSlot);
+        if (equality == Equality.ID) return new PocketJukeboxPointer(item, PocketJukeboxComponent.get(stack), invType, invSlot);
         throw new IllegalArgumentException("Unsupported equality " + equality);
     }
 

@@ -1,7 +1,7 @@
 package net.adequoir.muft.client.sound;
 
 import net.adequoir.muft.client.render.WorldRenderUtil;
-import net.adequoir.muft.client.util.PocketJukeboxPtr;
+import net.adequoir.muft.client.util.PocketJukeboxPointer;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.ClientPlayerTickable;
 import org.jetbrains.annotations.Nullable;
@@ -10,13 +10,13 @@ public class PocketJukeboxManager implements ClientPlayerTickable {
     private final ClientPlayerEntity player;
     private boolean isPlaying;
 
-    private @Nullable PocketJukeboxPtr pointer;
+    private @Nullable PocketJukeboxPointer pointer;
 
     public PocketJukeboxManager(ClientPlayerEntity player) { this.player = player; }
 
     public boolean isPlaying() { return isPlaying; }
 
-    public void loadPointer(long prevId, PocketJukeboxPtr ptr) {
+    public void loadPointer(long prevId, PocketJukeboxPointer ptr) {
         if (this.pointer == null || pointer.id() != prevId) {
             if (!isPlaying) WorldRenderUtil.setAllJukeboxMute(true);
             isPlaying = true;

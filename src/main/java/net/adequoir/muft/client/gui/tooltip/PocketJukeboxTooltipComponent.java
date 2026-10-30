@@ -1,7 +1,7 @@
 package net.adequoir.muft.client.gui.tooltip;
 
 import net.adequoir.muft.MusicalFeature;
-import net.adequoir.muft.client.util.DrawHelper;
+import net.adequoir.muft.client.util.RenderHelper;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.mixin.client.gui.AxDrawContext;
 import net.minecraft.client.MinecraftClient;
@@ -96,19 +96,19 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
     private void drawItem(int index, int x, int y, int seed, TextRenderer textRenderer, DrawContext context) {
         boolean isSelected = index == jukeboxContents.selectedIndex();
         var texture = isSelected ? SLOT_HIGHLIGHT_BACK_TEXTURE : SLOT_BACKGROUND_TEXTURE;
-        var itemStack = jukeboxContents.get(index);
+        var itemEntry = PocketJukeboxComponent.getEntry(jukeboxContents, index);
 
         context.drawGuiTexture(texture, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
-        context.drawItem(itemStack, x + Y_MARGIN, y + Y_MARGIN, seed);
-        DrawHelper.drawStackOverlay(context, textRenderer, itemStack, x + Y_MARGIN, y + Y_MARGIN);
+        RenderHelper.drawItem(context, itemEntry, x + Y_MARGIN, y + Y_MARGIN, seed);
+        RenderHelper.drawStackOverlay(context, textRenderer, itemEntry, x + Y_MARGIN, y + Y_MARGIN);
         if (!isSelected) return;
         context.drawGuiTexture(SLOT_HIGHLIGHT_FRONT_TEXTURE, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
     }
 
     private void drawSelectedItemTooltip(TextRenderer textRenderer, DrawContext drawContext, int x, int y, int width) {
         if (!jukeboxContents.hasSelected()) return;
-        var itemStack = jukeboxContents.getSelected();
-        Text text = itemStack.getName();
+        var itemEntry = PocketJukeboxComponent.getSelectedEntry(jukeboxContents);
+        Text text = itemEntry.name();
         OrderedText orderedText = text.asOrderedText();
         int i = textRenderer.getWidth(orderedText);
         int j = x + width / 2 - 12;

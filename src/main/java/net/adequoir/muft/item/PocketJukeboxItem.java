@@ -2,10 +2,8 @@ package net.adequoir.muft.item;
 
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.util.PocketJukeboxIndexer;
-import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PocketJukeboxItem extends Item {
     private static final List<PocketJukeboxItem> pocketJukeboxes = new ArrayList<>();

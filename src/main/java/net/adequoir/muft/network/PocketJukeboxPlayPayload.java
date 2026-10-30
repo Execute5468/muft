@@ -1,7 +1,7 @@
 package net.adequoir.muft.network;
 
 import net.adequoir.muft.MusicalFeature;
-import net.adequoir.muft.client.util.PocketJukeboxPtr;
+import net.adequoir.muft.client.util.PocketJukeboxPointer;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.fabricmc.api.EnvType;
@@ -37,7 +37,7 @@ public record PocketJukeboxPlayPayload(int slotId, long playbackId) implements C
 
         var invType = slotId < 0 ? 2 : 0;
         var slotId = Math.max(this.slotId, 0);
-        var ptr = new PocketJukeboxPtr(stack.getItem(), newComponent, invType, slotId);
+        var ptr = new PocketJukeboxPointer(stack.getItem(), newComponent, invType, slotId);
         ((IClientPE) player).muft_pocketJukeboxManager().loadPointer(component.playbackId(), ptr);
     }
 }

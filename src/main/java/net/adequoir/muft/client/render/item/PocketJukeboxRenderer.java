@@ -1,5 +1,6 @@
 package net.adequoir.muft.client.render.item;
 
+import net.adequoir.muft.client.util.RenderHelper;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.adequoir.muft.mixin.client.render.item.AxItemRenderer;
@@ -57,8 +58,8 @@ public final class PocketJukeboxRenderer {
         var frontModel = models.getModelManager().getModel(modelPair.front);
         renderModel(matrices, vertexProvider, stack, renderMode, leftHanded, backModel, renderer, light, overlay);
 
-        var selectedStack = component.getSelected();
-        renderer.renderItem(selectedStack, renderMode, light, overlay, matrices, vertexProvider, null, 0);
+        var selectedStack = PocketJukeboxComponent.getSelectedEntry(component);
+        RenderHelper.renderItem(renderer, selectedStack, renderMode, light, overlay, matrices, vertexProvider, null, 0);
 
         renderModel(matrices, vertexProvider, stack, renderMode, leftHanded, frontModel, renderer, light, overlay);
         return true;
