@@ -58,7 +58,7 @@ public final class PocketJukeboxRenderer {
         var frontModel = models.getModelManager().getModel(modelPair.front);
         renderModel(matrices, vertexProvider, stack, renderMode, leftHanded, backModel, renderer, light, overlay);
 
-        var selectedStack = PocketJukeboxComponent.getSelectedEntry(component);
+        var selectedStack = component.getSelected();
         RenderHelper.renderItem(renderer, selectedStack, renderMode, light, overlay, matrices, vertexProvider, null, 0);
 
         renderModel(matrices, vertexProvider, stack, renderMode, leftHanded, frontModel, renderer, light, overlay);

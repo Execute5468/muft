@@ -65,24 +65,12 @@ public class PocketJukeboxComponent implements TooltipData {
         return !stack.isEmpty() && stack.getItem().getComponents().contains(DataComponentTypes.JUKEBOX_PLAYABLE);
     }
 
-    public static ItemEntry getEntry(PocketJukeboxComponent component, int index) { return component.entries[index]; }
-    public static ItemEntry getSelectedEntry(PocketJukeboxComponent component) {
-        return component.hasSelected() ? component.entries[component.selectedIndex] : ItemEntry.EMPTY;
-    }
-
     public static PocketJukeboxComponent get(ItemStack stack) {
         return stack.getOrDefault(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, DEFAULT);
     }
 
     public static @Nullable PocketJukeboxComponent getOrNull(ItemStack stack) {
         return stack.get(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS);
-    }
-
-    public static ItemStack getSelected(ItemStack stack) {
-        var component = stack.getOrDefault(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, DEFAULT);
-        return component.inBounds(component.selectedIndex)
-                ? component.entries[component.selectedIndex].toStack()
-                : ItemStack.EMPTY;
     }
 
     public static void set(ItemStack stack, PocketJukeboxComponent component) {
@@ -107,37 +95,8 @@ public class PocketJukeboxComponent implements TooltipData {
     public int selectedIndex() { return this.selectedIndex; }
     public long playbackId() { return this.playbackId; }
 
-    public ItemStack getSelected() { return hasSelected() ? get(selectedIndex) : ItemStack.EMPTY; }
-
-    public ItemStack get(int index) {
-        if (inBounds(index)) return entries[index].toStack();
-        throw new IndexOutOfBoundsException(index);
-    }
-
-    private static DataResult<PocketJukeboxComponent> serialize(List<ItemEntry> entries) {
-        if (entries.isEmpty()) return DataResult.success(DEFAULT);
-        return DataResult.success(new PocketJukeboxComponent(entries.toArray(EMPTY_ENTRIES)));
-    }
-
-    public static void withAdded(ItemStack source, ItemStack added) {
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(added);
-
-        var component = getOrNull(source);
-        if (component == null) return;
-        if (added.isEmpty()) return;
-        if (!canInsert(added)) throwUnsupportedStack(added);
-        int lastIndex = component.entries.length;
-        var newStacks = Arrays.copyOf(component.entries, lastIndex + 1);
-        newStacks[lastIndex] = ItemEntry.of(added);
-
-        var newComponent = new PocketJukeboxComponent(newStacks, component.selectedIndex, component.playbackId);
-        set(source, newComponent);
-    }
-
-    public static void withAdded(ItemStack source, Slot slot, PlayerEntity player) {
-
-    }
+    public ItemEntry get(int index) { return entries[index]; }
+    public ItemEntry getSelected() { return hasSelected() ? entries[selectedIndex] : ItemEntry.EMPTY; }
 
     public PocketJukeboxComponent withAdded(ItemStack stack) {
         if (stack.isEmpty()) return this;
@@ -207,6 +166,11 @@ public class PocketJukeboxComponent implements TooltipData {
     }
 
     public boolean inBounds(int stackIndex) { return stackIndex >= 0 && stackIndex < entries.length; }
+
+    private static DataResult<PocketJukeboxComponent> serialize(List<ItemEntry> entries) {
+        if (entries.isEmpty()) return DataResult.success(DEFAULT);
+        return DataResult.success(new PocketJukeboxComponent(entries.toArray(EMPTY_ENTRIES)));
+    }
 
     private static void throwFull() { throw new IllegalStateException("Pocket Jukebox is full"); }
     private static void throwUnsupportedStack(ItemStack stack) {

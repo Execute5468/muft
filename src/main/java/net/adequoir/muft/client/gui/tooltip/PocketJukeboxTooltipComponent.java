@@ -96,7 +96,7 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
     private void drawItem(int index, int x, int y, int seed, TextRenderer textRenderer, DrawContext context) {
         boolean isSelected = index == jukeboxContents.selectedIndex();
         var texture = isSelected ? SLOT_HIGHLIGHT_BACK_TEXTURE : SLOT_BACKGROUND_TEXTURE;
-        var itemEntry = PocketJukeboxComponent.getEntry(jukeboxContents, index);
+        var itemEntry = jukeboxContents.get(index);
 
         context.drawGuiTexture(texture, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
         RenderHelper.drawItem(context, itemEntry, x + Y_MARGIN, y + Y_MARGIN, seed);
@@ -107,7 +107,7 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
 
     private void drawSelectedItemTooltip(TextRenderer textRenderer, DrawContext drawContext, int x, int y, int width) {
         if (!jukeboxContents.hasSelected()) return;
-        var itemEntry = PocketJukeboxComponent.getSelectedEntry(jukeboxContents);
+        var itemEntry = jukeboxContents.getSelected();
         Text text = itemEntry.name();
         OrderedText orderedText = text.asOrderedText();
         int i = textRenderer.getWidth(orderedText);
