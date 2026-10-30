@@ -2,6 +2,7 @@ package net.adequoir.muft.component;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.util.ItemEntry;
 import net.adequoir.muft.registry.MuftComponentTypes;
 import net.minecraft.component.DataComponentTypes;
@@ -34,20 +35,32 @@ public class PocketJukeboxComponent implements TooltipData {
          PocketJukeboxComponent::serialize,
          component -> DataResult.success(component.isEmpty() ? EMPTY_LIST : Arrays.asList(component.entries))
     );
-    public static final PacketCodec<RegistryByteBuf, PocketJukeboxComponent> PACKET_CODEC = ItemEntry.PACKET_CODEC.collect(PacketCodecs.toList()).xmap(
-        list -> new PocketJukeboxComponent(list.toArray(EMPTY_ENTRIES)),
-        component -> Arrays.asList(component.entries)
-    );
+    public static final PacketCodec<RegistryByteBuf, PocketJukeboxComponent> PACKET_CODEC = new PacketCodec<>() {
+        private static final PacketCodec<RegistryByteBuf, List<ItemEntry>> ITEM_LIST_CODEC = ItemEntry.PACKET_CODEC.collect(PacketCodecs.toList());
+
+        public @Override PocketJukeboxComponent decode(RegistryByteBuf buf) {
+            var entries = ITEM_LIST_CODEC.decode(buf).toArray(EMPTY_ENTRIES);
+            return new PocketJukeboxComponent(entries, -1, buf.readVarLong());
+        }
+
+        public @Override void encode(RegistryByteBuf buf, PocketJukeboxComponent value) {
+            ITEM_LIST_CODEC.encode(buf, Arrays.asList(value.entries));
+            buf.writeVarLong(value.playbackId);
+        }
+    };
+
     private static final Pair<PocketJukeboxComponent, @Nullable ItemStack> EMPTY_REMOVED = new Pair<>(DEFAULT, null);
 
     private final ItemEntry[] entries;
     private final int selectedIndex;
+    private final long playbackId;
 
-    private PocketJukeboxComponent(ItemEntry[] entries, int selectedIndex) {
+    private PocketJukeboxComponent(ItemEntry[] entries, int selectedIndex, long playbackId) {
         this.entries = entries;
         this.selectedIndex = selectedIndex;
+        this.playbackId = playbackId;
     }
-    private PocketJukeboxComponent(ItemEntry[] entries) { this(entries, -1); }
+    private PocketJukeboxComponent(ItemEntry[] entries) { this(entries, -1, 0); }
 
     public int size() { return entries.length; }
     public boolean isFull() { return entries.length >= MAX_SLOT_COUNT; }
@@ -56,6 +69,7 @@ public class PocketJukeboxComponent implements TooltipData {
 
 
     public int selectedIndex() { return this.selectedIndex; }
+    public long playbackId() { return this.playbackId; }
 
     public ItemStack getSelected() { return hasSelected() ? get(selectedIndex) : ItemStack.EMPTY; }
 
@@ -119,7 +133,7 @@ public class PocketJukeboxComponent implements TooltipData {
         var newStacks = Arrays.copyOf(entries, lastIndex + 1);
         newStacks[lastIndex] = new ItemEntry(stack);
 
-        return new PocketJukeboxComponent(newStacks, selectedIndex);
+        return new PocketJukeboxComponent(newStacks, selectedIndex, playbackId);
     }
 
     public PocketJukeboxComponent withAdded(Slot slot, PlayerEntity player) {
@@ -132,7 +146,11 @@ public class PocketJukeboxComponent implements TooltipData {
 
     public PocketJukeboxComponent withSelected(int slotIndex) {
         slotIndex = slotIndex < -1 || slotIndex >= size() ? -1: slotIndex;
-        return slotIndex != this.selectedIndex ? new PocketJukeboxComponent(entries, slotIndex) : this;
+        return slotIndex != this.selectedIndex ? new PocketJukeboxComponent(entries, slotIndex, playbackId) : this;
+    }
+
+    public PocketJukeboxComponent withPlaying(long playbackId) {
+        return playbackId == this.playbackId ? this : new PocketJukeboxComponent(entries, -1, playbackId);
     }
 
     public Pair<PocketJukeboxComponent, @Nullable ItemStack> withRemoved() {
@@ -140,7 +158,8 @@ public class PocketJukeboxComponent implements TooltipData {
         int i = inBounds(selectedIndex) ? selectedIndex : 0;
         var removedStack = entries[i].toItemStack();
         if (entries.length == 1) return new Pair<>(DEFAULT, removedStack);
-        return new Pair<>(new PocketJukeboxComponent(copyOmit(entries, i), -1), removedStack);
+
+        return new Pair<>(new PocketJukeboxComponent(copyOmit(entries, i), -1, playbackId), removedStack);
     }
 
     public @Override boolean equals(Object obj) {

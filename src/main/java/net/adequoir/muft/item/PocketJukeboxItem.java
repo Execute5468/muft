@@ -1,7 +1,10 @@
 package net.adequoir.muft.item;
 
 import net.adequoir.muft.component.PocketJukeboxComponent;
+import net.adequoir.muft.item.util.PocketJukeboxIndexer;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
+import net.adequoir.muft.network.PocketJukeboxPlayPayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
@@ -11,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Hand;
@@ -21,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PocketJukeboxItem extends Item {
     private static final List<PocketJukeboxItem> pocketJukeboxes = new ArrayList<>();
@@ -106,9 +111,18 @@ public class PocketJukeboxItem extends Item {
 
     public @Override TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         var stack = user.getStackInHand(hand);
-        if (world.isClient) {
-            var player = MinecraftClient.getInstance().player;
-            if (player != null) ((IClientPE) player).muft_pocketJukeboxManager().togglePlaying(stack, 0);
+        var component = PocketJukeboxComponent.get(stack);
+        if (component.isEmpty()) return TypedActionResult.fail(stack);
+
+        if (!world.isClient) {
+
+            var selectedSlot = hand == Hand.MAIN_HAND ? user.getInventory().selectedSlot : -1;
+            var playbackId = PocketJukeboxIndexer.INSTANCE.getId();
+
+            var newComponent = component.withPlaying(playbackId);
+            PocketJukeboxComponent.set(stack, newComponent);
+
+            ServerPlayNetworking.send((ServerPlayerEntity) user, new PocketJukeboxPlayPayload(selectedSlot, playbackId));
         }
         return TypedActionResult.success(stack);
     }

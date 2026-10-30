@@ -1,6 +1,7 @@
 package net.adequoir.muft.registry;
 
 import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;
+import net.adequoir.muft.network.PocketJukeboxPlayPayload;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryByteBuf;
@@ -13,6 +14,8 @@ public final class MuftPayloads {
     static {
         registerC2S(PocketJukeboxItemSelectedPayload.ID, PocketJukeboxItemSelectedPayload::write, PocketJukeboxItemSelectedPayload::read);
         registerServerReceiver(PocketJukeboxItemSelectedPayload.ID, PocketJukeboxItemSelectedPayload::handle);
+
+        registerS2C(PocketJukeboxPlayPayload.ID, PocketJukeboxPlayPayload::write, PocketJukeboxPlayPayload::read);
     }
 
     private static <T extends CustomPayload> void registerServerReceiver(
@@ -27,6 +30,12 @@ public final class MuftPayloads {
         ValueFirstEncoder<? super RegistryByteBuf, T> encoder,
         PacketDecoder<? super RegistryByteBuf, T> decoder
     ) { PayloadTypeRegistry.playC2S().register(id, new GenericPacketCodec<>(encoder, decoder)); }
+
+    private static <T extends CustomPayload> void registerS2C(
+        CustomPayload.Id<T> id,
+        ValueFirstEncoder<? super RegistryByteBuf, T> encoder,
+        PacketDecoder<? super RegistryByteBuf, T> decoder
+    ) { PayloadTypeRegistry.playS2C().register(id, new GenericPacketCodec<>(encoder, decoder)); }
 
     private record GenericPacketCodec<T extends CustomPayload>(
         ValueFirstEncoder<? super RegistryByteBuf, T> encoder,

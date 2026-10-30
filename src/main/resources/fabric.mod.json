@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
             "net.adequoir.muft.MusicalFeature"
+		],
+		"client": [
+			"net.adequoir.muft.MusicalFeatureClient"
 		]
 	},
 	"mixins": [
