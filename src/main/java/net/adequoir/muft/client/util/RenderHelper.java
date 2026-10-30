@@ -1,6 +1,6 @@
 package net.adequoir.muft.client.util;
 
-import net.adequoir.muft.util.ItemView;
+import net.adequoir.muft.util.ItemEntry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -19,45 +19,45 @@ import org.jetbrains.annotations.Nullable;
 public final class RenderHelper {
 
     public static void renderItem(
-        ItemRenderer renderer,
-        ItemView entry, ModelTransformationMode renderMode,
-        int light, int overlay,
-        MatrixStack matrices, VertexConsumerProvider vertexProvider,
-        @Nullable World world, int seed
+            ItemRenderer renderer,
+            ItemEntry entry, ModelTransformationMode renderMode,
+            int light, int overlay,
+            MatrixStack matrices, VertexConsumerProvider vertexProvider,
+            @Nullable World world, int seed
     ) {
-        var stack = ItemView._unsafe_getOriginalStack(entry);
+        var stack = ItemEntry._unsafe_getOriginalStack(entry);
         renderer.renderItem(stack, renderMode, light, overlay, matrices, vertexProvider, world, seed);
     }
 
     public static void renderItem(
-        ItemRenderer renderer,
-        ItemView entry, @Nullable LivingEntity entity,
-        ModelTransformationMode renderMode, boolean leftHanded,
-        MatrixStack matrices, VertexConsumerProvider vertexProvider,
-        @Nullable World world, int light, int seed, int overlay
+            ItemRenderer renderer,
+            ItemEntry entry, @Nullable LivingEntity entity,
+            ModelTransformationMode renderMode, boolean leftHanded,
+            MatrixStack matrices, VertexConsumerProvider vertexProvider,
+            @Nullable World world, int light, int seed, int overlay
     ) {
-        var stack = ItemView._unsafe_getOriginalStack(entry);
+        var stack = ItemEntry._unsafe_getOriginalStack(entry);
         renderer.renderItem(entity, stack, renderMode, leftHanded, matrices, vertexProvider, world, light, seed, overlay);
     }
 
     public static void renderItem(
-        ItemRenderer renderer,
-        ItemView entry, ModelTransformationMode renderMode, boolean leftHanded,
-        MatrixStack matrices, VertexConsumerProvider vertexProvider,
-        int light, int overlay,
-        BakedModel model
+            ItemRenderer renderer,
+            ItemEntry entry, ModelTransformationMode renderMode, boolean leftHanded,
+            MatrixStack matrices, VertexConsumerProvider vertexProvider,
+            int light, int overlay,
+            BakedModel model
     ) {
-        var stack = ItemView._unsafe_getOriginalStack(entry);
+        var stack = ItemEntry._unsafe_getOriginalStack(entry);
         renderer.renderItem(stack, renderMode, leftHanded, matrices, vertexProvider, light, overlay, model);
     }
 
-    public static void drawItem(DrawContext context, ItemView entry, int x, int y, int seed) {
-        var stack = ItemView._unsafe_getOriginalStack(entry);
+    public static void drawItem(DrawContext context, ItemEntry entry, int x, int y, int seed) {
+        var stack = ItemEntry._unsafe_getOriginalStack(entry);
         context.drawItem(stack, x, y, seed);
     }
 
-    public static void drawStackOverlay(DrawContext context, TextRenderer textRenderer, ItemView entry, int x, int y) {
-        var stack = ItemView._unsafe_getOriginalStack(entry);
+    public static void drawStackOverlay(DrawContext context, TextRenderer textRenderer, ItemEntry entry, int x, int y) {
+        var stack = ItemEntry._unsafe_getOriginalStack(entry);
         drawStackOverlay(context, textRenderer, stack, x, y);
     }
 
@@ -71,8 +71,8 @@ public final class RenderHelper {
         matrices.pop();
     }
 
-    public static void drawItemBar(DrawContext context, ItemView entry, int x, int y) {
-        var stack = ItemView._unsafe_getOriginalStack(entry);
+    public static void drawItemBar(DrawContext context, ItemEntry entry, int x, int y) {
+        var stack = ItemEntry._unsafe_getOriginalStack(entry);
         drawItemBar(context, stack, x, y);
     }
 
@@ -84,8 +84,8 @@ public final class RenderHelper {
         context.fill(i, j, i + stack.getItemBarStep(), j + 1, stack.getItemBarColor() | 0xFF000000);
     }
 
-    public static void drawCooldownProgress(DrawContext context, ItemView entry, int x, int y) {
-        var stack = ItemView._unsafe_getOriginalStack(entry);
+    public static void drawCooldownProgress(DrawContext context, ItemEntry entry, int x, int y) {
+        var stack = ItemEntry._unsafe_getOriginalStack(entry);
         drawCooldownProgress(context, stack, x, y);
     }
 
@@ -103,8 +103,8 @@ public final class RenderHelper {
         int j = i + MathHelper.ceil(16.0F * f);
         context.fill(x, i, x + 16, j, Integer.MAX_VALUE);
     }
-    public static void drawStackCount(DrawContext context, TextRenderer textRenderer, ItemView entry, int x, int y) {
-        var stack = ItemView._unsafe_getOriginalStack(entry);
+    public static void drawStackCount(DrawContext context, TextRenderer textRenderer, ItemEntry entry, int x, int y) {
+        var stack = ItemEntry._unsafe_getOriginalStack(entry);
         drawStackCount(context, textRenderer, stack, x, y);
     }
 

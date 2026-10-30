@@ -14,26 +14,26 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Rarity;
 import org.jetbrains.annotations.Nullable;
 
-public final class ItemView {
+public final class ItemEntry {
     @SuppressWarnings("deprecation")
-    public static final Codec<ItemView> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final Codec<ItemEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         ItemStack.ITEM_CODEC.fieldOf("id").forGetter(entry -> entry.stack.getItem().getRegistryEntry()),
-        Codec.intRange(1, 99).fieldOf("count").orElse(1).forGetter(ItemView::count),
+        Codec.intRange(1, 99).fieldOf("count").orElse(1).forGetter(ItemEntry::count),
         ComponentChanges.CODEC.optionalFieldOf("components", ComponentChanges.EMPTY).forGetter(entry -> entry.stack.getComponentChanges())
-    ).apply(instance, ItemView::new));
-    public static final PacketCodec<RegistryByteBuf, ItemView> PACKET_CODEC = ItemStack.PACKET_CODEC.xmap(ItemView::of, ItemView::_unsafe_getOriginalStack);
+    ).apply(instance, ItemEntry::new));
+    public static final PacketCodec<RegistryByteBuf, ItemEntry> PACKET_CODEC = ItemStack.PACKET_CODEC.xmap(ItemEntry::of, ItemEntry::_unsafe_getOriginalStack);
 
-    public static final ItemView EMPTY = new ItemView(ItemStack.EMPTY);
+    public static final ItemEntry EMPTY = new ItemEntry(ItemStack.EMPTY);
 
     private final ItemStack stack;
 
-    private ItemView(RegistryEntry<Item> item, int count, ComponentChanges changes) { this(new ItemStack(item, count, changes)); }
-    private ItemView(ItemStack stack) { this.stack = stack; }
+    private ItemEntry(RegistryEntry<Item> item, int count, ComponentChanges changes) { this(new ItemStack(item, count, changes)); }
+    private ItemEntry(ItemStack stack) { this.stack = stack; }
 
-    public static ItemView of(ItemStack stack) { return stack.isEmpty() ? EMPTY : new ItemView(stack.copy()); }
-    public static ItemStack _unsafe_getOriginalStack(ItemView entry) { return entry.stack; }
+    public static ItemEntry of(ItemStack stack) { return stack.isEmpty() ? EMPTY : new ItemEntry(stack.copy()); }
+    public static ItemStack _unsafe_getOriginalStack(ItemEntry entry) { return entry.stack; }
 
-    public static boolean areStackable(ItemView first, ItemView second) { return ItemStack.areItemsAndComponentsEqual(first.stack, second.stack); }
+    public static boolean areStackable(ItemEntry first, ItemEntry second) { return ItemStack.areItemsAndComponentsEqual(first.stack, second.stack); }
 
     public boolean isEmpty() { return stack.isEmpty(); }
     public boolean isStackable(ItemStack stack) { return ItemStack.areItemsAndComponentsEqual(this.stack, stack); }
@@ -54,7 +54,7 @@ public final class ItemView {
     public @Override int hashCode() { return ItemStack.hashCode(stack); }
     public @Override boolean equals(Object other) {
         if (other == this) return true;
-        return other instanceof ItemView entry && ItemStack.areEqual(stack, entry.stack);
+        return other instanceof ItemEntry entry && ItemStack.areEqual(stack, entry.stack);
     }
     public @Override String toString() { return stack.getCount() + " x " + stack .getItem(); }
 }
