@@ -36,7 +36,7 @@ public class PocketJukeboxManager implements ClientPlayerTickable {
 
     public boolean isPlaying() { return isPlaying; }
 
-    public void loadPointer(long prevId, PocketJukeboxPointer ptr) {
+    public void loadPointer(int prevId, PocketJukeboxPointer ptr) {
         if (this.pointer == null || pointer.id() != prevId) {
             if (!isPlaying) WorldRenderUtil.setAllJukeboxMute(true);
             startPlaying(ptr.component());

@@ -38,12 +38,12 @@ public class PocketJukeboxComponent implements TooltipData {
 
         public @Override PocketJukeboxComponent decode(RegistryByteBuf buf) {
             var entries = ITEM_LIST_CODEC.decode(buf).toArray(EMPTY_ENTRIES);
-            return new PocketJukeboxComponent(entries, -1, buf.readVarLong());
+            return new PocketJukeboxComponent(entries, -1, buf.readVarInt());
         }
 
         public @Override void encode(RegistryByteBuf buf, PocketJukeboxComponent value) {
             ITEM_LIST_CODEC.encode(buf, Arrays.asList(value.entries));
-            buf.writeVarLong(value.playbackId);
+            buf.writeVarInt(value.playbackId);
         }
     };
 
@@ -51,9 +51,9 @@ public class PocketJukeboxComponent implements TooltipData {
 
     private final ItemEntry[] entries;
     private final int selectedIndex;
-    private final long playbackId;
+    private final int playbackId;
 
-    private PocketJukeboxComponent(ItemEntry[] entries, int selectedIndex, long playbackId) {
+    private PocketJukeboxComponent(ItemEntry[] entries, int selectedIndex, int playbackId) {
         this.entries = entries;
         this.selectedIndex = selectedIndex;
         this.playbackId = playbackId;
@@ -93,7 +93,7 @@ public class PocketJukeboxComponent implements TooltipData {
     public boolean hasSelected() { return selectedIndex >= 0; }
 
     public int selectedIndex() { return this.selectedIndex; }
-    public long playbackId() { return this.playbackId; }
+    public int playbackId() { return this.playbackId; }
 
     public ItemEntry get(int index) { return entries[index]; }
     public ItemEntry getSelected() { return hasSelected() ? entries[selectedIndex] : ItemEntry.EMPTY; }
@@ -122,7 +122,7 @@ public class PocketJukeboxComponent implements TooltipData {
         return slotIndex != this.selectedIndex ? new PocketJukeboxComponent(entries, slotIndex, playbackId) : this;
     }
 
-    public PocketJukeboxComponent withPlaying(long playbackId) {
+    public PocketJukeboxComponent withPlaying(int playbackId) {
         return playbackId == this.playbackId ? this : new PocketJukeboxComponent(entries, -1, playbackId);
     }
 

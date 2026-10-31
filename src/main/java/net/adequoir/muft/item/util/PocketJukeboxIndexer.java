@@ -1,15 +1,15 @@
 package net.adequoir.muft.item.util;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class PocketJukeboxIndexer {
     public static PocketJukeboxIndexer INSTANCE = new PocketJukeboxIndexer();
 
-    private final AtomicLong playbackCounter = new AtomicLong();
+    private final AtomicInteger playbackCounter = new AtomicInteger();
 
-    public long getId() {
-        long id;
-        do { id = playbackCounter.incrementAndGet(); } while (id == 0L);
+    public int getId() {
+        int id;
+        do { id = playbackCounter.incrementAndGet(); } while (id == 0);
         return id;
     }
 

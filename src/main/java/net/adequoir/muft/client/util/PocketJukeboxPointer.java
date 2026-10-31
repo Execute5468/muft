@@ -15,7 +15,7 @@ public record PocketJukeboxPointer(
 ) {
     public static final int T_CURSOR_STACK = -2;
 
-    public long id() { return component.playbackId(); }
+    public int id() { return component.playbackId(); }
 
     public boolean test(ItemStack stack) { return testEquality(stack) != Equality.NONE; }
 
