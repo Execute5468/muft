@@ -5,6 +5,7 @@ import net.adequoir.muft.client.util.PocketJukeboxPointer;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.mixin.client.sound.AxSoundManager;
 import net.adequoir.muft.mixin.client.sound.AxSoundSystem;
+import net.adequoir.muft.mixutils.client.sound.ISource;
 import net.adequoir.muft.util.ItemEntry;
 import net.minecraft.block.jukebox.JukeboxSong;
 import net.minecraft.client.MinecraftClient;
@@ -21,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class PocketJukeboxManager implements ClientPlayerTickable {
-    private static final Consumer<Source> PAUSE_ACTION = Source::pause;
-    private static final Consumer<Source> RESUME_ACTION = Source::resume;
+    private static final Consumer<Source> PAUSE_ACTION = source -> ((ISource) source).muft_setSoundPaused(true);
+    private static final Consumer<Source> RESUME_ACTION = source -> ((ISource) source).muft_setSoundPaused(false);
 
     private final ClientPlayerEntity player;
 
