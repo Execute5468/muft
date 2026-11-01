@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_blank_disc": {
+      "conditions": {
+        "items": [
+          {
+            "items": "muft:blank_disc"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "muft:pocket_jukebox"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_blank_disc"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "muft:pocket_jukebox"
+    ]
+  }
+}

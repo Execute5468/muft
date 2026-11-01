@@ -7,11 +7,22 @@ import net.adequoir.muft.item.PocketJukeboxItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.util.Identifier;
 
 import java.util.function.Function;
 
 //@SuppressWarnings("unused")
 public final class MuftItems {
+    public static final Item COPPER_NUGGET = getOrRegister(
+        Identifier.ofVanilla("copper_nugget"),
+        Item::new,
+        new Item.Settings()
+    );
+
     public static final Item POCKET_JUKEBOX = registerPocketJukebox("pocket_jukebox");
 
     public static final Item WHITE_POCKET_JUKEBOX = registerPocketJukebox("white_pocket_jukebox");
@@ -73,6 +84,7 @@ public final class MuftItems {
             PINK_POCKET_JUKEBOX
         );
         ItemEntries.addAfter(ItemGroups.TOOLS, Items.MUSIC_DISC_PIGSTEP, BLANK_DISC);
+        ItemEntries.addAfter(ItemGroups.INGREDIENTS, Items.IRON_NUGGET, COPPER_NUGGET);
     }
 
     private static Item.Settings pocketJukebox() {
@@ -89,6 +101,18 @@ public final class MuftItems {
         var id = MusicalFeature.id(name);
         var item = factory.apply(settings);
         return Items.register(id, item);
+    }
+
+    private static Item getOrRegister(Identifier id, Function<Item.Settings, Item> factory, Item.Settings settings) {
+        var registryKey = RegistryKey.of(RegistryKeys.ITEM, id);
+        var existingItem = Registries.ITEM.get(registryKey);
+        if (existingItem != null) {
+            MusicalFeature.LOGGER.info("Existing item with id {} found - skipping registration", id);
+            return existingItem;
+        }
+
+        var newItem = factory.apply(settings);
+        return Registry.register(Registries.ITEM, registryKey, newItem);
     }
 
     public static void init() {}
