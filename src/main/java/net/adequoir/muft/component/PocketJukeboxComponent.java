@@ -61,7 +61,7 @@ public class PocketJukeboxComponent implements TooltipData {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean canInsert(ItemStack stack) {
-        return !stack.isEmpty() && stack.getItem().getComponents().contains(DataComponentTypes.JUKEBOX_PLAYABLE);
+        return !stack.isEmpty() && stack.getComponents().contains(DataComponentTypes.JUKEBOX_PLAYABLE);
     }
 
     public static PocketJukeboxComponent get(ItemStack stack) {
