@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "muft:item/green_pocket_jukebox"
+  }
+}

@@ -10,13 +10,26 @@ import net.minecraft.item.Items;
 
 import java.util.function.Function;
 
-@SuppressWarnings("unused")
+//@SuppressWarnings("unused")
 public final class MuftItems {
-    public static final Item POCKET_JUKEBOX = register(
-        "pocket_jukebox",
-        PocketJukeboxItem::new,
-        new Item.Settings().maxCount(1).component(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, PocketJukeboxComponent.DEFAULT)
-    );
+    public static final Item POCKET_JUKEBOX = registerPocketJukebox("pocket_jukebox");
+
+    public static final Item WHITE_POCKET_JUKEBOX = registerPocketJukebox("white_pocket_jukebox");
+    public static final Item LIGHT_GRAY_POCKET_JUKEBOX = registerPocketJukebox("light_gray_pocket_jukebox");
+    public static final Item GRAY_POCKET_JUKEBOX = registerPocketJukebox("gray_pocket_jukebox");
+    public static final Item BLACK_POCKET_JUKEBOX = registerPocketJukebox("black_pocket_jukebox");
+    public static final Item BROWN_POCKET_JUKEBOX = registerPocketJukebox("brown_pocket_jukebox");
+    public static final Item RED_POCKET_JUKEBOX = registerPocketJukebox("red_pocket_jukebox");
+    public static final Item ORANGE_POCKET_JUKEBOX = registerPocketJukebox("orange_pocket_jukebox");
+    public static final Item YELLOW_POCKET_JUKEBOX = registerPocketJukebox("yellow_pocket_jukebox");
+    public static final Item LIME_POCKET_JUKEBOX = registerPocketJukebox("lime_pocket_jukebox");
+    public static final Item GREEN_POCKET_JUKEBOX = registerPocketJukebox("green_pocket_jukebox");
+    public static final Item CYAN_POCKET_JUKEBOX = registerPocketJukebox("cyan_pocket_jukebox");
+    public static final Item LIGHT_BLUE_POCKET_JUKEBOX = registerPocketJukebox("light_blue_pocket_jukebox");
+    public static final Item BLUE_POCKET_JUKEBOX = registerPocketJukebox("blue_pocket_jukebox");
+    public static final Item PURPLE_POCKET_JUKEBOX = registerPocketJukebox("purple_pocket_jukebox");
+    public static final Item MAGENTA_POCKET_JUKEBOX = registerPocketJukebox("magenta_pocket_jukebox");
+    public static final Item PINK_POCKET_JUKEBOX = registerPocketJukebox("pink_pocket_jukebox");
 
     public static final Item BLANK_DISC = register("blank_disc");
 
@@ -39,11 +52,36 @@ public final class MuftItems {
     public static final Item PINK_TRACK_DISC = register("pink_track_disc", unstackable());
 
     static {
-        ItemEntries.addBefore(ItemGroups.TOOLS, Items.MUSIC_DISC_13, POCKET_JUKEBOX);
+        ItemEntries.addBefore(
+            ItemGroups.TOOLS, Items.MUSIC_DISC_13,
+            POCKET_JUKEBOX,
+            WHITE_POCKET_JUKEBOX,
+            LIGHT_GRAY_POCKET_JUKEBOX,
+            GRAY_POCKET_JUKEBOX,
+            BLACK_POCKET_JUKEBOX,
+            BROWN_POCKET_JUKEBOX,
+            RED_POCKET_JUKEBOX,
+            ORANGE_POCKET_JUKEBOX,
+            YELLOW_POCKET_JUKEBOX,
+            LIME_POCKET_JUKEBOX,
+            GREEN_POCKET_JUKEBOX,
+            CYAN_POCKET_JUKEBOX,
+            LIGHT_BLUE_POCKET_JUKEBOX,
+            BLUE_POCKET_JUKEBOX,
+            PURPLE_POCKET_JUKEBOX,
+            MAGENTA_POCKET_JUKEBOX,
+            PINK_POCKET_JUKEBOX
+        );
         ItemEntries.addAfter(ItemGroups.TOOLS, Items.MUSIC_DISC_PIGSTEP, BLANK_DISC);
     }
 
+    private static Item.Settings pocketJukebox() {
+        return new Item.Settings().maxCount(1)
+                                  .component(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, PocketJukeboxComponent.DEFAULT);
+    }
     private static Item.Settings unstackable() { return new Item.Settings().maxCount(1); }
+
+    private static Item registerPocketJukebox(String name) { return register(name, PocketJukeboxItem::new, pocketJukebox()); }
 
     private static Item register(String name) { return register(name, new Item.Settings()); }
     private static Item register(String name, Item.Settings settings) { return register(name, Item::new, settings); }

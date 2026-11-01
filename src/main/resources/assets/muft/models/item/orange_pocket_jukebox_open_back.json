@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "muft:item/orange_pocket_jukebox_back"
+  }
+}
