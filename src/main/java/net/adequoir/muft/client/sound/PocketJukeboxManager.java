@@ -67,7 +67,7 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
         }
     }
 
-    public void accept(ItemStack stack, int newPlaybackId) {
+    public void accept(ItemStack stack, int newPlaybackId, boolean sneaking) {
         var component = PocketJukeboxComponent.getOrNull(stack);
         if (component == null) return;
         var newComponent = component.withPlaying(newPlaybackId);
@@ -75,12 +75,14 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
 
         if (playingId == 0) {
             WorldRenderUtil.setAllJukeboxMute(true);
-            playNewSong(component, newPlaybackId);
+            playNewSong(component, newPlaybackId, sneaking);
         } else if (component.playbackId() == playingId) {
-            pauseAndUpdateCurrentSong(newPlaybackId);
+            if (sneaking) {
+                skipAndUpdateCurrentSong(component, newPlaybackId);
+            } else pauseAndUpdateCurrentSong(newPlaybackId);
         } else {
             pauseCurrentSong();
-            playNewSong(component, newPlaybackId);
+            playNewSong(component, newPlaybackId, sneaking);
         }
     }
 
@@ -106,13 +108,31 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
         playPaused();
     }
 
-    private void playNewSong(PocketJukeboxComponent component, int newPlaybackId) {
+    private void skipAndUpdateCurrentSong(PocketJukeboxComponent component, int newPlaybackId) {
+        var entry = playingSongs.remove(playingId);
+        //noinspection ConstantValue
+        if (entry != null) entry.stop();
+        var nextSong = pickRandom(component, entry.discIndex);
+        var songEntry = new SongEntry(player, component, nextSong);
+        soundManager().play(songEntry.soundInstance);
+        playDescription(songEntry.songEntry);
+        playingSongs.put(newPlaybackId, songEntry);
+        playingId = newPlaybackId;
+    }
+
+    @SuppressWarnings("ConstantValue")
+    private void playNewSong(PocketJukeboxComponent component, int newPlaybackId, boolean sneaking) {
         int prevId = component.playbackId();
         var prevEntry = playingSongs.remove(prevId);
         SongEntry songEntry;
 
-        //noinspection ConstantValue
-        if (prevId == 0 || prevEntry == null) {
+
+        if (sneaking && prevEntry != null) {
+            prevEntry.stop();
+            var randomSong = pickRandom(component, prevEntry.discIndex);
+            songEntry = new SongEntry(player, component, randomSong);
+            soundManager().play(songEntry.soundInstance);
+        } else if (prevId == 0 || prevEntry == null) {
             var randomSong = pickRandom(component, -1);
             songEntry = new SongEntry(player, component, randomSong);
             soundManager().play(songEntry.soundInstance);

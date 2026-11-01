@@ -28,6 +28,6 @@ public record PocketJukeboxPlayPayload(int slotId, int playbackId) implements Cu
     public void handle(ClientPlayerEntity player) {
         var inventory = player.getInventory();
         var stack = slotId < 0 ? inventory.offHand.getFirst() : inventory.main.get(slotId);
-        PocketJukeboxManager.get(player).accept(stack, playbackId);
+        PocketJukeboxManager.get(player).accept(stack, playbackId, player.isSneaking());
     }
 }
