@@ -1,9 +1,6 @@
 package net.adequoir.muft;
 
-import net.adequoir.muft.registry.MuftItemTags;
-import net.adequoir.muft.registry.MuftItems;
-import net.adequoir.muft.registry.MuftPayloads;
-import net.adequoir.muft.registry.MuftRecipeSerializers;
+import net.adequoir.muft.registry.*;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.util.Identifier;
@@ -18,6 +15,7 @@ public class MusicalFeature implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		MuftBlocks.init();
 		MuftItems.init();
 		MuftItemTags.init();
 		MuftPayloads.init();

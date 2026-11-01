@@ -1,5 +1,7 @@
 {
+    "container.muft.disc_press": "Disc Press",
     "pocket_jukebox.music_paused": "Music Paused",
+    "block.muft.disc_press": "Disc Press",
     "item.minecraft.copper_nugget": "Copper Nugget",
     "item.muft.pocket_jukebox": "Pocket Jukebox",
     "item.muft.pocket_jukebox.empty": "Empty",

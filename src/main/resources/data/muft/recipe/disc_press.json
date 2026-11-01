@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "T": {
+      "item": "minecraft:crafting_table"
+    },
+    "D": {
+      "item": "muft:blank_disc"
+    },
+    "S": {
+      "item": "minecraft:cobblestone"
+    }
+  },
+  "pattern": [
+    "CDC",
+    "CTC",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "muft:disc_press"
+  }
+}
