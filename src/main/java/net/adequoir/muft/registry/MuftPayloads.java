@@ -3,6 +3,7 @@ package net.adequoir.muft.registry;
 import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
 import net.adequoir.muft.network.PocketJukeboxResetPayload;
+import net.adequoir.muft.util.FabricDependant;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryByteBuf;
@@ -10,16 +11,24 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketDecoder;
 import net.minecraft.network.codec.ValueFirstEncoder;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.function.BiConsumer;
+
+@FabricDependant
 public final class MuftPayloads {
     static {
         registerC2S(PocketJukeboxItemSelectedPayload.ID, PocketJukeboxItemSelectedPayload::write, PocketJukeboxItemSelectedPayload::read);
-        registerServerReceiver(PocketJukeboxItemSelectedPayload.ID, PocketJukeboxItemSelectedPayload::handle);
+        registerServerReceiver(PocketJukeboxItemSelectedPayload.ID, handlePlayer(PocketJukeboxItemSelectedPayload::handle));
 
         registerC2S(PocketJukeboxResetPayload.ID, PocketJukeboxResetPayload::write, PocketJukeboxResetPayload::read);
-        registerServerReceiver(PocketJukeboxResetPayload.ID, ((payload, context) -> payload.handle(context.player())));
+        registerServerReceiver(PocketJukeboxResetPayload.ID, handlePlayer(PocketJukeboxResetPayload::handle));
 
         registerS2C(PocketJukeboxPlayPayload.ID, PocketJukeboxPlayPayload::write, PocketJukeboxPlayPayload::read);
+    }
+
+    private static <T extends CustomPayload> ServerPlayNetworking.PlayPayloadHandler<T> handlePlayer(BiConsumer<T, ServerPlayerEntity> consumer) {
+        return (payload, context) -> consumer.accept(payload, context.player());
     }
 
     private static <T extends CustomPayload> void registerServerReceiver(

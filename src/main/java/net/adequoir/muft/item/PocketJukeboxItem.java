@@ -6,14 +6,10 @@ import net.adequoir.muft.item.util.PocketJukeboxIndexer;
 import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.adequoir.muft.network.ServerNetworkHelper;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -82,36 +78,13 @@ public class PocketJukeboxItem extends Item {
                     onContentChanged(player);
                 }
                 if (player.getWorld().isClient) {
-                    onRemove(player, stack, PocketJukeboxManager.T_CURSOR_STACK, -1, pair.getLeft(), component.selectedIndex());
+                    PocketJukeboxManager.onRemove(player, stack, PocketJukeboxManager.T_CURSOR_STACK, -1, pair.getLeft(), component.selectedIndex());
                 }
             }
             return true;
         }
 
         return false;
-    }
-
-    @Environment(EnvType.CLIENT)
-    private static void onRemove(
-        PlayerEntity player,
-        ItemStack stack, int invType, int invSlot,
-        PocketJukeboxComponent component, int discIndex
-    ) {
-        PocketJukeboxManager.get((ClientPlayerEntity) player).onRemove(stack, invType, invSlot, component, discIndex);
-    }
-
-    @Environment(EnvType.CLIENT)
-    private static void onRemove(PlayerEntity player, ItemStack stack, Slot slot, PocketJukeboxComponent component, int discIndex) {
-        if (!(slot.inventory instanceof PlayerInventory)) return;
-        var combinedInv = ((AxPlayerInventory) player.getInventory()).axCombinedInventory();
-
-        var invSlot = slot.getIndex();
-        for (int i = 0; i < combinedInv.size(); i++) {
-            var invSize = combinedInv.get(i).size();
-            if (invSlot >= invSize) { invSlot -= invSize; continue; }
-            onRemove(player, stack, i, invSlot, component, discIndex);
-            return;
-        }
     }
 
     public @Override boolean onClicked(
@@ -147,7 +120,7 @@ public class PocketJukeboxItem extends Item {
                     onContentChanged(player);
                 }
                 if (player.getWorld().isClient) {
-                    onRemove(player, stack, slot, pair.getLeft(), component.selectedIndex());
+                    PocketJukeboxManager.onRemove(player, stack, slot, pair.getLeft(), component.selectedIndex());
                 }
             }
             return true;
@@ -170,7 +143,7 @@ public class PocketJukeboxItem extends Item {
             var newComponent = component.withPlaying(playbackId);
             PocketJukeboxComponent.set(stack, newComponent);
 
-            ServerPlayNetworking.send((ServerPlayerEntity) user, new PocketJukeboxPlayPayload(selectedSlot, playbackId));
+            ServerNetworkHelper.send((ServerPlayerEntity) user, new PocketJukeboxPlayPayload(selectedSlot, playbackId));
         }
         return TypedActionResult.success(stack);
     }

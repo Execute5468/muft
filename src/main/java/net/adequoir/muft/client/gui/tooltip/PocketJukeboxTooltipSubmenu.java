@@ -3,8 +3,8 @@ package net.adequoir.muft.client.gui.tooltip;
 import net.adequoir.muft.client.input.Scroller;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
+import net.adequoir.muft.client.network.ClientNetworkHelper;
 import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
@@ -48,7 +48,7 @@ public class PocketJukeboxTooltipSubmenu implements TooltipSubmenu {
         var newComponent = component.withSelected(selectedIndex);
         PocketJukeboxComponent.set(item, newComponent);
         var payload = new PocketJukeboxItemSelectedPayload(slotId, selectedIndex);
-        ClientPlayNetworking.send(payload);
+        ClientNetworkHelper.send(payload);
     }
 
     public void reset(ItemStack item, int slotId) { sendPacket(item, slotId, -1); }

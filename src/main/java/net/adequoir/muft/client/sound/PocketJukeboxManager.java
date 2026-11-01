@@ -5,22 +5,26 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.adequoir.muft.client.render.WorldRenderUtil;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
+import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
 import net.adequoir.muft.mixin.client.sound.AxSoundManager;
 import net.adequoir.muft.mixin.client.sound.AxSoundSystem;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.adequoir.muft.mixutils.client.sound.ISource;
+import net.adequoir.muft.client.network.ClientNetworkHelper;
 import net.adequoir.muft.network.PocketJukeboxResetPayload;
 import net.adequoir.muft.util.ItemEntry;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.jukebox.JukeboxSong;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.*;
 import net.minecraft.client.util.ClientPlayerTickable;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
@@ -48,6 +52,25 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
     public static PocketJukeboxManager get(ClientPlayerEntity player) { return ((IClientPE) player).muft_pocketJukeboxTicker(); }
 
     public boolean isPlaying() { return playingId != 0; }
+
+    public static void onRemove(
+        PlayerEntity player,
+        ItemStack stack, int invType, int invSlot,
+        PocketJukeboxComponent component, int discIndex
+    ) { get((ClientPlayerEntity) player).onRemove(stack, invType, invSlot, component, discIndex); }
+
+    public static void onRemove(PlayerEntity player, ItemStack stack, Slot slot, PocketJukeboxComponent component, int discIndex) {
+        if (!(slot.inventory instanceof PlayerInventory)) return;
+        var combinedInv = ((AxPlayerInventory) player.getInventory()).axCombinedInventory();
+
+        var invSlot = slot.getIndex();
+        for (int i = 0; i < combinedInv.size(); i++) {
+            var invSize = combinedInv.get(i).size();
+            if (invSlot >= invSize) { invSlot -= invSize; continue; }
+            onRemove(player, stack, i, invSlot, component, discIndex);
+            return;
+        }
+    }
 
     public void onRemove(ItemStack stack, int invType, int invSlot, PocketJukeboxComponent component, int discIndex) {
         var playbackId = component.playbackId();
@@ -174,7 +197,7 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
     }
 
     private void resetStack(ItemStack stack, PocketJukeboxComponent component, int invType, int slotId) {
-        ClientPlayNetworking.send(new PocketJukeboxResetPayload(invType, slotId));
+        ClientNetworkHelper.send(new PocketJukeboxResetPayload(invType, slotId));
         var newComponent = component.withPlaying(0);
         PocketJukeboxComponent.set(stack, newComponent);
     }
