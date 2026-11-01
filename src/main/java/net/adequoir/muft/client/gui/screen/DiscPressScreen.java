@@ -3,10 +3,13 @@ package net.adequoir.muft.client.gui.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.adequoir.muft.MusicalFeature;
+import net.adequoir.muft.mixin.client.gui.AxDrawContext;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
 import net.minecraft.block.jukebox.JukeboxSong;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -16,27 +19,30 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
+import net.minecraft.util.StringHelper;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
-    private static final int BACKGROUND_WIDTH = 276;
-    private static final int PLAYER_INV_TITLE_X = 107;
-    private static final int CATALOGUE_OFFSET_X = 49;
+    private static final int BACKGROUND_WIDTH = 308;
+    private static final int PLAYER_INV_TITLE_X = 139;
+    private static final int CATALOGUE_OFFSET_X = 65;
     private static final int TEXTURE_WIDTH = 512;
     private static final int TEXTURE_HEIGHT = 256;
     private static final int SLOT_SIZE = 16;
 
-    private static final int TRACK_BUFFER_SIZE = 5;
-    private static final int TRACK_TITLE_OFFSET_X = 5;
+    private static final int TRACK_BUFFER_SIZE = 6;
 
     private static final int WIDGET_OFFSET_X = 5;
-    private static final int SCROLLBAR_OFFSET_X = 94;
-    private static final int SCROLLBAR_OFFSET_Y = 18;
+    private static final int WIDGET_OFFSET_Y = 3;
+    private static final int SCROLLBAR_OFFSET_X = 126;
+    private static final int SCROLLBAR_OFFSET_Y = 26;
     private static final int SCROLLBAR_WIDTH = 6;
     private static final int SCROLLBAR_HEIGHT = 27;
-    private static final int SCROLLBAR_AREA_HEIGHT = 139;
+    private static final int SCROLLBAR_AREA_HEIGHT = 131;
     private static final int MAX_TRACK_TITLE_WIDTH = WidgetButtonPage.WIDTH - (WIDGET_OFFSET_X * 2);
 
     private static final Identifier TEXTURE = MusicalFeature.id("textures/gui/container/disc_press.png");
@@ -45,17 +51,22 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
     private static final Identifier SCROLLER_DISABLED_TEXTURE = MusicalFeature.id("container/disc_press/scroller_disabled");
     private static final Identifier SCROLLER_TEXTURE = MusicalFeature.id("container/disc_press/scroller");
 
-
     private final WidgetButtonPage[] tracks = new WidgetButtonPage[TRACK_BUFFER_SIZE];
     private int selectedIndex;
     private int indexStartOffset;
     private boolean scrolling;
 
-    private final Reference2ObjectOpenHashMap<RegistryEntry<JukeboxSong>, Text> descriptionCache = new Reference2ObjectOpenHashMap<>();
-    private final Function<RegistryEntry<JukeboxSong>, Text> titleFactory = (entry) -> {
-        var rawString = entry.value().description().getString();
-        var title = stripTitle(rawString);
-        return Text.literal(textRenderer.trimToWidth((title), MAX_TRACK_TITLE_WIDTH));
+    private final Reference2ObjectOpenHashMap<RegistryEntry<JukeboxSong>, TextCache> descriptionCache = new Reference2ObjectOpenHashMap<>();
+    private final Function<RegistryEntry<JukeboxSong>, TextCache> titleFactory = (entry) -> {
+        var song = entry.value();
+        var rawString = song.description().getString();
+        var titlePair = stripTitle(rawString);
+
+        var artist = Text.literal(textRenderer.trimToWidth((titlePair.getLeft()), MAX_TRACK_TITLE_WIDTH));
+        var title = Text.literal(textRenderer.trimToWidth((titlePair.getRight()), MAX_TRACK_TITLE_WIDTH));
+        var duration = Text.literal(StringHelper.formatTicks(song.getLengthInTicks(), 20.0F)).withColor(Colors.LIGHT_GRAY);
+
+        return new TextCache(title, artist, List.of(song.description(), duration));
     };
 
     public DiscPressScreen(DiscPressScreenHandler handler, PlayerInventory inventory, Text title) {
@@ -85,47 +96,27 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
     public @Override void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        renderInternal(context);
+        renderInternal(context, mouseX, mouseY);
         drawMouseoverTooltip(context, mouseX, mouseY);
     }
 
-    private void renderInternal(DrawContext context) {
+    private void renderInternal(DrawContext context, int mouseX, int mouseY) {
         var tracks = handler.tracks();
         var trackSize = tracks.size();
         if (trackSize <= 0) return;
 
         int i = (this.width - this.backgroundWidth) >> 1;
         int j = (this.height - this.backgroundHeight) >> 1;
-        int k = j + SLOT_SIZE + 1;
-        int l = i + WIDGET_OFFSET_X + TRACK_TITLE_OFFSET_X;
         renderScrollbar(context, i, j, tracks);
 
-        for (int m = 0; m < tracks.size(); m++) {
-            if (canScroll(trackSize) && (m < indexStartOffset || m >= TRACK_BUFFER_SIZE + indexStartOffset)) continue;
-            var trackEntry = tracks.get(m);
-
-            int n = k + 7;
-
-            var description = descriptionCache.computeIfAbsent(trackEntry, titleFactory);
-
-            context.drawText(textRenderer, description, l, n, Colors.WHITE, true);
-            k += WidgetButtonPage.HEIGHT;
+        for (var widget: this.tracks) {
+            widget.visible = widget.index < trackSize;
+            widget.renderTooltip(context, mouseX, mouseY);
         }
-
-        for (var widget: this.tracks) widget.visible = widget.index < trackSize;
         RenderSystem.enableDepthTest();
     }
 
-    private static String stripTitle(String description) {
-        int delimIndex = description.indexOf('-');
-        if (delimIndex < 0) return description;
-
-        var i = delimIndex + 1;
-        while (i < description.length() && Character.isWhitespace(description.charAt(i))) i++;
-        return i >= description.length() ? description : description.substring(i);
-    }
-
-    private void renderScrollbar(DrawContext context, int x, int y, RegistryEntryList<JukeboxSong   > tracks) {
+    private void renderScrollbar(DrawContext context, int x, int y, RegistryEntryList<JukeboxSong> tracks) {
         int i = tracks.size() + 1 - TRACK_BUFFER_SIZE;
 
         int drawX = x + SCROLLBAR_OFFSET_X;
@@ -138,15 +129,11 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
         int j = SCROLLBAR_AREA_HEIGHT - (SCROLLBAR_HEIGHT + (i - 1) * SCROLLBAR_AREA_HEIGHT / i);
         int k = 1 + j / i + SCROLLBAR_AREA_HEIGHT / i;
-        int l = 113;
+        int l = 105;
         int m = Math.min(l, indexStartOffset * k);
         if (indexStartOffset == i - 1) m = l;
 
         context.drawGuiTexture(SCROLLER_TEXTURE, drawX, drawY + m, 0, SCROLLBAR_WIDTH, SCROLLBAR_HEIGHT);
-    }
-
-    protected @Override void drawForeground(DrawContext context, int mouseX, int mouseY) {
-        super.drawForeground(context, mouseX, mouseY);
     }
 
     protected @Override void drawBackground(DrawContext ctx, float delta, int mouseX, int mouseY) {
@@ -186,7 +173,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
     public @Override boolean mouseClicked(double mouseX, double mouseY, int button) {
         scrolling = false;
-        int i = (this.width - this.backgroundHeight) >> 1;
+        int i = (this.width - this.backgroundWidth) >> 1;
         int j = (this.height - this.backgroundHeight) >> 1;
 
         boolean bl = canScroll(handler.tracks().size())
@@ -199,11 +186,36 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    private static Pair<String, String> stripTitle(String description) {
+        int delimIndex = description.indexOf('-');
+        if (delimIndex < 0) return new Pair<>("", description);
+
+        var i = delimIndex + 1;
+        while (i < description.length() && Character.isWhitespace(description.charAt(i))) i++;
+
+        var j = delimIndex - 1;
+        while (j > 0 && Character.isWhitespace(description.charAt(j))) j--;
+
+        return i >= description.length()
+                ? new Pair<>("", description)
+                : new Pair<>(description.substring(0, j + 1), description.substring(i));
+    }
+
+    private record TextCache(Text title, Text artist, List<Text> tooltip) {}
+
     private static boolean canScroll(int listSize) { return listSize > TRACK_BUFFER_SIZE; }
 
-    private static class WidgetButtonPage extends ButtonWidget {
-        private static final int WIDTH = 88;
-        private static final int HEIGHT = 28;
+    private class WidgetButtonPage extends ButtonWidget {
+        private static final int WIDTH = 120;
+        private static final int HEIGHT = 22;
+
+        static final Identifier TEXTURE = MusicalFeature.id("container/disc_press/button");
+        static final Identifier HIGHLIGHTED_TEXTURE = MusicalFeature.id("container/disc_press/button_highlighted");
+        static final Identifier SELECTED_TEXTURE = MusicalFeature.id("container/disc_press/button_selected");
+
+        static final int ARTIST_TEXT_COLOR = 0xFF685E4A;
+        static final int ARTIST_SELECTED_TEXT_COLOR = 0xFFA09172;
+        static final int HIGHLIGHT_TITLE_TEXT_COLOR = 0xFFFFFF80;
 
         final int index;
 
@@ -211,6 +223,55 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             super(x, y, WIDTH, HEIGHT, ScreenTexts.EMPTY, onPress, DEFAULT_NARRATION_SUPPLIER);
             this.index = index;
             this.visible = false;
+        }
+
+        protected @Override void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+            var tracks = handler.tracks();
+            var m = indexStartOffset + index;
+            if (m > tracks.size()) return;
+
+            context.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
+            RenderSystem.enableBlend();
+            RenderSystem.enableDepthTest();
+
+            context.drawGuiTexture(getTexture(), getX(), getY(), getWidth(), getHeight());
+            context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            renderText(context, m);
+        }
+
+        private void renderText(DrawContext context, int m) {
+            var tracks = handler.tracks();
+            var trackEntry = tracks.get(m);
+
+            var text = descriptionCache.computeIfAbsent(trackEntry, titleFactory);
+
+            var isSelected = selectedIndex - indexStartOffset == index;
+
+            var titleColor = isHovered() || isSelected ? HIGHLIGHT_TITLE_TEXT_COLOR : Colors.WHITE;
+            var artistColor = isSelected ? ARTIST_SELECTED_TEXT_COLOR : ARTIST_TEXT_COLOR;
+
+            context.drawText(textRenderer, text.title, getX() + WIDGET_OFFSET_X, getY() + WIDGET_OFFSET_Y, titleColor, true);
+            context.drawText(textRenderer, text.artist, getX() + WIDGET_OFFSET_X, getY() + WIDGET_OFFSET_Y + textRenderer.fontHeight, artistColor, false);
+        }
+
+        private void renderTooltip(DrawContext context, int x, int y) {
+            var tracks = handler.tracks();
+            var m = selectedIndex + indexStartOffset;
+            if (!hovered || m > tracks.size()) return;
+            var trackEntry = tracks.get(m);
+            var textCache = descriptionCache.get(trackEntry);
+            if (textCache == null) return;
+            context.drawTooltip(
+                textRenderer,
+                textCache.tooltip,
+                x, y
+            );
+        }
+
+        private Identifier getTexture() {
+            if (!active) return SELECTED_TEXTURE;
+            if (selectedIndex - indexStartOffset == index) return SELECTED_TEXTURE;
+            return isHovered() ? HIGHLIGHTED_TEXTURE: TEXTURE;
         }
     }
 }

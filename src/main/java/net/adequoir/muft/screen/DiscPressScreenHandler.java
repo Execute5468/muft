@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 import java.util.function.BiConsumer;
 
 public class DiscPressScreenHandler extends ScreenHandler {
-    private static final int INV_OFFSET_X = 108;
+    private static final int INV_OFFSET_X = 140;
     private static final int INV_OFFSET_Y = 84;
     private static final int HOTBAR_OFFSET_Y = 142;
     private static final int SLOT_SIZE = 18;
@@ -136,7 +136,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
     }
 
     private static class DyeSlot extends Slot {
-        private static final int X_OFFSET = 135;
+        private static final int X_OFFSET = 167;
         private static final int Y_OFFSET = 37;
         private static final int INDEX = 0;
 
@@ -145,7 +145,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
     }
 
     private static class DiscSlot extends Slot {
-        private static final int X_OFFSET = 168;
+        private static final int X_OFFSET = 200;
         private static final int Y_OFFSET = 37;
         private static final int INDEX = 1;
 
@@ -154,7 +154,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
     }
 
     private class OutputSlot extends Slot {
-        private static final int X_OFFSET = 224;
+        private static final int X_OFFSET = 256;
         private static final int Y_OFFSET = 37;
         private static final int INDEX = 0;
 
