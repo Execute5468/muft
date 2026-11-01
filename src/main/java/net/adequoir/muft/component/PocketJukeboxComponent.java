@@ -91,7 +91,9 @@ public class PocketJukeboxComponent implements TooltipData {
     public boolean isEmpty() { return entries.length == 0; }
     public boolean hasSelected() { return selectedIndex >= 0; }
 
-    public int selectedIndex() { return this.selectedIndex; }
+    public int selectedIndex() { return selectedIndex; }
+    public int boundSelectedIndex() { return inBounds(selectedIndex) ? selectedIndex : 0; }
+
     public int playbackId() { return this.playbackId; }
 
     public ItemEntry get(int index) { return entries[index]; }

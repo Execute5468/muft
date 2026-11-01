@@ -78,7 +78,7 @@ public class PocketJukeboxItem extends Item {
                     onContentChanged(player);
                 }
                 if (player.getWorld().isClient) {
-                    PocketJukeboxManager.onRemove(player, stack, PocketJukeboxManager.T_CURSOR_STACK, -1, pair.getLeft(), component.selectedIndex());
+                    PocketJukeboxManager.onRemove(player, stack, PocketJukeboxManager.T_CURSOR_STACK, -1, pair.getLeft(), component.boundSelectedIndex());
                 }
             }
             return true;
@@ -120,7 +120,7 @@ public class PocketJukeboxItem extends Item {
                     onContentChanged(player);
                 }
                 if (player.getWorld().isClient) {
-                    PocketJukeboxManager.onRemove(player, stack, slot, pair.getLeft(), component.selectedIndex());
+                    PocketJukeboxManager.onRemove(player, stack, slot, pair.getLeft(), component.boundSelectedIndex());
                 }
             }
             return true;
