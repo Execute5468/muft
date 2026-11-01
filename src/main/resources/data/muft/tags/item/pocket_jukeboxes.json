@@ -1,0 +1,21 @@
+{
+    "values": [
+        "muft:pocket_jukebox",
+        "muft:white_pocket_jukebox",
+        "muft:light_gray_pocket_jukebox",
+        "muft:gray_pocket_jukebox",
+        "muft:black_pocket_jukebox",
+        "muft:brown_pocket_jukebox",
+        "muft:red_pocket_jukebox",
+        "muft:orange_pocket_jukebox",
+        "muft:yellow_pocket_jukebox",
+        "muft:lime_pocket_jukebox",
+        "muft:green_pocket_jukebox",
+        "muft:cyan_pocket_jukebox",
+        "muft:light_blue_pocket_jukebox",
+        "muft:blue_pocket_jukebox",
+        "muft:purple_pocket_jukebox",
+        "muft:magenta_pocket_jukebox",
+        "muft:pink_pocket_jukebox"
+    ]
+}
