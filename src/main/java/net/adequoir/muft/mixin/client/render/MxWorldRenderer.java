@@ -1,6 +1,7 @@
 package net.adequoir.muft.mixin.client.render;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.adequoir.muft.client.sound.PocketJukeboxTicker;
 import net.adequoir.muft.mixin.client.sound.AxSoundManager;
 import net.adequoir.muft.mixin.client.sound.AxSoundSystem;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
@@ -37,7 +38,7 @@ public class MxWorldRenderer {
     @Unique private void tryMuteJukeboxSong(SoundInstance instance) {
         var clientPlayer = client.player;
         if (clientPlayer == null) return;
-        var isPlaying = ((IClientPE) clientPlayer).muft_pocketJukeboxManager().isPlaying();
+        var isPlaying = PocketJukeboxTicker.get(clientPlayer).isPlaying();
         if (!isPlaying) return;
         var soundSystem = (AxSoundSystem) ((AxSoundManager) client.getSoundManager()).axSoundSystem();
         var sources = soundSystem.axSources();

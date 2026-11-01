@@ -1,9 +1,7 @@
 package net.adequoir.muft.network;
 
 import net.adequoir.muft.MusicalFeature;
-import net.adequoir.muft.client.util.PocketJukeboxPointer;
-import net.adequoir.muft.component.PocketJukeboxComponent;
-import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
+import net.adequoir.muft.client.sound.PocketJukeboxTicker;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -30,14 +28,6 @@ public record PocketJukeboxPlayPayload(int slotId, int playbackId) implements Cu
     public void handle(ClientPlayerEntity player) {
         var inventory = player.getInventory();
         var stack = slotId < 0 ? inventory.offHand.getFirst() : inventory.main.get(slotId);
-        var component = PocketJukeboxComponent.getOrNull(stack);
-        if (component == null) return;
-        var newComponent = component.withPlaying(playbackId);
-        PocketJukeboxComponent.set(stack, newComponent);
-
-        var invType = slotId < 0 ? 2 : 0;
-        var slotId = Math.max(this.slotId, 0);
-        var ptr = new PocketJukeboxPointer(stack.getItem(), newComponent, invType, slotId);
-        ((IClientPE) player).muft_pocketJukeboxManager().loadPointer(component.playbackId(), ptr);
+        PocketJukeboxTicker.get(player).accept(stack, playbackId);
     }
 }

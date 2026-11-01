@@ -1,18 +1,25 @@
 package net.adequoir.muft.client.sound;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.adequoir.muft.client.render.WorldRenderUtil;
 import net.adequoir.muft.client.util.PocketJukeboxPointer;
 import net.adequoir.muft.component.PocketJukeboxComponent;
+import net.adequoir.muft.item.PocketJukeboxItem;
+import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
 import net.adequoir.muft.mixin.client.sound.AxSoundManager;
 import net.adequoir.muft.mixin.client.sound.AxSoundSystem;
 import net.adequoir.muft.mixutils.client.sound.ISource;
+import net.adequoir.muft.network.PocketJukeboxResetPayload;
 import net.adequoir.muft.util.ItemEntry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.jukebox.JukeboxSong;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.sound.*;
 import net.minecraft.client.util.ClientPlayerTickable;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundCategory;
@@ -21,11 +28,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class PocketJukeboxManager implements ClientPlayerTickable {
+public final class PocketJukeboxManager implements ClientPlayerTickable {
+    private static final int T_CURSOR_STACK = PocketJukeboxResetPayload.T_CURSOR_STACK;
     private static final Consumer<Source> PAUSE_ACTION = source -> ((ISource) source).muft_setSoundPaused(true);
     private static final Consumer<Source> RESUME_ACTION = source -> ((ISource) source).muft_setSoundPaused(false);
 
     private final ClientPlayerEntity player;
+
+    private final IntOpenHashSet tickingPlayIds = new IntOpenHashSet();
+    private final Int2ObjectOpenHashMap<@Nullable SoundInstance> playingSongs = new Int2ObjectOpenHashMap<>();
+    private int playingId = 0;
 
     private @Nullable SoundInstance playingSong;
     private boolean isPlaying;
@@ -35,6 +47,63 @@ public class PocketJukeboxManager implements ClientPlayerTickable {
     public PocketJukeboxManager(ClientPlayerEntity player) { this.player = player; }
 
     public boolean isPlaying() { return isPlaying; }
+
+    public void tryPlay(int prevId, int playbackId, RegistryEntry<JukeboxSong> jukeboxSongEntry) {
+
+
+
+    }
+
+    private void togglePauseImpl() {
+
+    }
+
+    private void tickStack(ItemStack stack, int invType, int slotId) {
+        if (stack.isEmpty() || !((stack.getItem()) instanceof PocketJukeboxItem)) return;
+        var component = PocketJukeboxComponent.getOrNull(stack);
+        if (component == null) return;
+        var playbackId = component.playbackId();
+        if (playbackId == 0) return;
+
+        if (!playingSongs.containsKey(playbackId) || !tickingPlayIds.add(playbackId)) {
+            resetStack(stack, component, invType, slotId);
+        }
+    }
+
+    private void tickSongs() {
+        var tickingPlayIds = this.tickingPlayIds;
+        var playingSongs = this.playingSongs;
+        var soundManager = soundManager();
+
+        if (!playingSongs.isEmpty()) {
+            var it = playingSongs.int2ObjectEntrySet().fastIterator();
+            while (it.hasNext()) {
+                var entry = it.next();
+                var playbackId = entry.getIntKey();
+                if (tickingPlayIds.contains(playbackId)) continue;
+                if (playingId == playbackId) playingId = 0;
+                soundManager.stop(entry.getValue());
+                it.remove();
+            }
+        }
+        tickingPlayIds.clear();
+    }
+
+    private void tickInventory() {
+        var combinedInv = ((AxPlayerInventory) player.getInventory()).axCombinedInventory();
+        for (int i = 0; i < combinedInv.size(); i++) {
+            var inv = combinedInv.get(i);
+            for (int j = 0; j < inv.size(); j++) tickStack(inv.get(i), i, j);
+        }
+        tickStack(player.currentScreenHandler.getCursorStack(), T_CURSOR_STACK, -1);
+        tickSongs();
+    }
+
+    private void resetStack(ItemStack stack, PocketJukeboxComponent component, int invType, int slotId) {
+        ClientPlayNetworking.send(new PocketJukeboxResetPayload(invType, slotId));
+        var newComponent = component.withPlaying(0);
+        PocketJukeboxComponent.set(stack, newComponent);
+    }
 
     public void loadPointer(int prevId, PocketJukeboxPointer ptr) {
         if (this.pointer == null || pointer.id() != prevId) {
@@ -122,5 +191,9 @@ public class PocketJukeboxManager implements ClientPlayerTickable {
     private @Nullable Channel.SourceManager sourceManager() {
         if (playingSong == null) return null;
         return ((AxSoundSystem) ((AxSoundManager) soundManager()).axSoundSystem()).axSources().get(playingSong);
+    }
+
+    private @Nullable Channel.SourceManager sourceManagerOf(SoundInstance soundInstance) {
+        return ((AxSoundSystem) ((AxSoundManager) soundManager()).axSoundSystem()).axSources().get(soundInstance);
     }
 }

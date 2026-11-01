@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class PocketJukeboxComponent implements TooltipData {
     public static final int MAX_COLUMN_LENGTH = 4;
@@ -123,7 +122,7 @@ public class PocketJukeboxComponent implements TooltipData {
     }
 
     public PocketJukeboxComponent withPlaying(int playbackId) {
-        return playbackId == this.playbackId ? this : new PocketJukeboxComponent(entries, -1, playbackId);
+        return playbackId == this.playbackId ? this : new PocketJukeboxComponent(entries, selectedIndex, playbackId);
     }
 
     public Pair<PocketJukeboxComponent, @Nullable ItemStack> withRemoved() {

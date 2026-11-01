@@ -2,6 +2,7 @@ package net.adequoir.muft.registry;
 
 import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
+import net.adequoir.muft.network.PocketJukeboxResetPayload;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryByteBuf;
@@ -14,6 +15,9 @@ public final class MuftPayloads {
     static {
         registerC2S(PocketJukeboxItemSelectedPayload.ID, PocketJukeboxItemSelectedPayload::write, PocketJukeboxItemSelectedPayload::read);
         registerServerReceiver(PocketJukeboxItemSelectedPayload.ID, PocketJukeboxItemSelectedPayload::handle);
+
+        registerC2S(PocketJukeboxResetPayload.ID, PocketJukeboxResetPayload::write, PocketJukeboxResetPayload::read);
+        registerServerReceiver(PocketJukeboxResetPayload.ID, ((payload, context) -> payload.handle(context.player())));
 
         registerS2C(PocketJukeboxPlayPayload.ID, PocketJukeboxPlayPayload::write, PocketJukeboxPlayPayload::read);
     }

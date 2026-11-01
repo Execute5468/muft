@@ -1,7 +1,7 @@
 package net.adequoir.muft.mixutils.client.entity.player;
 
-import net.adequoir.muft.client.sound.PocketJukeboxManager;
+import net.adequoir.muft.client.sound.PocketJukeboxTicker;
 
 public interface IClientPE {
-    PocketJukeboxManager muft_pocketJukeboxManager();
+    default PocketJukeboxTicker muft_pocketJukeboxTicker() { throw new AssertionError(); }
 }
