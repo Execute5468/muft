@@ -2,8 +2,10 @@ package net.adequoir.muft.registry;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.component.PocketJukeboxComponent;
+import net.adequoir.muft.item.ItemEntries;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 
 import java.util.function.Function;
@@ -35,6 +37,11 @@ public final class MuftItems {
     public static final Item PURPLE_TRACK_DISC = register("purple_track_disc", unstackable());
     public static final Item MAGENTA_TRACK_DISC = register("magenta_track_disc", unstackable());
     public static final Item PINK_TRACK_DISC = register("pink_track_disc", unstackable());
+
+    static {
+        ItemEntries.addBefore(ItemGroups.TOOLS, Items.MUSIC_DISC_13, POCKET_JUKEBOX);
+        ItemEntries.addAfter(ItemGroups.TOOLS, Items.MUSIC_DISC_PIGSTEP, BLANK_DISC);
+    }
 
     private static Item.Settings unstackable() { return new Item.Settings().maxCount(1); }
 
