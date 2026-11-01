@@ -1,10 +1,9 @@
 package net.adequoir.muft.mixin.client.render;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.adequoir.muft.client.sound.PocketJukeboxTicker;
+import net.adequoir.muft.client.sound.PocketJukeboxManager;
 import net.adequoir.muft.mixin.client.sound.AxSoundManager;
 import net.adequoir.muft.mixin.client.sound.AxSoundSystem;
-import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.adequoir.muft.mixutils.client.sound.ISource;
 import net.minecraft.block.jukebox.JukeboxSong;
 import net.minecraft.client.MinecraftClient;
@@ -38,7 +37,7 @@ public class MxWorldRenderer {
     @Unique private void tryMuteJukeboxSong(SoundInstance instance) {
         var clientPlayer = client.player;
         if (clientPlayer == null) return;
-        var isPlaying = PocketJukeboxTicker.get(clientPlayer).isPlaying();
+        var isPlaying = PocketJukeboxManager.get(clientPlayer).isPlaying();
         if (!isPlaying) return;
         var soundSystem = (AxSoundSystem) ((AxSoundManager) client.getSoundManager()).axSoundSystem();
         var sources = soundSystem.axSources();

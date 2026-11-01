@@ -2,11 +2,9 @@ package net.adequoir.muft.client.sound;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.render.WorldRenderUtil;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
-import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
 import net.adequoir.muft.mixin.client.sound.AxSoundManager;
 import net.adequoir.muft.mixin.client.sound.AxSoundSystem;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
@@ -32,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public final class PocketJukeboxTicker implements ClientPlayerTickable {
+public final class PocketJukeboxManager implements ClientPlayerTickable {
     public static final int T_CURSOR_STACK = PocketJukeboxResetPayload.T_CURSOR_STACK;
     private static final Consumer<Source> PAUSE_ACTION = source -> ((ISource) source).muft_setSoundPaused(true);
     private static final Consumer<Source> RESUME_ACTION = source -> ((ISource) source).muft_setSoundPaused(false);
@@ -45,9 +43,9 @@ public final class PocketJukeboxTicker implements ClientPlayerTickable {
     private final Int2ObjectOpenHashMap<SongEntry> playingSongs = new Int2ObjectOpenHashMap<>();
     private int playingId = 0;
 
-    public PocketJukeboxTicker(ClientPlayerEntity player) { this.player = player; }
+    public PocketJukeboxManager(ClientPlayerEntity player) { this.player = player; }
 
-    public static PocketJukeboxTicker get(ClientPlayerEntity player) { return ((IClientPE) player).muft_pocketJukeboxTicker(); }
+    public static PocketJukeboxManager get(ClientPlayerEntity player) { return ((IClientPE) player).muft_pocketJukeboxTicker(); }
 
     public boolean isPlaying() { return playingId != 0; }
 
@@ -198,8 +196,8 @@ public final class PocketJukeboxTicker implements ClientPlayerTickable {
 
     private static void playDescription(RegistryEntry<JukeboxSong> entry) { client().inGameHud.setRecordPlayingOverlay(entry.value().description()); }
     private static void playPaused() {
-        client().inGameHud.setOverlayMessage(PocketJukeboxTicker.SONG_PAUSED, true);
-        client().getNarratorManager().narrate(PocketJukeboxTicker.SONG_PAUSED);
+        client().inGameHud.setOverlayMessage(PocketJukeboxManager.SONG_PAUSED, true);
+        client().getNarratorManager().narrate(PocketJukeboxManager.SONG_PAUSED);
     }
     private static MinecraftClient client() { return MinecraftClient.getInstance();  }
     private static SoundManager soundManager() { return MinecraftClient.getInstance().getSoundManager(); }

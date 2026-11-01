@@ -1,6 +1,6 @@
 package net.adequoir.muft.mixin.client.entity.player;
 
-import net.adequoir.muft.client.sound.PocketJukeboxTicker;
+import net.adequoir.muft.client.sound.PocketJukeboxManager;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -23,9 +23,9 @@ import java.util.List;
 public class MxClientPE implements IClientPE {
     @Shadow private @Final List<ClientPlayerTickable> tickables;
 
-    @Unique private final PocketJukeboxTicker pocketJukeboxTicker = new PocketJukeboxTicker((ClientPlayerEntity) (Object) this);
+    @Unique private final PocketJukeboxManager pocketJukeboxManager = new PocketJukeboxManager((ClientPlayerEntity) (Object) this);
 
-    public @Override PocketJukeboxTicker muft_pocketJukeboxTicker() { return pocketJukeboxTicker; }
+    public @Override PocketJukeboxManager muft_pocketJukeboxTicker() { return pocketJukeboxManager; }
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(
@@ -37,5 +37,5 @@ public class MxClientPE implements IClientPE {
         boolean lastSneaking,
         boolean lastSprinting,
         CallbackInfo ci
-    ) { tickables.add(pocketJukeboxTicker); }
+    ) { tickables.add(pocketJukeboxManager); }
 }

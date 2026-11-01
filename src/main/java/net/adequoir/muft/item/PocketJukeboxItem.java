@@ -1,6 +1,6 @@
 package net.adequoir.muft.item;
 
-import net.adequoir.muft.client.sound.PocketJukeboxTicker;
+import net.adequoir.muft.client.sound.PocketJukeboxManager;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.util.PocketJukeboxIndexer;
 import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
@@ -82,7 +82,7 @@ public class PocketJukeboxItem extends Item {
                     onContentChanged(player);
                 }
                 if (player.getWorld().isClient) {
-                    onRemove(player, stack, PocketJukeboxTicker.T_CURSOR_STACK, -1, pair.getLeft(), component.selectedIndex());
+                    onRemove(player, stack, PocketJukeboxManager.T_CURSOR_STACK, -1, pair.getLeft(), component.selectedIndex());
                 }
             }
             return true;
@@ -97,7 +97,7 @@ public class PocketJukeboxItem extends Item {
         ItemStack stack, int invType, int invSlot,
         PocketJukeboxComponent component, int discIndex
     ) {
-        PocketJukeboxTicker.get((ClientPlayerEntity) player).onRemove(stack, invType, invSlot, component, discIndex);
+        PocketJukeboxManager.get((ClientPlayerEntity) player).onRemove(stack, invType, invSlot, component, discIndex);
     }
 
     @Environment(EnvType.CLIENT)
@@ -113,8 +113,6 @@ public class PocketJukeboxItem extends Item {
             return;
         }
     }
-
-
 
     public @Override boolean onClicked(
         ItemStack stack, ItemStack otherStack, Slot slot,
