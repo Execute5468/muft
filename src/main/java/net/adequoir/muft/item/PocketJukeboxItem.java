@@ -7,6 +7,7 @@ import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
 import net.adequoir.muft.network.ServerNetworkHelper;
+import net.adequoir.muft.registry.MuftItems;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,9 +19,11 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ClickType;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -156,6 +159,28 @@ public class PocketJukeboxItem extends Item {
         return stack.contains(DataComponentTypes.HIDE_TOOLTIP) || stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)
                 ? Optional.empty()
                 : Optional.ofNullable(PocketJukeboxComponent.getOrNull(stack));
+    }
+
+    public static Item get(@Nullable DyeColor color) {
+        return switch (color) {
+            case WHITE -> MuftItems.WHITE_POCKET_JUKEBOX;
+            case LIGHT_GRAY -> MuftItems.LIGHT_GRAY_POCKET_JUKEBOX;
+            case GRAY -> MuftItems.GRAY_POCKET_JUKEBOX;
+            case BLACK -> MuftItems.BLACK_POCKET_JUKEBOX;
+            case BROWN -> MuftItems.BROWN_POCKET_JUKEBOX;
+            case RED -> MuftItems.RED_POCKET_JUKEBOX;
+            case ORANGE -> MuftItems.ORANGE_POCKET_JUKEBOX;
+            case YELLOW -> MuftItems.YELLOW_POCKET_JUKEBOX;
+            case LIME -> MuftItems.LIME_POCKET_JUKEBOX;
+            case GREEN -> MuftItems.GREEN_POCKET_JUKEBOX;
+            case CYAN -> MuftItems.CYAN_POCKET_JUKEBOX;
+            case LIGHT_BLUE -> MuftItems.LIGHT_BLUE_POCKET_JUKEBOX;
+            case BLUE -> MuftItems.BLUE_POCKET_JUKEBOX;
+            case PURPLE -> MuftItems.PURPLE_POCKET_JUKEBOX;
+            case MAGENTA -> MuftItems.MAGENTA_POCKET_JUKEBOX;
+            case PINK -> MuftItems.PINK_POCKET_JUKEBOX;
+            case null -> MuftItems.POCKET_JUKEBOX;
+        };
     }
 
     private static void playRemoveOneSound(Entity entity) {
