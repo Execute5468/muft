@@ -94,6 +94,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
     public Slot discSlot() { return this.discSlot; }
     public Slot dyeSlot() { return this.dyeSlot; }
     public Slot outputSlot() { return this.outputSlot; }
+    public RegistryEntryList<JukeboxSong> tracks() { return this.songLookup; }
 
     public @Override ItemStack quickMove(PlayerEntity player, int slotId) {
         var stack = ItemStack.EMPTY;
