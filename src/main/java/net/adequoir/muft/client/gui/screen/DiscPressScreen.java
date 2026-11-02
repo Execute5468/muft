@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenTexts;
@@ -20,8 +21,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
     private static final int BACKGROUND_WIDTH = 308;
@@ -42,6 +45,11 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
     private static final int SCROLLBAR_HEIGHT = 27;
     private static final int SCROLLBAR_AREA_HEIGHT = 131;
 
+    private static final int NAME_FIELD_OFFSET_X = 7;
+    private static final int NAME_FIELD_OFFSET_Y = 10;
+    private static final int NAME_FIELD_WIDTH = 103;
+    private static final int NAME_FIELD_HEIGHT = 12;
+
     private static final Identifier TEXTURE = MusicalFeature.id("textures/gui/container/disc_press.png");
     private static final Identifier DISC_SLOT_TEXTURE = MusicalFeature.id("container/disc_press/disc_empty");
     private static final Identifier DYE_SLOT_TEXTURE = MusicalFeature.id("container/disc_press/dye_empty");
@@ -49,6 +57,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
     private static final Identifier SCROLLER_TEXTURE = MusicalFeature.id("container/disc_press/scroller");
 
     private final WidgetButtonPage[] trackWidgets = new WidgetButtonPage[TRACK_BUFFER_SIZE];
+    private TextFieldWidget nameField;
     private final Cache cache = new Cache(handler.tracks());
 
     private int selectedId = cache.isEmpty() ? 0 : cache.idOf(0);
@@ -82,11 +91,44 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             trackWidgets[l] = addDrawableChild(new WidgetButtonPage(i + WIDGET_OFFSET_X, k, l, pressAction));
             k += WidgetButtonPage.HEIGHT;
         }
+        initNameField(i, j);
+    }
+
+    private void initNameField(int x, int y) {
+        nameField = new TextFieldWidget(textRenderer, x + NAME_FIELD_OFFSET_X, y + NAME_FIELD_OFFSET_Y, NAME_FIELD_WIDTH, NAME_FIELD_HEIGHT, Text.empty());
+        nameField.setFocusUnlocked(false);
+        nameField.setEditableColor(-1);
+        nameField.setUneditableColor(-1);
+        nameField.setDrawsBackground(false);
+        nameField.setMaxLength(50);
+        nameField.setText("");
+        nameField.setEditable(true);
+        nameField.setChangedListener(this::onRenamed);
+        addSelectableChild(nameField);
+    }
+
+    private void onRenamed(String name) {
+        indexStartOffset = 0;
+        cache.updateFilter(name);
+    }
+
+    public @Override void resize(MinecraftClient client, int width, int height) {
+        var string = nameField.getText();
+        super.resize(client, width, height);
+        nameField.setText(string);
+    }
+
+    public @Override boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && client != null && client.player != null) client.player.closeHandledScreen();
+
+        var bl = nameField.keyPressed(keyCode, scanCode, modifiers) || nameField.isActive();
+        return bl || super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     public @Override void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         renderInternal(context, mouseX, mouseY);
+        nameField.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
     }
 
@@ -197,7 +239,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
         public @Override void onPress(ButtonWidget button) {
             sortType = sortType.next();
-            sortType.sort(cache);
+            sortType.sort(cache, nameField.getText());
         }
 
         private void renderTooltip(DrawContext context, int x, int y) {
@@ -247,7 +289,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
         protected @Override void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
             var m = indexStartOffset + index;
-            if (m > cache.size()) return;
+            if (m >= cache.size()) return;
 
             context.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
             RenderSystem.enableBlend();
@@ -277,7 +319,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
         private void renderTooltip(DrawContext context, int x, int y) {
             var m = index + indexStartOffset;
-            if (!hovered || m > cache.size()) return;
+            if (!hovered || m >= cache.size()) return;
             context.drawTooltip(
                 textRenderer,
                 cache.getTooltip(m),
@@ -305,6 +347,8 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
         private final List<Text>[] tooltips;
 
         private final int[] indexMappings;
+        private final int[] filteredIndexMappings;
+        private int filteredMappingsSize;
 
         Cache(List<RegistryEntry<JukeboxSong>> songEntries) {
             int size = songEntries.size();
@@ -318,7 +362,9 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             loadAllTexts();
 
             indexMappings = createIndexMappings(size);
-            sortByAscendingTitle();
+            initSort();
+            filteredIndexMappings = indexMappings.clone();
+            filteredMappingsSize = filteredIndexMappings.length;
         }
 
         private static int[] createIndexMappings(int size) {
@@ -327,79 +373,123 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             return mappings;
         }
 
+        void updateFilter(String filter) {
+            if (filter.isBlank()) { resetFilter(); return; }
 
-        void sortByAscendingDuration() {
+            var artists = this.artists;
+            var titles = this.titles;
+
+            var mappings = indexMappings;
+
+            int r = 0; int w = 0;
+
+            while (r < mappings.length) {
+                var id = mappings[r];
+                boolean matches;
+
+                var title = titles[id].getLiteralString();
+                matches = title != null && stringContains(title, filter);
+                if (!matches) {
+                    var artist = artists[id].getLiteralString();
+                    matches = artist != null && stringContains(artist, filter);
+                }
+                if (matches) { filteredIndexMappings[w++] = id; }
+                r++;
+            }
+            filteredMappingsSize = w;
+        }
+
+        private void resetFilter() {
+            System.arraycopy(
+                    indexMappings, 0,
+                    filteredIndexMappings, 0,
+                    Math.min(indexMappings.length, filteredIndexMappings.length)
+            );
+            filteredMappingsSize = filteredIndexMappings.length;
+        }
+
+        private void initSort() {
+            IntComparator nameSorter = (a, b) -> {
+                var firstString = titles[a].getLiteralString();
+                var secondString = titles[b].getLiteralString();
+
+                if (firstString == null) return secondString == null ? 0 : -1;
+                if (secondString == null) return 1;
+
+                return String.CASE_INSENSITIVE_ORDER.compare(firstString, secondString);
+            };
+            IntArrays.stableSort(indexMappings, nameSorter);
+        }
+
+        void sortByAscendingTitle(String filter) {
+            initSort();
+            updateFilter(filter);
+        }
+
+        void sortByDescendingTitle(String filter) {
+            IntComparator nameSorter = (a, b) -> {
+                var firstString = titles[a].getLiteralString();
+                var secondString = titles[b].getLiteralString();
+
+                if (firstString == null) return secondString == null ? 0 : 1;
+                if (secondString == null) return -1;
+
+                return String.CASE_INSENSITIVE_ORDER.compare(secondString, firstString);
+            };
+            IntArrays.stableSort(indexMappings, nameSorter);
+            updateFilter(filter);
+        }
+
+        void sortByAscendingArtist(String filter) {
+            IntComparator nameSorter = (a, b) -> {
+                var firstString = artists[a].getLiteralString();
+                var secondString = artists[b].getLiteralString();
+
+                if (firstString == null) return secondString == null ? 0 : -1;
+                if (secondString == null) return 1;
+
+                return String.CASE_INSENSITIVE_ORDER.compare(firstString, secondString);
+            };
+            IntArrays.stableSort(indexMappings, nameSorter);
+            updateFilter(filter);
+        }
+
+        void sortByDescendingArtist(String filter) {
+            IntComparator nameSorter = (a, b) -> {
+                var firstString = artists[a].getLiteralString();
+                var secondString = artists[b].getLiteralString();
+
+                if (firstString == null) return secondString == null ? 0 : 1;
+                if (secondString == null) return -1;
+
+                return String.CASE_INSENSITIVE_ORDER.compare(secondString, firstString);
+            };
+            IntArrays.stableSort(indexMappings, nameSorter);
+            updateFilter(filter);
+        }
+
+        void sortByAscendingDuration(String filter) {
             IntComparator durationSorter =(a, b) -> Float.compare(
-                entries.get(a).value().lengthInSeconds(),
-                entries.get(b).value().lengthInSeconds()
+                    entries.get(a).value().lengthInSeconds(),
+                    entries.get(b).value().lengthInSeconds()
             );
             IntArrays.stableSort(indexMappings, durationSorter);
+            updateFilter(filter);
         }
 
-        void sortByDescendingDuration() {
+        void sortByDescendingDuration(String filter) {
             IntComparator durationSorter = (a, b) -> Float.compare(
-                entries.get(b).value().lengthInSeconds(),
-                entries.get(a).value().lengthInSeconds()
+                    entries.get(b).value().lengthInSeconds(),
+                    entries.get(a).value().lengthInSeconds()
             );
             IntArrays.stableSort(indexMappings, durationSorter);
+            updateFilter(filter);
         }
 
-        void sortByAscendingTitle() {
-            IntComparator nameSorter = (a, b) -> {
-                var firstString = titles[a].getLiteralString();
-                var secondString = titles[b].getLiteralString();
-
-                if (firstString == null) return secondString == null ? 0 : -1;
-                if (secondString == null) return 1;
-
-                return String.CASE_INSENSITIVE_ORDER.compare(firstString, secondString);
-            };
-            IntArrays.stableSort(indexMappings, nameSorter);
-        }
-
-        void sortByDescendingTitle() {
-            IntComparator nameSorter = (a, b) -> {
-                var firstString = titles[a].getLiteralString();
-                var secondString = titles[b].getLiteralString();
-
-                if (firstString == null) return secondString == null ? 0 : 1;
-                if (secondString == null) return -1;
-
-                return String.CASE_INSENSITIVE_ORDER.compare(secondString, firstString);
-            };
-            IntArrays.stableSort(indexMappings, nameSorter);
-        }
-
-        void sortByAscendingArtist() {
-            IntComparator nameSorter = (a, b) -> {
-                var firstString = artists[a].getLiteralString();
-                var secondString = artists[b].getLiteralString();
-
-                if (firstString == null) return secondString == null ? 0 : -1;
-                if (secondString == null) return 1;
-
-                return String.CASE_INSENSITIVE_ORDER.compare(firstString, secondString);
-            };
-            IntArrays.stableSort(indexMappings, nameSorter);
-        }
-
-        void sortByDescendingArtist() {
-            IntComparator nameSorter = (a, b) -> {
-                var firstString = artists[a].getLiteralString();
-                var secondString = artists[b].getLiteralString();
-
-                if (firstString == null) return secondString == null ? 0 : 1;
-                if (secondString == null) return -1;
-
-                return String.CASE_INSENSITIVE_ORDER.compare(secondString, firstString);
-            };
-            IntArrays.stableSort(indexMappings, nameSorter);
-        }
-
-        int size() { return entries.size(); }
+        int size() { return filteredMappingsSize; }
         boolean isEmpty() { return entries.isEmpty(); }
 
-        int idOf(int index) { return indexMappings[index]; }
+        int idOf(int index) { return filteredIndexMappings[index]; }
 
         Text getTitle(int index) { return titles[idOf(index)]; }
         Text getArtist(int index) { return artists[idOf(index)]; }
@@ -450,31 +540,62 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             var truncatedString = textRenderer.trimToWidth(string, MAX_TRUNCATED_WIDTH) + "...";
             return Text.literal(truncatedString);
         }
+
+        private static boolean stringContains(String source, String target) {
+            if (source.isBlank()) return target.isBlank();
+            if (target.isBlank()) return true;
+            if (source.length() < target.length()) return false;
+            if (source.length() == target.length()) return Objects.equals(source, target);
+
+            int i = 0;
+            final int end = source.length() - target.length();
+            char firstChar = Character.toLowerCase(target.charAt(0));
+
+            while (i <= end) {
+                boolean bl = Character.toLowerCase(source.charAt(i)) == firstChar
+                        && matchesAt(source, i, target);
+                if (bl) return true;
+                i++;
+            }
+            return false;
+        }
+
+        private static boolean matchesAt(String source, int offset, String target) {
+            int i = offset;
+            int j = 0;
+
+            while (j < target.length()) {
+                if (Character.toLowerCase(source.charAt(i)) != Character.toLowerCase(target.charAt(j))) return false;
+                i++; j++;
+            }
+            return true;
+        }
+
     }
 
     private enum SortType {
         TITLE_ASCENDING("Title (Ascending)") {
-            @Override void sort(Cache cache) { cache.sortByAscendingTitle(); }
+            @Override void sort(Cache cache, String filter) { cache.sortByAscendingTitle(filter); }
             @Override SortType next() { return TITLE_DESCENDING; }
         },
         TITLE_DESCENDING("Title (Descending)") {
-            @Override void sort(Cache cache) { cache.sortByDescendingTitle(); }
+            @Override void sort(Cache cache, String filter) { cache.sortByDescendingTitle(filter); }
             @Override SortType next() { return ARTIST_ASCENDING; }
         },
         ARTIST_ASCENDING("Artist (Ascending)") {
-            @Override void sort(Cache cache) { cache.sortByAscendingArtist(); }
+            @Override void sort(Cache cache, String filter) { cache.sortByAscendingArtist(filter); }
             @Override SortType next() { return ARTIST_DESCENDING; }
         },
         ARTIST_DESCENDING("Artist (Descending)") {
-            @Override void sort(Cache cache) { cache.sortByDescendingArtist(); }
+            @Override void sort(Cache cache, String filter) { cache.sortByDescendingArtist(filter); }
             @Override SortType next() { return DURATION_ASCENDING; }
         },
         DURATION_ASCENDING("Duration (Ascending)") {
-            @Override void sort(Cache cache) { cache.sortByAscendingDuration(); }
+            @Override void sort(Cache cache, String filter) { cache.sortByAscendingDuration(filter); }
             @Override SortType next() { return DURATION_DESCENDING; }
         },
         DURATION_DESCENDING("Duration (Descending)") {
-            @Override void sort(Cache cache) { cache.sortByDescendingDuration(); }
+            @Override void sort(Cache cache, String filter) { cache.sortByDescendingDuration(filter); }
             @Override SortType next() { return TITLE_ASCENDING; }
         };
 
@@ -485,7 +606,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             tooltip = List.of(Text.literal(tooltipText));
         }
 
-        abstract void sort(Cache cache);
+        abstract void sort(Cache cache, String filter);
         abstract SortType next();
     }
 }
