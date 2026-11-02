@@ -42,6 +42,7 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
     private static final Identifier SLOT_HIGHLIGHT_FRONT_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_highlight_front");
     private static final Identifier SLOT_BACKGROUND_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_background");
     private static final Identifier SLOT_PLAYING_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_playing");
+    private static final Identifier SLOT_PAUSED_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_paused");
 
     private static final Text TEXT_FULL = Text.translatable("item.muft.pocket_jukebox.full");
     private static final Text TEXT_EMPTY = Text.translatable("item.muft.pocket_jukebox.empty");
@@ -105,15 +106,17 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
     private void drawPlaying(DrawContext context, int i, int j) {
         var player = MinecraftClient.getInstance().player;
         if (player == null) return;
-        var discId = PocketJukeboxManager.get(player).getDiscId(jukeboxContents);
+        var manager = PocketJukeboxManager.get(player);
+        var discId = manager.getDiscId(jukeboxContents);
         if (discId < 0) return;
+        var texture = manager.playingId() == jukeboxContents.playbackId() ? SLOT_PLAYING_TEXTURE : SLOT_PAUSED_TEXTURE;
 
         int rowIndex = (discId / SLOTS_PER_ROW) + 1;
         int columnIndex = (discId % SLOTS_PER_ROW) + 1;
         int n = i - columnIndex * SLOT_DIMENSION;
         int o = j - rowIndex * SLOT_DIMENSION;
 
-        context.drawGuiTexture(SLOT_PLAYING_TEXTURE, n, o, SLOT_DIMENSION, SLOT_DIMENSION);
+        context.drawGuiTexture(texture, n, o, SLOT_DIMENSION, SLOT_DIMENSION);
     }
 
     private void drawItem(int index, int x, int y, int seed, TextRenderer textRenderer, DrawContext context) {

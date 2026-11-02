@@ -51,8 +51,6 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
 
     public static PocketJukeboxManager get(ClientPlayerEntity player) { return ((IClientPE) player).muft_pocketJukeboxTicker(); }
 
-    public boolean isPlaying() { return playingId != 0; }
-
     public static void onRemove(
         PlayerEntity player,
         ItemStack stack, int invType, int invSlot,
@@ -71,6 +69,10 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
             return;
         }
     }
+
+    public boolean isPlaying() { return playingId != 0; }
+
+    public int playingId() {  return playingId; }
 
     public void onRemove(ItemStack stack, int invType, int invSlot, PocketJukeboxComponent component, int discIndex) {
         var playbackId = component.playbackId();
