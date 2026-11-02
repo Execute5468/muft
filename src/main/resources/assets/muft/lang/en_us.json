@@ -1,4 +1,6 @@
 {
+    "resourcePack.muft.rebrushed_music_discs.name": "Rebrushed Music Discs",
+    "resourcePack.muft.rebrushed_music_discs.description": "Texture enhancements for Music Discs",
     "muft.option.renderSelectedDisc": "Render Selected Disc",
     "muft.option.betterJukeboxTooltip": "Better Jukebox Tooltip",
     "muft.config.title": "Musical Feature Options",

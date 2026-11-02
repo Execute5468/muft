@@ -1,6 +1,7 @@
 package net.adequoir.muft;
 
 import net.adequoir.muft.registry.*;
+import net.adequoir.muft.resource.PackHelper;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.util.Identifier;
@@ -21,9 +22,8 @@ public class MusicalFeature implements ModInitializer {
 		MuftSoundEvents.init();
 		MuftPayloads.init();
 		MuftRecipeSerializers.init();
+		MuftPacks.init();
 	}
 
-	public static Identifier id(String path) {
-		return Identifier.of(MOD_ID, path);
-	}
+	public static Identifier id(String path) { return Identifier.of(MOD_ID, path); }
 }

@@ -1,0 +1,9 @@
+{
+  "pack": {
+    "pack_format": 29,
+    "supported_formats": [29, 35],
+    "description": {
+      "translate": "resourcePack.muft.rebrushed_music_discs.description"
+    }
+  }
+}
