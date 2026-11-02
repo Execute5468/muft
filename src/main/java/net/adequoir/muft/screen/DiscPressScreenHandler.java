@@ -1,10 +1,13 @@
 package net.adequoir.muft.screen;
 
+import net.adequoir.muft.item.TrackDiscs;
 import net.adequoir.muft.registry.MuftBlocks;
 import net.adequoir.muft.registry.MuftItems;
 import net.adequoir.muft.registry.MuftJukeboxSongTags;
 import net.adequoir.muft.registry.MuftScreenHandlers;
 import net.minecraft.block.jukebox.JukeboxSong;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.JukeboxPlayableComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -12,8 +15,8 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryPair;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
@@ -59,8 +62,8 @@ public class DiscPressScreenHandler extends ScreenHandler {
     private final Slot discSlot;
     private final Slot outputSlot;
     private long lastTakeResultTime;
+    private int selectedIndex;
 
-    private final RegistryEntryList<JukeboxSong> songLookup;
     private final List<RegistryEntry<JukeboxSong>> songEntries;
 
     public DiscPressScreenHandler(int syncId, PlayerInventory playerInventory) {
@@ -77,7 +80,6 @@ public class DiscPressScreenHandler extends ScreenHandler {
         addPlayerInventorySlots(playerInventory);
 
         var songLookup = playerInventory.player.getRegistryManager().getWrapperOrThrow(RegistryKeys.JUKEBOX_SONG).getOrThrow(MuftJukeboxSongTags.DISC_PRESSABLE);
-        this.songLookup = songLookup;
         songEntries = songLookup.stream().toList();
     }
 
@@ -97,10 +99,39 @@ public class DiscPressScreenHandler extends ScreenHandler {
         for (int i = 0; i < SLOTS_PER_ROW; i++) addSlot(new Slot(playerInventory, i, INV_OFFSET_X + i * SLOT_SIZE, HOTBAR_OFFSET_Y));
     }
 
+    public int getSelectedIndex() { return selectedIndex; }
+    public void setSelectedIndex(int index) {
+        selectedIndex = index < 0 || index >= songEntries.size() ? 0 : index;
+        onContentChanged(input);
+    }
+
     public Slot discSlot() { return this.discSlot; }
     public Slot dyeSlot() { return this.dyeSlot; }
     public Slot outputSlot() { return this.outputSlot; }
     public List<RegistryEntry<JukeboxSong>> tracks() { return this.songEntries; }
+
+
+    public @Override void onContentChanged(Inventory inventory) {
+        updateCraftDisc();
+        super.onContentChanged(inventory);
+    }
+
+    private void updateCraftDisc() {
+        if (songEntries.isEmpty()) return;
+        var discStack = discSlot.getStack();
+        if (discStack.isEmpty()) return;
+        var songKey = songEntries.get(selectedIndex).getKey();
+        if (songKey.isEmpty()) return;
+        var jukeboxComponent = new JukeboxPlayableComponent(new RegistryPair<>(songKey.get()), true);
+
+        var dyeStack = dyeSlot.getStack();
+        var dyeColor = dyeStack.getItem() instanceof DyeItem dye ? dye.getColor() : null;
+
+        var resultDisc = TrackDiscs.get(dyeColor);
+        var resultStack = resultDisc.getDefaultStack();
+        resultStack.set(DataComponentTypes.JUKEBOX_PLAYABLE, jukeboxComponent);
+        outputSlot.setStack(resultStack);
+    }
 
     public @Override ItemStack quickMove(PlayerEntity player, int slotId) {
         var stack = ItemStack.EMPTY;
@@ -112,7 +143,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
         stack = otherStack.copy();
 
         if (slotId == outputSlot.id) {
-            if (!insertItem(otherStack, INVENTORY_START, INVENTORY_END, true)) return ItemStack.EMPTY;
+            if (!insertItem(otherStack, INVENTORY_START, HOTBAR_END, true)) return ItemStack.EMPTY;
             slot.onQuickTransfer(otherStack, stack);
         } else if (slotId != dyeSlot.id && slotId != discSlot.id) {
             var otherItem = otherStack.getItem();

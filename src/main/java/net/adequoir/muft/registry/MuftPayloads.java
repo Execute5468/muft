@@ -1,5 +1,6 @@
 package net.adequoir.muft.registry;
 
+import net.adequoir.muft.network.DiscPressSelectPayload;
 import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
 import net.adequoir.muft.network.PocketJukeboxResetPayload;
@@ -25,6 +26,9 @@ public final class MuftPayloads {
         registerServerReceiver(PocketJukeboxResetPayload.ID, handlePlayer(PocketJukeboxResetPayload::handle));
 
         registerS2C(PocketJukeboxPlayPayload.ID, PocketJukeboxPlayPayload::write, PocketJukeboxPlayPayload::read);
+
+        registerC2S(DiscPressSelectPayload.ID, DiscPressSelectPayload::write, DiscPressSelectPayload::read);
+        registerServerReceiver(DiscPressSelectPayload.ID, handlePlayer(DiscPressSelectPayload::handle));
     }
 
     private static <T extends CustomPayload> ServerPlayNetworking.PlayPayloadHandler<T> handlePlayer(BiConsumer<T, ServerPlayerEntity> consumer) {

@@ -1,0 +1,21 @@
+{
+    "values": [
+        "muft:track_disc",
+        "muft:white_track_disc",
+        "muft:light_gray_track_disc",
+        "muft:gray_track_disc",
+        "muft:black_track_disc",
+        "muft:brown_track_disc",
+        "muft:red_track_disc",
+        "muft:orange_track_disc",
+        "muft:yellow_track_disc",
+        "muft:lime_track_disc",
+        "muft:green_track_disc",
+        "muft:cyan_track_disc",
+        "muft:light_blue_track_disc",
+        "muft:blue_track_disc",
+        "muft:purple_track_disc",
+        "muft:magenta_track_disc",
+        "muft:pink_track_disc"
+    ]
+}

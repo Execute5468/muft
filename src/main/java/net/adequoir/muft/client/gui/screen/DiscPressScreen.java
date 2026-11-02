@@ -4,6 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import net.adequoir.muft.MusicalFeature;
+import net.adequoir.muft.client.network.ClientNetworkHelper;
+import net.adequoir.muft.network.DiscPressSelectPayload;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
 import net.minecraft.block.jukebox.JukeboxSong;
 import net.minecraft.client.MinecraftClient;
@@ -58,9 +60,9 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
     private final WidgetButtonPage[] trackWidgets = new WidgetButtonPage[TRACK_BUFFER_SIZE];
     private TextFieldWidget nameField;
-    private final Cache cache = new Cache(handler.tracks());
+    private final Cache cache;
 
-    private int selectedId = cache.isEmpty() ? 0 : cache.idOf(0);
+    private int selectedId;
     private int indexStartOffset;
     private boolean scrolling;
 
@@ -68,6 +70,8 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
         super(handler, inventory, title);
         this.backgroundWidth = BACKGROUND_WIDTH;
         this.playerInventoryTitleX = PLAYER_INV_TITLE_X;
+        this.cache = new Cache(handler.tracks());
+        if (!cache.isEmpty()) selectId(cache.idOf(0));
     }
 
     protected @Override void init() {
@@ -84,7 +88,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
         ButtonWidget.PressAction pressAction = button -> {
             if (!(button instanceof WidgetButtonPage widgetButtonPage)) return;
-            selectedId = cache.idOf(widgetButtonPage.index + indexStartOffset);
+            selectId(cache.idOf(widgetButtonPage.index + indexStartOffset));
         };
 
         for (int l = 0; l < TRACK_BUFFER_SIZE; l++) {
@@ -105,6 +109,12 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
         nameField.setEditable(true);
         nameField.setChangedListener(this::onRenamed);
         addSelectableChild(nameField);
+    }
+
+    private void selectId(int id) {
+        selectedId = id;
+        handler.setSelectedIndex(id);
+        ClientNetworkHelper.send(new DiscPressSelectPayload(id));
     }
 
     private void onRenamed(String name) {
@@ -570,7 +580,6 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             }
             return true;
         }
-
     }
 
     private enum SortType {
