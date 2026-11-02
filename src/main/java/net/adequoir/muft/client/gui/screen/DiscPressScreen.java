@@ -262,17 +262,21 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
     }
 
     private static class SortButton extends ButtonWidget {
-        private static final int SIZE = 16;
-        private static final int OFFSET_X = 117;
-        private static final int OFFSET_Y = 6;
+        private static final int SIZE = 14;
+        private static final int OFFSET_X = 118;
+        private static final int OFFSET_Y = 7;
+        private static final Identifier TEXTURE = MusicalFeature.id("container/disc_press/sort_button");
+        private static final Identifier HIGHLIGHTED_TEXTURE = MusicalFeature.id("container/disc_press/sort_button_highlighted");
 
         protected SortButton(int x, int y, SortButtonState state) {
             super(x + OFFSET_X, y + OFFSET_Y, SIZE, SIZE, Text.empty(), state, DEFAULT_NARRATION_SUPPLIER);
         }
 
         protected @Override void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-            super.renderWidget(context, mouseX, mouseY, delta);
-            if (isHovered()) ((SortButtonState) onPress).renderTooltip(context, mouseX, mouseY);
+            if (isHovered()) {
+                context.drawGuiTexture(HIGHLIGHTED_TEXTURE, getX(), getY(), getWidth(), getHeight());
+                ((SortButtonState) onPress).renderTooltip(context, mouseX, mouseY);
+            } else context.drawGuiTexture(TEXTURE, getX(), getY(), getWidth(), getHeight());
         }
     }
 
@@ -360,11 +364,11 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
         private final int[] filteredIndexMappings;
         private int filteredMappingsSize;
 
+        @SuppressWarnings("unchecked")
         Cache(List<RegistryEntry<JukeboxSong>> songEntries) {
             int size = songEntries.size();
             entries = songEntries;
 
-            //noinspection unchecked
             tooltips = (List<Text>[]) new List<?>[size];
             titles = new Text[size];
             artists = new Text[size];

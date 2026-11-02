@@ -1,0 +1,8 @@
+{
+    "comparator_output": 1,
+    "description": {
+        "translate": "jukebox_song.muft.home"
+    },
+    "length_in_seconds": 380.0,
+    "sound_event": "muft:music_disc.home"
+}

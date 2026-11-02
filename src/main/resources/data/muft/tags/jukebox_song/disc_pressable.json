@@ -1,21 +1,13 @@
 {
     "values": [
-        "minecraft:creator",
-        "minecraft:creator_music_box",
-        "minecraft:otherside",
-        "minecraft:pigstep",
-        "minecraft:precipice",
-        "minecraft:13",
-        "minecraft:blocks",
-        "minecraft:cat",
-        "minecraft:chirp",
-        "minecraft:mall",
-        "minecraft:mellohi",
-        "minecraft:wait",
-        "minecraft:ward",
-        "minecraft:11",
-        "minecraft:5",
-        "minecraft:relic",
-        "minecraft:stal"
+        "muft:beginning_2",
+        "muft:ebb",
+        "muft:floating_trees",
+        "muft:home",
+        "muft:memories",
+        "muft:moog_city_2",
+        "muft:mutation",
+        "muft:nightly",
+        "muft:shores"
     ]
 }

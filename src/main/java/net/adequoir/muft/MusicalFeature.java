@@ -18,6 +18,7 @@ public class MusicalFeature implements ModInitializer {
 		MuftBlocks.init();
 		MuftItems.init();
 		MuftItemTags.init();
+		MuftSoundEvents.init();
 		MuftPayloads.init();
 		MuftRecipeSerializers.init();
 	}

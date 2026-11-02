@@ -1,0 +1,74 @@
+{
+    "music_disc.beginning_2": {
+        "sounds":[
+            {
+                "name": "music/menu/beginning_2",
+                "stream": true
+            }
+        ]
+    },
+    "music_disc.floating_trees": {
+        "sounds":[
+            {
+                "name": "music/menu/floating_trees",
+                "stream": true
+            }
+        ]
+    },
+    "music_disc.moog_city_2": {
+        "sounds":[
+            {
+                "name": "music/menu/moog_city_2",
+                "stream": true
+            }
+        ]
+    },
+    "music_disc.mutation": {
+        "sounds":[
+            {
+                "name": "music/menu/beginning_2",
+                "stream": true
+            }
+        ]
+    },
+    "music_disc.ebb": {
+        "sounds":[
+            {
+                "name": "music/game/ebb",
+                "stream": true
+            }
+        ]
+    },
+    "music_disc.home": {
+        "sounds":[
+            {
+                "name": "music/game/home",
+                "stream": true
+            }
+        ]
+    },
+    "music_disc.memories": {
+        "sounds":[
+            {
+                "name": "music/game/memories",
+                "stream": true
+            }
+        ]
+    },
+    "music_disc.nightly": {
+        "sounds":[
+            {
+                "name": "music/game/nightly",
+                "stream": true
+            }
+        ]
+    },
+    "music_disc.shores": {
+        "sounds":[
+            {
+                "name": "music/game/ebb",
+                "stream": true
+            }
+        ]
+    }
+}
