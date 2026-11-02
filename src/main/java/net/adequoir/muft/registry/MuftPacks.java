@@ -6,6 +6,7 @@ public final class MuftPacks {
 
     static {
         PackHelper.registerPack("rebrushed_music_discs");
+        PackHelper.registerPack("diamond_pocket_jukeboxes");
         PackHelper.initPacks();
     }
 
