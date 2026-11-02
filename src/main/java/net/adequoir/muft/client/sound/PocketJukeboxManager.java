@@ -90,6 +90,13 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
         }
     }
 
+    @SuppressWarnings("ConstantValue")
+    public int getDiscId(PocketJukeboxComponent component) {
+        if (component.playbackId() == 0) return -1;
+        var entry = playingSongs.get(component.playbackId());
+        return entry == null ? -1 : entry.discIndex;
+    }
+
     public void accept(ItemStack stack, int newPlaybackId, boolean sneaking) {
         var component = PocketJukeboxComponent.getOrNull(stack);
         if (component == null) return;

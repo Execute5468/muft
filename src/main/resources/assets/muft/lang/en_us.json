@@ -1,4 +1,7 @@
 {
+    "muft.option.renderSelectedDisc": "Render Selected Disc",
+    "muft.option.betterJukeboxTooltip": "Better Jukebox Tooltip",
+    "muft.config.title": "Musical Feature Options",
     "container.muft.disc_press": "Disc Press",
     "pocket_jukebox.music_paused": "Music Paused",
     "block.muft.disc_press": "Disc Press",

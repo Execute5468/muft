@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"net.adequoir.muft.MusicalFeatureClient"
+		],
+		"modmenu": [
+			"net.adequoir.muft.client.MuftModMenu"
 		]
 	},
 	"mixins": [

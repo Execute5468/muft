@@ -4,6 +4,10 @@ plugins {
 }
 
 repositories {
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
 }
 
 dependencies {
@@ -12,6 +16,8 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 
 	compileOnly "org.jetbrains:annotations:26.1.0"
 }
