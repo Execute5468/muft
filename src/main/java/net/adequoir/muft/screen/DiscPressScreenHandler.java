@@ -11,6 +11,7 @@ import net.minecraft.component.type.JukeboxPlayableComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
@@ -43,20 +44,14 @@ public class DiscPressScreenHandler extends ScreenHandler {
 
     private final ScreenHandlerContext context;
 
-    Runnable inventoryChangeListener = () -> {};
     private final Inventory input = new SimpleInventory(2) {
         public @Override void markDirty() {
             super.markDirty();
             onContentChanged(this);
-            inventoryChangeListener.run();
         }
     };
-    private final Inventory output = new SimpleInventory(1) {
-        public @Override void markDirty() {
-            super.markDirty();
-            inventoryChangeListener.run();
-        }
-    };
+    @SuppressWarnings("FieldCanBeLocal")
+    private final Inventory output = new SimpleInventory(1);
 
     private final Slot dyeSlot;
     private final Slot discSlot;
@@ -112,16 +107,16 @@ public class DiscPressScreenHandler extends ScreenHandler {
 
 
     public @Override void onContentChanged(Inventory inventory) {
-        updateCraftDisc();
-        super.onContentChanged(inventory);
+        outputSlot.setStack(craftDisc());
+        sendContentUpdates();
     }
 
-    private void updateCraftDisc() {
-        if (songEntries.isEmpty()) return;
+    private ItemStack craftDisc() {
+        if (songEntries.isEmpty()) return ItemStack.EMPTY;
         var discStack = discSlot.getStack();
-        if (discStack.isEmpty()) return;
+        if (discStack.isEmpty()) return ItemStack.EMPTY;
         var songKey = songEntries.get(selectedIndex).getKey();
-        if (songKey.isEmpty()) return;
+        if (songKey.isEmpty()) return ItemStack.EMPTY;
         var jukeboxComponent = new JukeboxPlayableComponent(new RegistryPair<>(songKey.get()), true);
 
         var dyeStack = dyeSlot.getStack();
@@ -130,7 +125,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
         var resultDisc = TrackDiscs.get(dyeColor);
         var resultStack = resultDisc.getDefaultStack();
         resultStack.set(DataComponentTypes.JUKEBOX_PLAYABLE, jukeboxComponent);
-        outputSlot.setStack(resultStack);
+        return resultStack;
     }
 
     public @Override ItemStack quickMove(PlayerEntity player, int slotId) {
