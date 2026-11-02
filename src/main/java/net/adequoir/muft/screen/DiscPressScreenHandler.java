@@ -12,6 +12,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -21,6 +22,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public class DiscPressScreenHandler extends ScreenHandler {
@@ -49,7 +51,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
     private final Inventory output = new SimpleInventory(1) {
         public @Override void markDirty() {
             super.markDirty();
-            inventoryChangeListener .run();
+            inventoryChangeListener.run();
         }
     };
 
@@ -59,6 +61,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
     private long lastTakeResultTime;
 
     private final RegistryEntryList<JukeboxSong> songLookup;
+    private final List<RegistryEntry<JukeboxSong>> songEntries;
 
     public DiscPressScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
@@ -72,7 +75,10 @@ public class DiscPressScreenHandler extends ScreenHandler {
         this.outputSlot = addSlot(new OutputSlot(output));
 
         addPlayerInventorySlots(playerInventory);
-        songLookup = playerInventory.player.getRegistryManager().getWrapperOrThrow(RegistryKeys.JUKEBOX_SONG).getOrThrow(MuftJukeboxSongTags.DISC_PRESSABLE);
+
+        var songLookup = playerInventory.player.getRegistryManager().getWrapperOrThrow(RegistryKeys.JUKEBOX_SONG).getOrThrow(MuftJukeboxSongTags.DISC_PRESSABLE);
+        this.songLookup = songLookup;
+        songEntries = songLookup.stream().toList();
     }
 
     private void addPlayerInventorySlots(PlayerInventory playerInventory) {
@@ -94,7 +100,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
     public Slot discSlot() { return this.discSlot; }
     public Slot dyeSlot() { return this.dyeSlot; }
     public Slot outputSlot() { return this.outputSlot; }
-    public RegistryEntryList<JukeboxSong> tracks() { return this.songLookup; }
+    public List<RegistryEntry<JukeboxSong>> tracks() { return this.songEntries; }
 
     public @Override ItemStack quickMove(PlayerEntity player, int slotId) {
         var stack = ItemStack.EMPTY;
