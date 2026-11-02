@@ -1,6 +1,8 @@
 package net.adequoir.muft.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import it.unimi.dsi.fastutil.ints.IntArrays;
+import it.unimi.dsi.fastutil.ints.IntComparator;
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
 import net.minecraft.block.jukebox.JukeboxSong;
@@ -18,7 +20,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
     private final WidgetButtonPage[] trackWidgets = new WidgetButtonPage[TRACK_BUFFER_SIZE];
     private final Cache cache = new Cache(handler.tracks());
 
-    private int selectedIndex;
+    private int selectedId = cache.isEmpty() ? 0 : cache.idOf(0);
     private int indexStartOffset;
     private boolean scrolling;
 
@@ -68,9 +69,13 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
         int j = (this.height - this.backgroundHeight) >> 1;
         int k = j + SCROLLBAR_OFFSET_Y;
 
+
+        var sortButton = new SortButton(i, j, new SortButtonState());
+        addDrawableChild(sortButton);
+
         ButtonWidget.PressAction pressAction = button -> {
             if (!(button instanceof WidgetButtonPage widgetButtonPage)) return;
-            selectedIndex = widgetButtonPage.index + indexStartOffset;
+            selectedId = cache.idOf(widgetButtonPage.index + indexStartOffset);
         };
 
         for (int l = 0; l < TRACK_BUFFER_SIZE; l++) {
@@ -187,6 +192,38 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
     private static boolean canScroll(int listSize) { return listSize > TRACK_BUFFER_SIZE; }
 
+    private class SortButtonState implements ButtonWidget.PressAction {
+        private SortType sortType = SortType.TITLE_ASCENDING;
+
+        public @Override void onPress(ButtonWidget button) {
+            sortType = sortType.next();
+            sortType.sort(cache);
+        }
+
+        private void renderTooltip(DrawContext context, int x, int y) {
+            context.drawTooltip(
+                textRenderer,
+                sortType.tooltip,
+                x, y
+            );
+        }
+    }
+
+    private static class SortButton extends ButtonWidget {
+        private static final int SIZE = 16;
+        private static final int OFFSET_X = 117;
+        private static final int OFFSET_Y = 6;
+
+        protected SortButton(int x, int y, SortButtonState state) {
+            super(x + OFFSET_X, y + OFFSET_Y, SIZE, SIZE, Text.empty(), state, DEFAULT_NARRATION_SUPPLIER);
+        }
+
+        protected @Override void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+            super.renderWidget(context, mouseX, mouseY, delta);
+            if (isHovered()) ((SortButtonState) onPress).renderTooltip(context, mouseX, mouseY);
+        }
+    }
+
     private class WidgetButtonPage extends ButtonWidget {
         private static final int WIDTH = 120;
         private static final int HEIGHT = 22;
@@ -222,7 +259,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
         }
 
         private void renderText(DrawContext context, int m) {
-            var isSelected = selectedIndex - indexStartOffset == index;
+            var isSelected = selectedId == cache.idOf(indexStartOffset + index);
 
             var titleColor = isHovered() || isSelected ? HIGHLIGHT_TITLE_TEXT_COLOR : Colors.WHITE;
             var metadataColor = isSelected
@@ -250,7 +287,7 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
 
         private Identifier getTexture() {
             if (!active) return SELECTED_TEXTURE;
-            if (selectedIndex - indexStartOffset == index) return SELECTED_TEXTURE;
+            if (selectedId == cache.idOf(indexStartOffset + index)) return SELECTED_TEXTURE;
             return isHovered() ? HIGHLIGHTED_TEXTURE: TEXTURE;
         }
     }
@@ -260,46 +297,118 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
         private static final int MAX_TRUNCATED_WIDTH = MAX_TEXT_WIDTH - MinecraftClient.getInstance().textRenderer.getWidth("...");
         private static final Text UNKNOWN_ARTIST = Text.literal("Unknown");
 
-        private final @Nullable Text[] titles;
-        private final @Nullable Text[] artists;
-        private final @Nullable Text[] durations;
-        private final @Nullable List<Text>[] tooltips;
         private final List<RegistryEntry<JukeboxSong>> entries;
+
+        private final Text[] titles;
+        private final Text[] artists;
+        private final Text[] durations;
+        private final List<Text>[] tooltips;
+
+        private final int[] indexMappings;
 
         Cache(List<RegistryEntry<JukeboxSong>> songEntries) {
             int size = songEntries.size();
+            entries = songEntries;
+
             //noinspection unchecked
             tooltips = (List<Text>[]) new List<?>[size];
             titles = new Text[size];
             artists = new Text[size];
             durations = new Text[size];
-            entries = songEntries;
+            loadAllTexts();
+
+            indexMappings = createIndexMappings(size);
+            sortByAscendingTitle();
+        }
+
+        private static int[] createIndexMappings(int size) {
+            var mappings = new int[size];
+            for (int i = 0; i < size; i++) mappings[i] = i;
+            return mappings;
+        }
+
+
+        void sortByAscendingDuration() {
+            IntComparator durationSorter =(a, b) -> Float.compare(
+                entries.get(a).value().lengthInSeconds(),
+                entries.get(b).value().lengthInSeconds()
+            );
+            IntArrays.stableSort(indexMappings, durationSorter);
+        }
+
+        void sortByDescendingDuration() {
+            IntComparator durationSorter = (a, b) -> Float.compare(
+                entries.get(b).value().lengthInSeconds(),
+                entries.get(a).value().lengthInSeconds()
+            );
+            IntArrays.stableSort(indexMappings, durationSorter);
+        }
+
+        void sortByAscendingTitle() {
+            IntComparator nameSorter = (a, b) -> {
+                var firstString = titles[a].getLiteralString();
+                var secondString = titles[b].getLiteralString();
+
+                if (firstString == null) return secondString == null ? 0 : -1;
+                if (secondString == null) return 1;
+
+                return String.CASE_INSENSITIVE_ORDER.compare(firstString, secondString);
+            };
+            IntArrays.stableSort(indexMappings, nameSorter);
+        }
+
+        void sortByDescendingTitle() {
+            IntComparator nameSorter = (a, b) -> {
+                var firstString = titles[a].getLiteralString();
+                var secondString = titles[b].getLiteralString();
+
+                if (firstString == null) return secondString == null ? 0 : 1;
+                if (secondString == null) return -1;
+
+                return String.CASE_INSENSITIVE_ORDER.compare(secondString, firstString);
+            };
+            IntArrays.stableSort(indexMappings, nameSorter);
+        }
+
+        void sortByAscendingArtist() {
+            IntComparator nameSorter = (a, b) -> {
+                var firstString = artists[a].getLiteralString();
+                var secondString = artists[b].getLiteralString();
+
+                if (firstString == null) return secondString == null ? 0 : -1;
+                if (secondString == null) return 1;
+
+                return String.CASE_INSENSITIVE_ORDER.compare(firstString, secondString);
+            };
+            IntArrays.stableSort(indexMappings, nameSorter);
+        }
+
+        void sortByDescendingArtist() {
+            IntComparator nameSorter = (a, b) -> {
+                var firstString = artists[a].getLiteralString();
+                var secondString = artists[b].getLiteralString();
+
+                if (firstString == null) return secondString == null ? 0 : 1;
+                if (secondString == null) return -1;
+
+                return String.CASE_INSENSITIVE_ORDER.compare(secondString, firstString);
+            };
+            IntArrays.stableSort(indexMappings, nameSorter);
         }
 
         int size() { return entries.size(); }
+        boolean isEmpty() { return entries.isEmpty(); }
 
-        Text getTitle(int index) {
-            var title = titles[index];
-            return title != null ? title : loadTexts(index).getTitle(index);
-        }
+        int idOf(int index) { return indexMappings[index]; }
 
-        Text getArtist(int index) {
-            var artist = artists[index];
-            return artist != null ? artist : loadTexts(index).getArtist(index);
-        }
+        Text getTitle(int index) { return titles[idOf(index)]; }
+        Text getArtist(int index) { return artists[idOf(index)]; }
+        Text getDuration(int index) { return durations[idOf(index)]; }
+        List<Text> getTooltip(int index) { return tooltips[idOf(index)]; }
 
-        Text getDuration(int index) {
-            var duration = durations[index];
-            return duration != null ? duration : loadTexts(index).getDuration(index);
-        }
-
-        List<Text> getTooltip(int index) {
-            var tooltip = tooltips[index];
-            return tooltip != null ? tooltip : loadTexts(index).getTooltip(index);
-        }
-
-        private Cache loadTexts(int index) {
-            var song = entries.get(index).value();
+        private void loadAllTexts() { for (int i = 0; i < entries.size(); i++) loadTextsAt(i); }
+        private void loadTextsAt(int id) {
+            var song = entries.get(id).value();
 
             var duration = Text.literal(StringHelper.formatTicks(song.getLengthInTicks(), 20.0F));
             var description = song.description();
@@ -308,8 +417,8 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             var fullTitle = description.getString();
             int delimIndex = fullTitle.indexOf('-');
             if (delimIndex < 0) {
-                setTexts(index, entryTextOf(fullTitle), UNKNOWN_ARTIST, duration, tooltip);
-                return this;
+                setTexts(id, entryTextOf(fullTitle), UNKNOWN_ARTIST, duration, tooltip);
+                return;
             }
 
             var i = delimIndex + 1;
@@ -319,13 +428,19 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             while (j > 0 && Character.isWhitespace(fullTitle.charAt(j))) j--;
 
             setTexts(
-                index,
+                id,
                 entryTextOf(fullTitle.substring(i)),
                 entryTextOf(fullTitle.substring(0, j + 1)),
                 duration,
                 tooltip
             );
-            return this;
+        }
+
+        private void setTexts(int id, Text title, Text artist, Text duration, List<Text> tooltip) {
+            titles[id] = title;
+            artists[id] = artist;
+            durations[id] = duration;
+            tooltips[id] = tooltip;
         }
 
         private static Text entryTextOf(String string) {
@@ -335,12 +450,42 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             var truncatedString = textRenderer.trimToWidth(string, MAX_TRUNCATED_WIDTH) + "...";
             return Text.literal(truncatedString);
         }
+    }
 
-        private void setTexts(int index, Text title, Text artist, Text duration, List<Text> tooltip) {
-            titles[index] = title;
-            artists[index] = artist;
-            durations[index] = duration;
-            tooltips[index] = tooltip;
+    private enum SortType {
+        TITLE_ASCENDING("Title (Ascending)") {
+            @Override void sort(Cache cache) { cache.sortByAscendingTitle(); }
+            @Override SortType next() { return TITLE_DESCENDING; }
+        },
+        TITLE_DESCENDING("Title (Descending)") {
+            @Override void sort(Cache cache) { cache.sortByDescendingTitle(); }
+            @Override SortType next() { return ARTIST_ASCENDING; }
+        },
+        ARTIST_ASCENDING("Artist (Ascending)") {
+            @Override void sort(Cache cache) { cache.sortByAscendingArtist(); }
+            @Override SortType next() { return ARTIST_DESCENDING; }
+        },
+        ARTIST_DESCENDING("Artist (Descending)") {
+            @Override void sort(Cache cache) { cache.sortByDescendingArtist(); }
+            @Override SortType next() { return DURATION_ASCENDING; }
+        },
+        DURATION_ASCENDING("Duration (Ascending)") {
+            @Override void sort(Cache cache) { cache.sortByAscendingDuration(); }
+            @Override SortType next() { return DURATION_DESCENDING; }
+        },
+        DURATION_DESCENDING("Duration (Descending)") {
+            @Override void sort(Cache cache) { cache.sortByDescendingDuration(); }
+            @Override SortType next() { return TITLE_ASCENDING; }
+        };
+
+        final List<Text> tooltip;
+
+        SortType(String tooltipEnd) {
+            var tooltipText = "Sorted by: " + tooltipEnd;
+            tooltip = List.of(Text.literal(tooltipText));
         }
+
+        abstract void sort(Cache cache);
+        abstract SortType next();
     }
 }
