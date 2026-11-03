@@ -1,0 +1,9 @@
+{
+  "pack": {
+    "pack_format": 34,
+    "supported_formats": [34, 48],
+    "description": {
+      "translate": "resourcePack.muft.resin_blank_disc.description"
+    }
+  }
+}

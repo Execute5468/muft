@@ -1,8 +1,12 @@
 {
+    "resourcePack.muft.backport_recipe_compat.name": "Backport Recipe Compat",
+    "resourcePack.muft.backport_recipe_compat.description": "Adds Dyed Bundle to Dyed Pocket Jukebox Recipes",
     "resourcePack.muft.diamond_pocket_jukeboxes.name": "Diamond Pocket Jukeboxes",
     "resourcePack.muft.diamond_pocket_jukeboxes.description": "Changes the Pocket Jukebox recipe(s) to require a Diamond",
     "resourcePack.muft.rebrushed_music_discs.name": "Rebrushed Music Discs",
     "resourcePack.muft.rebrushed_music_discs.description": "Texture enhancements for Music Discs",
+    "resourcePack.muft.resin_blank_disc.name": "Resin Blank Disc",
+    "resourcePack.muft.resin_blank_disc.description": "Changes the recipe of Blank Discs to require Resin Clump",
     "muft.options.renderSelectedDisc": "Render Selected Disc",
     "muft.options.betterJukeboxTooltip": "Better Jukebox Tooltip",
     "muft.config.title": "Musical Feature Options",

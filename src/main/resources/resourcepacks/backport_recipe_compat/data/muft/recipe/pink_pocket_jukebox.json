@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "pocket_jukeboxes",
+  "key": {
+    "C": {
+      "item": "minecraft:copper_nugget"
+    },
+    "B": {
+      "item": "minecraft:pink_bundle"
+    },
+    "D": {
+      "tag": "muft:pocket_jukebox_core_ingredients"
+    }
+  },
+  "pattern": [
+    "CDC",
+    "CBC",
+    "CCC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "muft:pink_pocket_jukebox"
+  }
+}
