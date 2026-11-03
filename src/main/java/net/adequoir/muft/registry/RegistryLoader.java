@@ -10,8 +10,8 @@ public final class RegistryLoader implements
 {
     static {
         MuftComponentTypes.init();
-        MuftBlocks.init();
         MuftItems.init();
+        MuftBlocks.init();
         MuftRecipeSerializers.init();
         MuftSHandlers.init();
         MuftSoundEvents.init();

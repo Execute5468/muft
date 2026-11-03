@@ -1,29 +1,22 @@
-package net.adequoir.muft.item;
+package net.adequoir.muft.fabric.item;
 
+import net.adequoir.muft.item.api.CreativeMenuEntries;
 import net.adequoir.muft.util.ArrayUtil;
-import net.adequoir.muft.util.FabricDependant;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.registry.RegistryKey;
 
 import java.util.function.Supplier;
 
-@FabricDependant
-public final class ItemEntries {
-
-    @SafeVarargs
-    public static void addAfter(RegistryKey<ItemGroup> itemGroup, ItemConvertible anchor, Supplier<? extends ItemConvertible>... itemSuppliers) {
+public final class FabricCreativeMenuEntries extends CreativeMenuEntries {
+    protected @Override void insertAfter(RegistryKey<ItemGroup> itemGroup, ItemConvertible anchor, Supplier<? extends ItemConvertible>[] itemSuppliers) {
         var items = ArrayUtil.mapTo(itemSuppliers, Supplier::get, ItemConvertible.class);
         ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.addAfter(anchor, items));
     }
 
-    @SafeVarargs
-    public static void addBefore(RegistryKey<ItemGroup> itemGroup, ItemConvertible anchor, Supplier<? extends ItemConvertible>... itemSuppliers) {
+    protected @Override void insertBefore(RegistryKey<ItemGroup> itemGroup, ItemConvertible anchor, Supplier<? extends ItemConvertible>[] itemSuppliers) {
         var items = ArrayUtil.mapTo(itemSuppliers, Supplier::get, ItemConvertible.class);
         ItemGroupEvents.modifyEntriesEvent(itemGroup).register(entries -> entries.addBefore(anchor, items));
     }
-
-    private ItemEntries() {}
 }

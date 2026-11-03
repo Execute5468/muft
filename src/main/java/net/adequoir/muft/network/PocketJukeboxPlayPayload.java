@@ -2,11 +2,13 @@ package net.adequoir.muft.network;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.sound.PocketJukeboxManager;
+import net.adequoir.muft.network.api.PlayerPayload;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
 
-public record PocketJukeboxPlayPayload(int slotId, int playbackId) implements CustomPayload {
+public record PocketJukeboxPlayPayload(int slotId, int playbackId) implements PlayerPayload {
     public static final CustomPayload.Id<PocketJukeboxPlayPayload> ID = new CustomPayload.Id<>(
         MusicalFeature.id("pocket_jukebox_play")
     );
@@ -22,9 +24,9 @@ public record PocketJukeboxPlayPayload(int slotId, int playbackId) implements Cu
         buf.writeVarInt(playbackId);
     }
 
-    public void handle(ClientPlayerEntity player) {
+    public @Override void handle(PlayerEntity player) {
         var inventory = player.getInventory();
         var stack = slotId < 0 ? inventory.offHand.getFirst() : inventory.main.get(slotId);
-        PocketJukeboxManager.get(player).accept(stack, playbackId, player.isSneaking());
+        PocketJukeboxManager.get((ClientPlayerEntity) player).accept(stack, playbackId, player.isSneaking());
     }
 }

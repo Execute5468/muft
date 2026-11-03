@@ -2,11 +2,13 @@ package net.adequoir.muft.network;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.mixutils.screen.MuftSHandler;
+import net.adequoir.muft.network.api.PlayerPayload;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public record PocketJukeboxItemSelectedPayload(int slotId, int selectedIndex) implements CustomPayload {
+public record PocketJukeboxItemSelectedPayload(int slotId, int selectedIndex) implements PlayerPayload {
     public static final CustomPayload.Id<PocketJukeboxItemSelectedPayload> ID = new CustomPayload.Id<>(
         MusicalFeature.id("pocket_jukebox_item_selected")
     );
@@ -22,7 +24,7 @@ public record PocketJukeboxItemSelectedPayload(int slotId, int selectedIndex) im
         buf.writeVarInt(selectedIndex);
     }
 
-    public void handle(ServerPlayerEntity player) {
+    public @Override void handle(PlayerEntity player) {
         ((MuftSHandler) player.currentScreenHandler).muft_selectPocketJukeboxStack(slotId, selectedIndex);
     }
 }

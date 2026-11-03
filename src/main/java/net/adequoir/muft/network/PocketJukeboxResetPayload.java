@@ -4,11 +4,13 @@ import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
+import net.adequoir.muft.network.api.PlayerPayload;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public record PocketJukeboxResetPayload(int invType, int slotId) implements CustomPayload {
+public record PocketJukeboxResetPayload(int invType, int slotId) implements PlayerPayload {
     public static final int T_CURSOR_STACK = -2;
 
     public static final CustomPayload.Id<PocketJukeboxResetPayload> ID = new CustomPayload.Id<>(
@@ -25,7 +27,7 @@ public record PocketJukeboxResetPayload(int invType, int slotId) implements Cust
         buf.writeVarInt(slotId);
     }
 
-    public void handle(ServerPlayerEntity player) {
+    public @Override void handle(PlayerEntity player) {
         var stack = invType == T_CURSOR_STACK
                 ? player.currentScreenHandler.getCursorStack()
                 : ((AxPlayerInventory) player.getInventory()).axCombinedInventory().get(invType).get(slotId);

@@ -1,8 +1,6 @@
 package net.adequoir.muft;
 
 import net.adequoir.muft.registry.RegistryLoader;
-import net.adequoir.muft.registry.api.FabricRegistrar;
-import net.adequoir.muft.registry.api.Registrars;
 import net.adequoir.muft.registry.misc.MuftItemEntries;
 import net.adequoir.muft.registry.misc.MuftPacks;
 import net.adequoir.muft.registry.misc.MuftPayloads;
@@ -17,10 +15,10 @@ import org.slf4j.LoggerFactory;
 public class MusicalFeature implements ModInitializer {
 	public static final String MOD_ID = "muft";
 
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger("MusicalFeature");
 
 	public @Override void onInitialize() {
-		Registrars.bootstrap(FabricRegistrar.FACTORY);
+		MuftBootstrapper.init();
 		RegistryLoader.init();
 		MuftItemEntries.init();
 		MuftItemTags.init();

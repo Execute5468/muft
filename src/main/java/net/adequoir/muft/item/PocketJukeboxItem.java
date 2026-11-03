@@ -6,7 +6,7 @@ import net.adequoir.muft.item.util.PocketJukeboxIndexer;
 import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
-import net.adequoir.muft.network.ServerNetworkHelper;
+import net.adequoir.muft.network.api.ServerNetworkHelper;
 import net.adequoir.muft.registry.MuftItems;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;

@@ -1,6 +1,8 @@
-package net.adequoir.muft.registry.api;
+package net.adequoir.muft.fabric.registry.api;
 
 import com.mojang.logging.LogUtils;
+import net.adequoir.muft.registry.api.Registrar;
+import net.adequoir.muft.registry.api.RegistrarFactory;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;

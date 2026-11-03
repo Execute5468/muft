@@ -1,6 +1,6 @@
 package net.adequoir.muft.registry.misc;
 
-import net.adequoir.muft.item.ItemEntries;
+import net.adequoir.muft.item.api.CreativeMenuEntries;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
@@ -11,7 +11,7 @@ import static net.adequoir.muft.registry.MuftBlocks.*;
 public final class MuftItemEntries {
 
     static {
-        ItemEntries.addBefore(
+        CreativeMenuEntries.addBefore(
             ItemGroups.TOOLS, Items.MUSIC_DISC_13,
             POCKET_JUKEBOX,
             WHITE_POCKET_JUKEBOX,
@@ -31,9 +31,9 @@ public final class MuftItemEntries {
             MAGENTA_POCKET_JUKEBOX,
             PINK_POCKET_JUKEBOX
         );
-        ItemEntries.addAfter(ItemGroups.TOOLS, Items.MUSIC_DISC_PIGSTEP, BLANK_DISC);
-        ItemEntries.addAfter(ItemGroups.INGREDIENTS, Items.IRON_NUGGET, COPPER_NUGGET);
-        ItemEntries.addAfter(ItemGroups.FUNCTIONAL, Blocks.BLAST_FURNACE, DISC_PRESS);
+        CreativeMenuEntries.addAfter(ItemGroups.TOOLS, Items.MUSIC_DISC_PIGSTEP, BLANK_DISC);
+        CreativeMenuEntries.addAfter(ItemGroups.INGREDIENTS, Items.IRON_NUGGET, COPPER_NUGGET);
+        CreativeMenuEntries.addAfter(ItemGroups.FUNCTIONAL, Blocks.BLAST_FURNACE, DISC_PRESS);
     }
 
     public static void init() {}

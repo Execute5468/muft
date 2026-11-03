@@ -1,12 +1,22 @@
 package net.adequoir.muft.client.network;
 
-import net.adequoir.muft.util.FabricDependant;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.packet.CustomPayload;
+import org.jetbrains.annotations.Nullable;
 
-@FabricDependant
-public final class ClientNetworkHelper {
-    public static void send(CustomPayload payload) { ClientPlayNetworking.send(payload); }
+public abstract class ClientNetworkHelper {
+    private static @Nullable ClientNetworkHelper instance;
 
-    private ClientNetworkHelper() {}
+    protected abstract void sendPayload(CustomPayload payload);
+
+    public static void send(CustomPayload payload) {
+        if (instance != null) { instance.sendPayload(payload); return; }
+        throw new IllegalStateException("ClientNetworkHelper has not been bootstrapped!");
+    }
+
+    public static void bootstrap(ClientNetworkHelper helper) {
+        if (instance == null) { instance = helper; return; }
+        throw new IllegalStateException("ClientNetworkHelper already bootstrapped!");
+    }
+
+    protected ClientNetworkHelper() {}
 }
