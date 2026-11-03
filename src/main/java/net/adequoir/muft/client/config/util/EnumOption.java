@@ -4,4 +4,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EnumSliderOption {}
+public @interface EnumOption {
+    Type type();
+
+    enum Type { SLIDER, CYCLIC }
+}

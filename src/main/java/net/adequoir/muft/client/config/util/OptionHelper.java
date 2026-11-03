@@ -72,11 +72,9 @@ public final class OptionHelper {
     }
 
     public static SimpleOption<?> ofEnum(Field field) {
-        var cycleEnum = field.getAnnotation(EnumCycleOption.class);
-        var sliderEnum = field.getAnnotation(EnumSliderOption.class);
-        if (cycleEnum == null && sliderEnum == null) throw new IllegalStateException("Annotation @EnumCycleOption or @EnumSliderOption required for enum-based options");
-        if (cycleEnum != null && sliderEnum != null) throw new IllegalStateException("Conflicting Enum annotations @EnumCycleOption and @EnumSliderOption");
-        return cycleEnum != null ? ofEnumCycleImpl(field) : ofEnumSliderImpl(field);
+        var enumOption = field.getAnnotation(EnumOption.class);
+        if (enumOption == null) throw new IllegalStateException("Annotation @EnumOption required for enum-based options");
+        return enumOption.type() == EnumOption.Type.CYCLIC ? ofEnumCycleImpl(field) : ofEnumSliderImpl(field);
     }
 
     @SuppressWarnings("unchecked")
