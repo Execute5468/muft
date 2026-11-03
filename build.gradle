@@ -19,6 +19,9 @@ dependencies {
 
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 
+	modImplementation files("libs/Platform-fabric-1.21.1-1.4.2.jar")
+	modImplementation files("libs/VanillaBackport-fabric-1.21.1-1.2.2.jar")
+
 	compileOnly "org.jetbrains:annotations:26.1.0"
 }
 
