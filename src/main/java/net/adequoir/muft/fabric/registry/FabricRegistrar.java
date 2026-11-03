@@ -1,4 +1,4 @@
-package net.adequoir.muft.fabric.registry.api;
+package net.adequoir.muft.fabric.registry;
 
 import com.mojang.logging.LogUtils;
 import net.adequoir.muft.api.registry.Registrar;

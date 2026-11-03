@@ -1,21 +1,21 @@
 package net.adequoir.muft.registry.misc;
 
 import net.adequoir.muft.MusicalFeature;
-import net.adequoir.muft.resource.PackActivationType;
-import net.adequoir.muft.resource.PackHelper;
+import net.adequoir.muft.api.resource.PackHelper;
+import net.adequoir.muft.api.resource.PackState;
 import net.adequoir.muft.util.GameState;
 
 public final class MuftPacks {
 
     static {
-        PackHelper.registerPack("rebrushed_music_discs");
-        PackHelper.registerPack("diamond_pocket_jukeboxes");
-        if (GameState.hasBackport()) {
+        PackHelper.build(MusicalFeature.MOD_ID, storage -> {
+            storage.registerResource("rebrushed_music_discs");
+            storage.registerData("diamond_pocket_jukeboxes");
+            if (!GameState.hasBackport()) return;
             MusicalFeature.LOGGER.info("Vanilla Backport detected!");
-            PackHelper.registerPack("backport_recipe_compat", PackActivationType.DEFAULT_ENABLED);
-            PackHelper.registerPack("resin_blank_disc");
-        }
-        PackHelper.initPacks();
+            storage.registerData("backport_recipe_compat", PackState.ENABLED);
+            storage.registerData("resin_blank_disc");
+        });
     }
 
     public static void init() {}

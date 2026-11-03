@@ -3,6 +3,7 @@ package net.adequoir.muft.api.client.config;
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.config.MuftConfigManager;
 import net.adequoir.muft.util.StringUtil;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.text.Text;
@@ -26,7 +27,7 @@ public final class OptionsHelper {
 
     public static SimpleOption<Boolean> ofBool(Field field) {
         var fieldName = nameOf(field);
-        return SimpleOption.ofBoolean(fieldName, getField(field, fieldName), consumerOf(field, fieldName));
+        return SimpleOption.ofBoolean(fieldName, tooltipOf(field, fieldName), getField(field, fieldName), consumerOf(field, fieldName));
     }
 
     public static SimpleOption<Integer> ofInt(Field field) {
@@ -43,7 +44,7 @@ public final class OptionsHelper {
 
         return new SimpleOption<>(
             fieldName,
-            SimpleOption.emptyTooltip(),
+            tooltipOf(field, fieldName),
             valueTextGetter,
             slider,
             getField(field, fieldName),
@@ -63,7 +64,7 @@ public final class OptionsHelper {
 
         return new SimpleOption<>(
             fieldName,
-            SimpleOption.emptyTooltip(),
+            tooltipOf(field, fieldName),
             valueTextGetter,
             slider,
             ((Enum<?>) getField(field, fieldName)).ordinal(),
@@ -89,7 +90,7 @@ public final class OptionsHelper {
 
         return new SimpleOption<>(
             fieldName,
-            SimpleOption.emptyTooltip(),
+            tooltipOf(field, fieldName),
             valueTextGetter,
             callback,
             getField(field, fieldName),
@@ -105,6 +106,13 @@ public final class OptionsHelper {
 
     private static String prefix(String string) { return MOD_ID + ".options." + string; }
     private static String nameOf(Field field) { return MOD_ID + ".options." + field.getName(); }
+
+    private static <T> SimpleOption.TooltipFactory<T> tooltipOf(Field field, String fieldName) {
+        var hasTooltip = field.getAnnotation(HasTooltip.class);
+        if (hasTooltip == null) return SimpleOption.emptyTooltip();
+        var tooltip = Tooltip.of(Text.translatable(fieldName + ".tooltip"));
+        return v -> tooltip;
+    }
 
     private static void setField(Field field, String name, Object value) {
         try {

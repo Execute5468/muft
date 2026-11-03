@@ -9,6 +9,7 @@
     "resourcePack.muft.resin_blank_disc.description": "Changes the recipe of Blank Discs to require Resin Clump",
     "muft.options.renderSelectedDisc": "Render Selected Disc",
     "muft.options.betterJukeboxTooltip": "Better Jukebox Tooltip",
+    "muft.options.betterJukeboxTooltip.tooltip": "If enabled, renders the selected disc tooltip in Pocket Jukebox menus with their track name underneath",
     "muft.config.title": "Musical Feature Options",
     "container.muft.disc_press": "Disc Press",
     "pocket_jukebox.music_paused": "Music Paused",
