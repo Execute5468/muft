@@ -1,4 +1,4 @@
-package net.adequoir.muft.registry;
+package net.adequoir.muft.registry.misc;
 
 import net.adequoir.muft.network.DiscPressSelectPayload;
 import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;

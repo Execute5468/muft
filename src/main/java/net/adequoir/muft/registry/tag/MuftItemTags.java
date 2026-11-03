@@ -1,4 +1,4 @@
-package net.adequoir.muft.registry;
+package net.adequoir.muft.registry.tag;
 
 import net.adequoir.muft.MusicalFeature;
 import net.minecraft.item.Item;

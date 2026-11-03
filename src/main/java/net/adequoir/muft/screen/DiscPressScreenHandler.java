@@ -3,15 +3,14 @@ package net.adequoir.muft.screen;
 import net.adequoir.muft.item.TrackDiscs;
 import net.adequoir.muft.registry.MuftBlocks;
 import net.adequoir.muft.registry.MuftItems;
-import net.adequoir.muft.registry.MuftJukeboxSongTags;
-import net.adequoir.muft.registry.MuftScreenHandlers;
+import net.adequoir.muft.registry.tag.MuftJukeboxSongTags;
+import net.adequoir.muft.registry.MuftSHandlers;
 import net.minecraft.block.jukebox.JukeboxSong;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.JukeboxPlayableComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.ItemStack;
@@ -66,7 +65,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
     }
 
     public DiscPressScreenHandler(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
-        super(MuftScreenHandlers.DISC_PRESS, syncId);
+        super(MuftSHandlers.DISC_PRESS.get(), syncId);
         this.context = context;
         this.dyeSlot = addSlot(new DyeSlot(input));
         this.discSlot = addSlot(new DiscSlot(input));
@@ -160,7 +159,7 @@ public class DiscPressScreenHandler extends ScreenHandler {
         return stack;
     }
 
-    public @Override boolean canUse(PlayerEntity player) { return canUse(context, player, MuftBlocks.DISC_PRESS); }
+    public @Override boolean canUse(PlayerEntity player) { return canUse(context, player, MuftBlocks.DISC_PRESS.get()); }
 
     public @Override void onClosed(PlayerEntity player) {
         super.onClosed(player);

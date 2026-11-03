@@ -1,7 +1,12 @@
 package net.adequoir.muft;
 
-import net.adequoir.muft.registry.*;
-import net.adequoir.muft.resource.PackHelper;
+import net.adequoir.muft.registry.RegistryLoader;
+import net.adequoir.muft.registry.api.FabricRegistrar;
+import net.adequoir.muft.registry.api.Registrars;
+import net.adequoir.muft.registry.misc.MuftItemEntries;
+import net.adequoir.muft.registry.misc.MuftPacks;
+import net.adequoir.muft.registry.misc.MuftPayloads;
+import net.adequoir.muft.registry.tag.MuftItemTags;
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.util.Identifier;
@@ -14,14 +19,12 @@ public class MusicalFeature implements ModInitializer {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	@Override
-	public void onInitialize() {
-		MuftBlocks.init();
-		MuftItems.init();
+	public @Override void onInitialize() {
+		Registrars.bootstrap(FabricRegistrar.FACTORY);
+		RegistryLoader.init();
+		MuftItemEntries.init();
 		MuftItemTags.init();
-		MuftSoundEvents.init();
 		MuftPayloads.init();
-		MuftRecipeSerializers.init();
 		MuftPacks.init();
 	}
 

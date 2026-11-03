@@ -20,6 +20,7 @@ public final class MuftConfigManager {
 
     static {
         if (!MuftConfig.FILE.exists()) {
+            MusicalFeature.LOGGER.info("Config not detected, creating new config");
             save();
         } else {
             MusicalFeature.LOGGER.info("Loading existing config");
@@ -33,7 +34,6 @@ public final class MuftConfigManager {
     }
 
     public static void save() {
-        MusicalFeature.LOGGER.info("Config not detected, creating new config");
         try (var writer = new FileWriter(MuftConfig.FILE)) {
             GSON.toJson(config, writer);
         } catch (IOException e) {

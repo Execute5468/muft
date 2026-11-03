@@ -163,23 +163,23 @@ public class PocketJukeboxItem extends Item {
 
     public static Item get(@Nullable DyeColor color) {
         return switch (color) {
-            case WHITE -> MuftItems.WHITE_POCKET_JUKEBOX;
-            case LIGHT_GRAY -> MuftItems.LIGHT_GRAY_POCKET_JUKEBOX;
-            case GRAY -> MuftItems.GRAY_POCKET_JUKEBOX;
-            case BLACK -> MuftItems.BLACK_POCKET_JUKEBOX;
-            case BROWN -> MuftItems.BROWN_POCKET_JUKEBOX;
-            case RED -> MuftItems.RED_POCKET_JUKEBOX;
-            case ORANGE -> MuftItems.ORANGE_POCKET_JUKEBOX;
-            case YELLOW -> MuftItems.YELLOW_POCKET_JUKEBOX;
-            case LIME -> MuftItems.LIME_POCKET_JUKEBOX;
-            case GREEN -> MuftItems.GREEN_POCKET_JUKEBOX;
-            case CYAN -> MuftItems.CYAN_POCKET_JUKEBOX;
-            case LIGHT_BLUE -> MuftItems.LIGHT_BLUE_POCKET_JUKEBOX;
-            case BLUE -> MuftItems.BLUE_POCKET_JUKEBOX;
-            case PURPLE -> MuftItems.PURPLE_POCKET_JUKEBOX;
-            case MAGENTA -> MuftItems.MAGENTA_POCKET_JUKEBOX;
-            case PINK -> MuftItems.PINK_POCKET_JUKEBOX;
-            case null -> MuftItems.POCKET_JUKEBOX;
+            case WHITE -> MuftItems.WHITE_POCKET_JUKEBOX.get();
+            case LIGHT_GRAY -> MuftItems.LIGHT_GRAY_POCKET_JUKEBOX.get();
+            case GRAY -> MuftItems.GRAY_POCKET_JUKEBOX.get();
+            case BLACK -> MuftItems.BLACK_POCKET_JUKEBOX.get();
+            case BROWN -> MuftItems.BROWN_POCKET_JUKEBOX.get();
+            case RED -> MuftItems.RED_POCKET_JUKEBOX.get();
+            case ORANGE -> MuftItems.ORANGE_POCKET_JUKEBOX.get();
+            case YELLOW -> MuftItems.YELLOW_POCKET_JUKEBOX.get();
+            case LIME -> MuftItems.LIME_POCKET_JUKEBOX.get();
+            case GREEN -> MuftItems.GREEN_POCKET_JUKEBOX.get();
+            case CYAN -> MuftItems.CYAN_POCKET_JUKEBOX.get();
+            case LIGHT_BLUE -> MuftItems.LIGHT_BLUE_POCKET_JUKEBOX.get();
+            case BLUE -> MuftItems.BLUE_POCKET_JUKEBOX.get();
+            case PURPLE -> MuftItems.PURPLE_POCKET_JUKEBOX.get();
+            case MAGENTA -> MuftItems.MAGENTA_POCKET_JUKEBOX.get();
+            case PINK -> MuftItems.PINK_POCKET_JUKEBOX.get();
+            case null -> MuftItems.POCKET_JUKEBOX.get();
         };
     }
 

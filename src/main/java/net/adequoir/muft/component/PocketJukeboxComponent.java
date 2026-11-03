@@ -65,24 +65,24 @@ public class PocketJukeboxComponent implements TooltipData {
     }
 
     public static PocketJukeboxComponent get(ItemStack stack) {
-        return stack.getOrDefault(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, DEFAULT);
+        return stack.getOrDefault(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS.get(), DEFAULT);
     }
 
     public static @Nullable PocketJukeboxComponent getOrNull(ItemStack stack) {
-        return stack.get(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS);
+        return stack.get(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS.get());
     }
 
     public static void set(ItemStack stack, PocketJukeboxComponent component) {
-        stack.set(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, component);
+        stack.set(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS.get(), component);
     }
 
     public static int sizeItemBarStep(ItemStack stack) {
-        var component = stack.get(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS);
+        var component = stack.get(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS.get());
         return component != null ? Math.min(component.size() * 13 / MAX_SLOT_COUNT, 13) : 0;
     }
 
     public static int colorItemBar(ItemStack stack) {
-        var component = stack.getOrDefault(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS, DEFAULT);
+        var component = stack.getOrDefault(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS.get(), DEFAULT);
         return component.size() >= MAX_SLOT_COUNT ? FULL_ITEM_BAR_COLOR : ITEM_BAR_COLOR;
     }
 

@@ -1,4 +1,4 @@
-package net.adequoir.muft.registry;
+package net.adequoir.muft.registry.misc;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.resource.PackActivationType;

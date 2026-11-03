@@ -53,5 +53,5 @@ public class PocketJukeboxColoringRecipe extends SpecialCraftingRecipe {
     }
 
     public @Override boolean fits(int width, int height) { return width * height >= 2; }
-    public @Override RecipeSerializer<?> getSerializer() { return MuftRecipeSerializers.POCKET_JUKEBOX; }
+    public @Override RecipeSerializer<?> getSerializer() { return MuftRecipeSerializers.POCKET_JUKEBOX_COLORING.get(); }
 }
