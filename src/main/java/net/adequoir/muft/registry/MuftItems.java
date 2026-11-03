@@ -7,13 +7,14 @@ import net.adequoir.muft.registry.api.Registrar;
 import net.adequoir.muft.registry.api.Registrars;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 import java.util.function.Supplier;
 
 public sealed interface MuftItems permits RegistryLoader {
     Registrar<Item> REGISTRAR = Registrars.create(MusicalFeature.MOD_ID, Registries.ITEM);
 
-    Supplier<Item> COPPER_NUGGET = REGISTRAR.register("copper_nugget", Item::new, new Item.Settings());
+    Supplier<Item> COPPER_NUGGET = REGISTRAR.register(Identifier.ofVanilla("copper_nugget"), Item::new, new Item.Settings());
 
     Supplier<Item> POCKET_JUKEBOX = registerPocketJukebox("pocket_jukebox");
     Supplier<Item> WHITE_POCKET_JUKEBOX = registerPocketJukebox("white_pocket_jukebox");
