@@ -3,8 +3,8 @@ package net.adequoir.muft.client.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.adequoir.muft.MusicalFeature;
+import net.adequoir.muft.client.config.util.OptionHelper;
 import net.minecraft.client.option.SimpleOption;
-import net.minecraft.text.Text;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -44,27 +44,9 @@ public final class MuftConfigManager {
     public static SimpleOption<?>[] asOptions() {
         var options = new ArrayList<SimpleOption<?>>();
         for (var field: MuftConfig.class.getDeclaredFields()) {
-            boolean bl = Modifier.isStatic(field.getModifiers())
-                    || field.getType() != boolean.class;
-            if (bl) continue;
-            field.setAccessible(true);
-            try {
-                var fieldName = "muft.option." + field.getName();
-                var translatedFieldName = Text.translatable(fieldName).getString();
-
-                var option = SimpleOption.ofBoolean(translatedFieldName, (Boolean) field.get(config), bool -> {
-                    try {
-                        field.set(config, bool);
-                    } catch (IllegalAccessException e) {
-                        MusicalFeature.LOGGER.warn("Unable to set field {}", translatedFieldName);
-                        MusicalFeature.LOGGER.warn("Stacktrace: ", e);
-                    }
-                });
-                options.add(option);
-            } catch (IllegalAccessException e) {
-                MusicalFeature.LOGGER.warn("Unable to load config options", e);
-            }
-
+            if (Modifier.isStatic(field.getModifiers())) continue;
+            var option = OptionHelper.of(field);
+            if (option != null) options.add(option);
         }
         return options.toArray(SimpleOption[]::new);
     }

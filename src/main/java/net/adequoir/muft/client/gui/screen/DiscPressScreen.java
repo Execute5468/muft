@@ -7,6 +7,7 @@ import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.network.ClientNetworkHelper;
 import net.adequoir.muft.network.DiscPressSelectPayload;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
+import net.adequoir.muft.util.StringUtil;
 import net.minecraft.block.jukebox.JukeboxSong;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -402,10 +403,10 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
                 boolean matches;
 
                 var title = titles[id].getLiteralString();
-                matches = title != null && stringContains(title, filter);
+                matches = title != null && StringUtil.containsInsensitive(title, filter);
                 if (!matches) {
                     var artist = artists[id].getLiteralString();
-                    matches = artist != null && stringContains(artist, filter);
+                    matches = artist != null && StringUtil.containsInsensitive(artist, filter);
                 }
                 if (matches) { filteredIndexMappings[w++] = id; }
                 r++;
@@ -553,36 +554,6 @@ public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
             if (textRenderer.getWidth(string) < MAX_TEXT_WIDTH) return Text.literal(string);
             var truncatedString = textRenderer.trimToWidth(string, MAX_TRUNCATED_WIDTH) + "...";
             return Text.literal(truncatedString);
-        }
-
-        private static boolean stringContains(String source, String target) {
-            if (source.isBlank()) return target.isBlank();
-            if (target.isBlank()) return true;
-            if (source.length() < target.length()) return false;
-            if (source.length() == target.length()) return Objects.equals(source, target);
-
-            int i = 0;
-            final int end = source.length() - target.length();
-            char firstChar = Character.toLowerCase(target.charAt(0));
-
-            while (i <= end) {
-                boolean bl = Character.toLowerCase(source.charAt(i)) == firstChar
-                        && matchesAt(source, i, target);
-                if (bl) return true;
-                i++;
-            }
-            return false;
-        }
-
-        private static boolean matchesAt(String source, int offset, String target) {
-            int i = offset;
-            int j = 0;
-
-            while (j < target.length()) {
-                if (Character.toLowerCase(source.charAt(i)) != Character.toLowerCase(target.charAt(j))) return false;
-                i++; j++;
-            }
-            return true;
         }
     }
 
