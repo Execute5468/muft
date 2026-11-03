@@ -10,7 +10,7 @@ import net.adequoir.muft.mixin.client.sound.AxSoundManager;
 import net.adequoir.muft.mixin.client.sound.AxSoundSystem;
 import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.adequoir.muft.mixutils.client.sound.ISource;
-import net.adequoir.muft.client.network.ClientNetworkHelper;
+import net.adequoir.muft.api.client.network.ClientNetworkHelper;
 import net.adequoir.muft.network.PocketJukeboxResetPayload;
 import net.adequoir.muft.util.ItemEntry;
 import net.minecraft.block.jukebox.JukeboxSong;

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.ints.IntArrays;
 import it.unimi.dsi.fastutil.ints.IntComparator;
 import net.adequoir.muft.MusicalFeature;
-import net.adequoir.muft.client.network.ClientNetworkHelper;
+import net.adequoir.muft.api.client.network.ClientNetworkHelper;
 import net.adequoir.muft.network.DiscPressSelectPayload;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
 import net.adequoir.muft.util.StringUtil;
@@ -27,7 +27,6 @@ import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
-import java.util.Objects;
 
 public class DiscPressScreen extends HandledScreen<DiscPressScreenHandler> {
     private static final int BACKGROUND_WIDTH = 308;

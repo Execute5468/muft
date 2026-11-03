@@ -4,11 +4,10 @@ import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.adequoir.muft.mixin.client.entity.player.AxPlayerInventory;
-import net.adequoir.muft.network.api.PlayerPayload;
+import net.adequoir.muft.api.network.PlayerPayload;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 public record PocketJukeboxResetPayload(int invType, int slotId) implements PlayerPayload {
     public static final int T_CURSOR_STACK = -2;

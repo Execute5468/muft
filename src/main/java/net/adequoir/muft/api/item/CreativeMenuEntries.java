@@ -1,4 +1,4 @@
-package net.adequoir.muft.item.api;
+package net.adequoir.muft.api.item;
 
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;

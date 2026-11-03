@@ -3,7 +3,7 @@ package net.adequoir.muft.client.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.adequoir.muft.MusicalFeature;
-import net.adequoir.muft.client.config.util.OptionHelper;
+import net.adequoir.muft.api.client.config.OptionsHelper;
 import net.minecraft.client.option.SimpleOption;
 
 import java.io.FileReader;
@@ -45,7 +45,7 @@ public final class MuftConfigManager {
         var options = new ArrayList<SimpleOption<?>>();
         for (var field: MuftConfig.class.getDeclaredFields()) {
             if (Modifier.isStatic(field.getModifiers())) continue;
-            var option = OptionHelper.of(field);
+            var option = OptionsHelper.of(field);
             if (option != null) options.add(option);
         }
         return options.toArray(SimpleOption[]::new);

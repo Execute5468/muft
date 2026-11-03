@@ -1,12 +1,11 @@
 package net.adequoir.muft.network;
 
 import net.adequoir.muft.MusicalFeature;
-import net.adequoir.muft.network.api.PlayerPayload;
+import net.adequoir.muft.api.network.PlayerPayload;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 public record DiscPressSelectPayload(int index) implements PlayerPayload {
     public static final CustomPayload.Id<DiscPressSelectPayload> ID = new CustomPayload.Id<>(

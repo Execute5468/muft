@@ -1,4 +1,4 @@
-package net.adequoir.muft.client.config.util;
+package net.adequoir.muft.api.client.config;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.config.MuftConfigManager;
@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 import static net.adequoir.muft.MusicalFeature.MOD_ID;
 
-public final class OptionHelper {
+public final class OptionsHelper {
     public static @Nullable SimpleOption<?> of(Field field) {
         var type = field.getType();
 
@@ -32,8 +32,8 @@ public final class OptionHelper {
     public static SimpleOption<Integer> ofInt(Field field) {
         var fieldName = nameOf(field);
 
-        var data = field.getAnnotation(IntOption.class);
-        if (data == null) throw new IllegalStateException("Annotation @IntOption required for int-based options");
+        var data = field.getAnnotation(Option.Int.class);
+        if (data == null) throw new IllegalStateException("Annotation @Option.Int required for int-based options");
         var unitName = prefix(data.unit());
 
         SimpleOption.ValueTextGetter<Integer> valueTextGetter = (optionText, value) -> GameOptions.getGenericValueText(
@@ -72,9 +72,9 @@ public final class OptionHelper {
     }
 
     public static SimpleOption<?> ofEnum(Field field) {
-        var enumOption = field.getAnnotation(EnumOption.class);
-        if (enumOption == null) throw new IllegalStateException("Annotation @EnumOption required for enum-based options");
-        return enumOption.type() == EnumOption.Type.CYCLIC ? ofEnumCycleImpl(field) : ofEnumSliderImpl(field);
+        var enumOption = field.getAnnotation(Option.Enum.class);
+        if (enumOption == null) throw new IllegalStateException("Annotation @Option.Enum required for enum-based options");
+        return enumOption.type() == OptionType.CYCLIC ? ofEnumCycleImpl(field) : ofEnumSliderImpl(field);
     }
 
     @SuppressWarnings("unchecked")
@@ -126,5 +126,5 @@ public final class OptionHelper {
         }
     }
 
-    private OptionHelper() {}
+    private OptionsHelper() {}
 }

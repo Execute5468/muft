@@ -1,6 +1,6 @@
 package net.adequoir.muft.fabric.network;
 
-import net.adequoir.muft.network.api.ServerNetworkHelper;
+import net.adequoir.muft.api.network.ServerNetworkHelper;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;

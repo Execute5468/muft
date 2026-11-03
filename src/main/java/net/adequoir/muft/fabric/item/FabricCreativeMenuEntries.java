@@ -1,6 +1,6 @@
 package net.adequoir.muft.fabric.item;
 
-import net.adequoir.muft.item.api.CreativeMenuEntries;
+import net.adequoir.muft.api.item.CreativeMenuEntries;
 import net.adequoir.muft.util.ArrayUtil;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.ItemConvertible;

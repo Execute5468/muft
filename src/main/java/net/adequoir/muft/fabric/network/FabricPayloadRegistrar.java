@@ -1,7 +1,7 @@
 package net.adequoir.muft.fabric.network;
 
-import net.adequoir.muft.network.api.PayloadRegistrar;
-import net.adequoir.muft.network.api.PlayerPayload;
+import net.adequoir.muft.api.network.PayloadRegistrar;
+import net.adequoir.muft.api.network.PlayerPayload;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;

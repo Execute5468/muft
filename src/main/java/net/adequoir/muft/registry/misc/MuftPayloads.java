@@ -5,7 +5,7 @@ import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
 import net.adequoir.muft.network.PocketJukeboxResetPayload;
 
-import static net.adequoir.muft.network.api.PayloadRegistrar.*;
+import static net.adequoir.muft.api.network.PayloadRegistrar.*;
 
 
 public final class MuftPayloads {

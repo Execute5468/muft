@@ -1,4 +1,4 @@
-package net.adequoir.muft.network.api;
+package net.adequoir.muft.api.network;
 
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;

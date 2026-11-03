@@ -2,8 +2,8 @@ package net.adequoir.muft.registry;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.block.DiscPressBlock;
-import net.adequoir.muft.registry.api.Registrar;
-import net.adequoir.muft.registry.api.Registrars;
+import net.adequoir.muft.api.registry.Registrar;
+import net.adequoir.muft.api.registry.Registrars;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;

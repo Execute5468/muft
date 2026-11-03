@@ -1,8 +1,8 @@
 package net.adequoir.muft.registry;
 
 import net.adequoir.muft.MusicalFeature;
-import net.adequoir.muft.registry.api.Registrar;
-import net.adequoir.muft.registry.api.Registrars;
+import net.adequoir.muft.api.registry.Registrar;
+import net.adequoir.muft.api.registry.Registrars;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.featuretoggle.FeatureFlags;

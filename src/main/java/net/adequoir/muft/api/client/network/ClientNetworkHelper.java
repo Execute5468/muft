@@ -1,4 +1,4 @@
-package net.adequoir.muft.client.network;
+package net.adequoir.muft.api.client.network;
 
 import net.minecraft.network.packet.CustomPayload;
 import org.jetbrains.annotations.Nullable;

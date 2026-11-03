@@ -2,11 +2,10 @@ package net.adequoir.muft.network;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.mixutils.screen.MuftSHandler;
-import net.adequoir.muft.network.api.PlayerPayload;
+import net.adequoir.muft.api.network.PlayerPayload;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 public record PocketJukeboxItemSelectedPayload(int slotId, int selectedIndex) implements PlayerPayload {
     public static final CustomPayload.Id<PocketJukeboxItemSelectedPayload> ID = new CustomPayload.Id<>(

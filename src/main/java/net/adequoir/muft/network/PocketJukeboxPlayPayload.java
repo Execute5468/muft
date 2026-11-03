@@ -2,7 +2,7 @@ package net.adequoir.muft.network;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.sound.PocketJukeboxManager;
-import net.adequoir.muft.network.api.PlayerPayload;
+import net.adequoir.muft.api.network.PlayerPayload;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;

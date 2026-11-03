@@ -3,7 +3,7 @@ package net.adequoir.muft.client.gui.tooltip;
 import net.adequoir.muft.client.input.Scroller;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
-import net.adequoir.muft.client.network.ClientNetworkHelper;
+import net.adequoir.muft.api.client.network.ClientNetworkHelper;
 import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;

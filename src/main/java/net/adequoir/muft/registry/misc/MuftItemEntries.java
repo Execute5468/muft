@@ -1,6 +1,6 @@
 package net.adequoir.muft.registry.misc;
 
-import net.adequoir.muft.item.api.CreativeMenuEntries;
+import net.adequoir.muft.api.item.CreativeMenuEntries;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
