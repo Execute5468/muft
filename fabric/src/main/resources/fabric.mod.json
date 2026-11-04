@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "${mod_id}",
+	"version": "${version}",
+	"name": "${mod_name}",
+	"description": "${description}",
+	"authors": [
+		"${mod_author}"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"license": "${license}",
+	"icon": "assets/muft/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.adequoir.muft.MusicalFeature"
+		],
+		"client": [
+			"net.adequoir.muft.MusicalFeatureClient"
+		],
+		"modmenu": [
+			"net.adequoir.muft.client.MuftModMenu"
+		]
+	},
+	"mixins": [
+		"muft.mixins.json"
+	],
+	"accessWidener": "muft.classtweaker",
+	"depends": {
+		"fabricloader": ">=0.17.3",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

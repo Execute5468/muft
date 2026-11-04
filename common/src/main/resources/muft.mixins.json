@@ -1,0 +1,33 @@
+{
+    "required": true,
+    "package": "net.adequoir.muft.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "client.entity.player.AxPlayerInventory",
+        "screen.MxSHandler",
+        "world.item.AxItemGroups"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "overwrites": {
+        "requireAnnotations": true
+    },
+    "client": [
+        "client.MxMouse",
+        "client.entity.player.MxClientPE",
+        "client.gui.AxDrawContext",
+        "client.gui.MxDrawContext",
+        "client.gui.render.model.MxModelLoader",
+        "client.gui.screen.AxScreen",
+        "client.gui.screen.ingame.MxHandledScreen",
+        "client.gui.tooltip.MxTooltipComponent",
+        "client.render.AxWorldRenderer",
+        "client.render.MxWorldRenderer",
+        "client.render.item.AxItemRenderer",
+        "client.render.item.MxItemRenderer",
+        "client.sound.AxSoundManager",
+        "client.sound.AxSoundSystem",
+        "client.sound.MxSource"
+    ]
+}

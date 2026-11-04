@@ -1,0 +1,330 @@
+[16:41:45] [main/INFO] (FabricLoader/GameProvider) Loading Minecraft 1.21.1 with Fabric Loader 0.18.6
+[16:41:45] [main/INFO] (FabricLoader) Loading 58 mods:
+	- fabric-api 0.116.7+1.21.1
+	- fabric-api-base 0.4.43+1bb677a619
+	- fabric-api-lookup-api-v1 1.6.71+b559734419
+	- fabric-biome-api-v1 13.0.31+d527f9fd19
+	- fabric-block-api-v1 1.1.0+0bc3503219
+	- fabric-block-view-api-v2 1.0.11+1bb677a619
+	- fabric-blockrenderlayer-v1 1.1.52+0af3f5a719
+	- fabric-client-tags-api-v1 1.1.15+6573ed8c19
+	- fabric-command-api-v1 1.2.49+f71b366f19
+	- fabric-command-api-v2 2.2.28+6ced4dd919
+	- fabric-commands-v0 0.2.66+df3654b319
+	- fabric-content-registries-v0 8.0.19+b559734419
+	- fabric-convention-tags-v1 2.1.5+7f945d5b19
+	- fabric-convention-tags-v2 2.11.1+a406e79519
+	- fabric-crash-report-info-v1 0.2.29+0af3f5a719
+	- fabric-data-attachment-api-v1 1.4.5+6116a37819
+	- fabric-data-generation-api-v1 20.2.34+37516cd619
+	- fabric-dimensions-v1 4.0.1+65213ef819
+	- fabric-entity-events-v1 1.8.0+2b27e0a419
+	- fabric-events-interaction-v0 0.7.13+ba9dae0619
+	- fabric-game-rule-api-v1 1.0.53+6ced4dd919
+	- fabric-gametest-api-v1 2.0.5+6fc22b9919
+	- fabric-item-api-v1 11.2.0+3b3cb2e819
+	- fabric-item-group-api-v1 4.1.7+def88e3a19
+	- fabric-key-binding-api-v1 1.0.47+0af3f5a719
+	- fabric-keybindings-v0 0.2.45+df3654b319
+	- fabric-lifecycle-events-v1 2.6.0+0865547519
+	- fabric-loot-api-v2 3.0.15+3f89f5a519
+	- fabric-loot-api-v3 1.0.3+3f89f5a519
+	- fabric-message-api-v1 6.0.14+8aaf3aca19
+	- fabric-model-loading-api-v1 2.1.0+b4d813fc19
+	- fabric-networking-api-v1 4.3.0+c7469b2119
+	- fabric-object-builder-api-v1 15.2.1+40875a9319
+	- fabric-particles-v1 4.0.2+6573ed8c19
+	- fabric-recipe-api-v1 5.0.15+2475392c19
+	- fabric-registry-sync-v0 5.3.1+e3eddc2119
+	- fabric-renderer-api-v1 3.4.1+b4d813fc19
+	- fabric-renderer-indigo 1.7.1+c705a49c19
+	- fabric-renderer-registries-v1 3.2.69+df3654b319
+	- fabric-rendering-data-attachment-v1 0.3.49+73761d2e19
+	- fabric-rendering-fluids-v1 3.1.6+1daea21519
+	- fabric-rendering-v0 1.1.72+df3654b319
+	- fabric-rendering-v1 5.1.0+ab4c25a019
+	- fabric-resource-conditions-api-v1 4.3.0+8dc279b119
+	- fabric-resource-loader-v0 2.0.0+1bb677a619
+	- fabric-screen-api-v1 2.0.25+8b68f1c719
+	- fabric-screen-handler-api-v1 1.3.90+b559734419
+	- fabric-sound-api-v1 1.0.23+6573ed8c19
+	- fabric-transfer-api-v1 5.4.3+c24bd99419
+	- fabric-transitive-access-wideners-v1 6.2.0+45b9699719
+	- fabricloader 0.18.6
+	- java 21
+	- minecraft 1.21.1
+	- mixinextras 0.5.3
+	- modmenu 11.0.5
+	- muft 1.0.0-a1
+	- platform 1.4.2
+	- vanillabackport 1.2.2
+[16:41:45] [main/INFO] (FabricLoader/Mixin) SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/C:/Users/execu/.gradle/caches/modules-2/files-2.1/net.fabricmc/sponge-mixin/0.17.0+mixin.0.8.7/cf31463202f72d03b0ef1e1e38e8ee71b7faaab6/sponge-mixin-0.17.0+mixin.0.8.7.jar Service=Knot/Fabric Env=CLIENT
+[16:41:45] [main/INFO] (FabricLoader/Mixin) Loaded Fabric development mappings for mixin remapper!
+[16:41:45] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_17
+[16:41:45] [main/INFO] (FabricLoader/Mixin) Compatibility level set to JAVA_21
+[16:41:46] [main/WARN] (FabricLoader/Mixin) Error loading class: jeresources/api/util/BiomeHelper (java.lang.ClassNotFoundException: jeresources/api/util/BiomeHelper)
+[16:41:46] [main/WARN] (FabricLoader/Mixin) Error loading class: yalter/mousetweaks/Main (java.lang.ClassNotFoundException: yalter/mousetweaks/Main)
+[16:41:46] [main/INFO] (FabricLoader/MixinExtras|Service) Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.3).
+[16:41:47] [Datafixer Bootstrap/INFO] (Minecraft) 226 Datafixer optimizations took 374 milliseconds
+[16:41:53] [Render thread/INFO] (Minecraft) Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, name=PROD]
+[16:41:53] [Render thread/INFO] (Minecraft) Setting user: Player492
+[16:41:53] [Render thread/INFO] (MusicalFeature) Vanilla Backport detected!
+[16:41:53] [Render thread/INFO] (FabricPackHelper) Registered built-in Resource Pack 'muft:rebrushed_music_discs'
+[16:41:53] [Render thread/INFO] (FabricPackHelper) Registered built-in Data Pack 'muft:diamond_pocket_jukeboxes'
+[16:41:53] [Render thread/INFO] (FabricPackHelper) Registered built-in Data Pack 'muft:backport_recipe_compat'
+[16:41:53] [Render thread/INFO] (FabricPackHelper) Registered built-in Data Pack 'muft:resin_blank_disc'
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for creaking
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for custom_boat
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for custom_chest_boat
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for happy_ghast
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for copper_golem
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for parched
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for camel_husk
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for nautilus
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for zombie_nautilus
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for sulfur_cube
+[16:41:53] [Render thread/ERROR] (Minecraft) No data fixer registered for cushion
+[16:41:54] [Render thread/WARN] (platform) Configuration file C:\Users\execu\Documents\MineMods\muft\fabric\runs\client\config\vanillabackport-common.toml is not correct. Correcting
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.has_updated_bundles was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.bundle_loot was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.has_dyeable_bundle_recipe was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.inverted_bundle_controls was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.bundle_recipe was corrected from null to its default, APPEND. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.resin was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.resin_loot was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.creaking was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.pale_garden was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.pale_trades was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.creaking_particle_color was corrected from null to its default, 6250335. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.creaking_particle_reverse_color was corrected from null to its default, 16545810. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.do_creaking_hearts_work_on_day was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.lead_recipe was corrected from null to its default, APPEND. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key The Garden Awakens.saddle_recipe was corrected from null to its default, APPEND. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.bushes was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.firefly_bushes was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.wildflowers was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.dry_grass was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.fallen_trees was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.leaf_litter was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.cactus_flowers was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.farm_animal_variants was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.wolf_sound_variants was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.camel_spawns was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.spring_trades was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.lodestone_loot was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.mob_variants_spawn_chance was corrected from null to its default, 1.0. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.cactus_flower_spawn_chance was corrected from null to its default, 0.25. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.lodestone_recipe was corrected from null to its default, APPEND. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.dried_ghasts was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.leash_drop_connections was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.tears_music_disc was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.happy_ghast_speed_modifier was corrected from null to its default, 1.0. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.modern_leashes was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Hot as Lava was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Hot as Lava.lava_chicken_music_disc was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.has_copper_horse_armor_loot was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.has_copper_golems was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.golem_weathering_tick_from was corrected from null to its default, 504000. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.golem_weathering_tick_to was corrected from null to its default, 552000. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.golem_item_carry_amount was corrected from null to its default, 16. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.has_copper_nuggets was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.has_copper_toolset was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.has_weathering_lightning_rods was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.has_parched_skeletons was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.has_camel_husks was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.has_nautilus was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.has_zombie_horses was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.zombie_nautilus_spawn_chance was corrected from null to its default, 0.5. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.has_nautilus_armor_loot was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.has_spears was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.can_mounts_float_while_ridden was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed.has_sulfur_caves was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed.has_sulfur_springs was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed.do_geysers_erupt was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed.has_sulfur_cubes was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed.do_sulfur_cubes_explode was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed.do_sulfur_cubes_damage was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed.do_merchant_trade_chaos_cubed_contents was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chaos Cubed.has_bounce_music_disc was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Wilderness Bound was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Wilderness Bound.has_dappled_forest was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Configuration file C:\Users\execu\Documents\MineMods\muft\fabric\runs\client\config\vanillabackport-client.toml is not correct. Correcting
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.endless_bundle_ui was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.has_modern_bundle_models was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.has_modern_redstone_torch_models was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Bundles of Bravery.has_modern_banner_pattern_textures was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.falling_leaves was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.falling_leaves_frequency was corrected from null to its default, 0.01. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.use_legacy_spawn_eggs was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Spring to Life.use_sheep_wool_undercoat was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.enable_locator_bar was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.locator_display_info_bar was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.locator_display_compass_info was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.locator_display_player_heads was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.locator_display_cardinal_points was corrected from null to its default, false. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Chase the Skies.extended_cloud_reach was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.enable_dye_palettes was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.enable_modern_dye_textures was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.end_flash_sky_visuals was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Copper Age.end_flash_terrain_visuals was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Mounts of Mayhem.has_zombie_horse_retexture was corrected from null to its default, true. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Wilderness Bound was corrected from null to its default, SimpleCommentedConfig:{}. 
+[16:41:54] [Render thread/WARN] (platform) Incorrect key Wilderness Bound.has_modern_hay_bale_texture was corrected from null to its default, true. 
+[16:41:54] [Render thread/INFO] (MusicalFeature) Loading existing config
+[16:41:54] [Render thread/INFO] (Mod Menu/Update Checker) Checking mod updates...
+[16:41:54] [Render thread/INFO] (Indigo) [Indigo] Registering Indigo renderer!
+[16:41:55] [Render thread/INFO] (Minecraft) Backend library: LWJGL version 3.3.3-snapshot
+[16:41:55] [ModMenu/Update Checker/Fabric Loader/INFO] (Mod Menu/Update Checker) Update available for 'fabricloader@0.18.6'
+[16:41:56] [Render thread/INFO] (Minecraft) Reloading ResourceManager: vanilla, fabric, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-view-api-v2, fabric-blockrenderlayer-v1, fabric-client-tags-api-v1, fabric-command-api-v1, fabric-command-api-v2, fabric-commands-v0, fabric-content-registries-v0, fabric-convention-tags-v1, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-gametest-api-v1, fabric-item-api-v1, fabric-item-group-api-v1, fabric-key-binding-api-v1, fabric-keybindings-v0, fabric-lifecycle-events-v1, fabric-loot-api-v2, fabric-loot-api-v3, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-renderer-registries-v1, fabric-rendering-data-attachment-v1, fabric-rendering-fluids-v1, fabric-rendering-v0, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-screen-api-v1, fabric-screen-handler-api-v1, fabric-sound-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, modmenu, muft, vanillabackport, muft:rebrushed_music_discs
+[16:41:56] [Worker-Main-13/INFO] (Minecraft) Found unifont_jp_patch-15.1.05.hex, loading
+[16:41:56] [Worker-Main-2/INFO] (Minecraft) Found unifont_all_no_pua-15.1.05.hex, loading
+[16:41:57] [Worker-Main-15/INFO] (MusicalFeature) Loading 17 Pocket Jukebox model pairs
+[16:41:57] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:item.goat_horn.play
+[16:41:57] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[16:41:57] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:block.potent_sulfur.geyser_continuous_eruption_start
+[16:41:58] [Render thread/INFO] (Minecraft) OpenAL initialized on device OpenAL Soft on Headphones (3- EDIFIER W820NB)
+[16:41:58] [Render thread/INFO] (Minecraft) Sound engine started
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 1024x1024x4 minecraft:textures/atlas/blocks.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 2048x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/chest.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[16:41:58] [Render thread/INFO] (Minecraft) Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[16:41:58] [Render thread/WARN] (Minecraft) Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[16:41:58] [Render thread/INFO] (VanillaBackport) Loaded 2 custom leaf color(s)
+[16:42:37] [Render thread/INFO] (Minecraft) Loaded 1675 recipes
+[16:42:37] [Render thread/INFO] (Minecraft) Loaded 1757 advancements
+[16:42:37] [Render thread/INFO] (Minecraft) Loaded 1786 advancements
+[16:42:38] [Render thread/INFO] (VanillaBackport) Loaded 3 custom dry foliage color rule(s)
+[16:42:38] [Render thread/INFO] (BiomeModificationImpl) Applied 67 biome modifications to 67 of 67 new biomes in 26.27 ms
+[16:42:38] [Server thread/INFO] (Minecraft) Starting integrated minecraft server version 1.21.1
+[16:42:38] [Server thread/INFO] (Minecraft) Generating keypair
+[16:42:38] [Server thread/INFO] (Minecraft) Preparing start region for dimension minecraft:overworld
+[16:42:38] [Render thread/INFO] (Minecraft) Preparing spawn area: 0%
+[16:42:38] [Render thread/INFO] (Minecraft) Time elapsed: 213 ms
+[16:42:38] [Server thread/WARN] (ConventionLogWarnings) 
+	Dev warning - Legacy Tags detected. Please migrate your old tags to our new format that follows better conventions!
+	See classes under net.fabricmc.fabric.api.tag.convention.v2 package for all tags.
+
+	NOTE: Many tags have been moved around or renamed. Some new ones were added so please review the new tags.
+	And make sure you follow tag conventions for new tags! The convention is `c` with nouns generally being plural and adjectives being singular.
+	You can disable this message by this system property to your runs: `-Dfabric-tag-conventions-v1.legacyTagWarning=SILENCED`.
+	To see individual legacy tags found, set the system property to `-Dfabric-tag-conventions-v1.legacyTagWarning=VERBOSE` instead. Default is `SHORT`.
+
+[16:42:38] [Server thread/WARN] (TranslationConventionLogWarnings) 
+	Dev warning - Untranslated Item Tags detected. Please translate your item tags so other mods such as recipe viewers can properly display your tag's name.
+	The format desired is tag.item.<namespace>.<path> for the translation key with slashes in path turned into periods.
+	To disable this message, set this system property in your runs: `-Dfabric-tag-conventions-v2.missingTagTranslationWarning=SILENCED`.
+	To see individual untranslated item tags found, set the system property to `-Dfabric-tag-conventions-v2.missingTagTranslationWarning=VERBOSE`.
+	Default is `SHORT`.
+
+[16:42:38] [Server thread/INFO] (Minecraft) Changing view distance to 12, from 10
+[16:42:38] [Server thread/INFO] (Minecraft) Changing simulation distance to 12, from 0
+[16:42:39] [Server thread/INFO] (Minecraft) Player492[local:E:2c6eab2e] logged in with entity id 1 at (3.0728404008005255, 0.0, -0.5898655123517149)
+[16:42:39] [Server thread/INFO] (Minecraft) Player492 joined the game
+[16:42:39] [Render thread/INFO] (Minecraft) Loaded 14 advancements
+[16:43:30] [Server thread/INFO] (Minecraft) [Player492: Unlocked 1675 recipes for Player492]
+[16:43:30] [Render thread/INFO] (Minecraft) [System] [CHAT] Unlocked 1675 recipes for Player492
+[16:43:43] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:43:43] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:overworld
+[16:43:43] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_nether
+[16:43:43] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_end
+[16:43:44] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:43:44] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:overworld
+[16:43:44] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_nether
+[16:43:44] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_end
+[16:43:47] [Render thread/INFO] (Minecraft) Reloading ResourceManager: vanilla, fabric, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-view-api-v2, fabric-blockrenderlayer-v1, fabric-client-tags-api-v1, fabric-command-api-v1, fabric-command-api-v2, fabric-commands-v0, fabric-content-registries-v0, fabric-convention-tags-v1, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-gametest-api-v1, fabric-item-api-v1, fabric-item-group-api-v1, fabric-key-binding-api-v1, fabric-keybindings-v0, fabric-lifecycle-events-v1, fabric-loot-api-v2, fabric-loot-api-v3, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-renderer-registries-v1, fabric-rendering-data-attachment-v1, fabric-rendering-fluids-v1, fabric-rendering-v0, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-screen-api-v1, fabric-screen-handler-api-v1, fabric-sound-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, modmenu, muft, vanillabackport, muft:rebrushed_music_discs
+[16:43:47] [Worker-Main-1/INFO] (Minecraft) Found unifont_all_no_pua-15.1.05.hex, loading
+[16:43:47] [Worker-Main-13/INFO] (Minecraft) Found unifont_jp_patch-15.1.05.hex, loading
+[16:43:48] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:item.goat_horn.play
+[16:43:48] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[16:43:48] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:block.potent_sulfur.geyser_continuous_eruption_start
+[16:43:48] [Render thread/INFO] (Minecraft) OpenAL initialized on device OpenAL Soft on Headphones (3- EDIFIER W820NB)
+[16:43:48] [Render thread/INFO] (Minecraft) Sound engine started
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 1024x1024x4 minecraft:textures/atlas/blocks.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 2048x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/chest.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[16:43:48] [Render thread/INFO] (Minecraft) Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[16:43:48] [Render thread/WARN] (Minecraft) Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[16:43:48] [Render thread/INFO] (VanillaBackport) Loaded 2 custom leaf color(s)
+[16:44:01] [Render thread/INFO] (Minecraft) [System] [CHAT] [Debug]: Reloaded resource packs
+[16:44:01] [Render thread/INFO] (Minecraft) Reloading ResourceManager: vanilla, fabric, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-view-api-v2, fabric-blockrenderlayer-v1, fabric-client-tags-api-v1, fabric-command-api-v1, fabric-command-api-v2, fabric-commands-v0, fabric-content-registries-v0, fabric-convention-tags-v1, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-gametest-api-v1, fabric-item-api-v1, fabric-item-group-api-v1, fabric-key-binding-api-v1, fabric-keybindings-v0, fabric-lifecycle-events-v1, fabric-loot-api-v2, fabric-loot-api-v3, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-renderer-registries-v1, fabric-rendering-data-attachment-v1, fabric-rendering-fluids-v1, fabric-rendering-v0, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-screen-api-v1, fabric-screen-handler-api-v1, fabric-sound-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, modmenu, muft, vanillabackport, muft:rebrushed_music_discs
+[16:44:01] [Worker-Main-6/INFO] (Minecraft) Found unifont_all_no_pua-15.1.05.hex, loading
+[16:44:01] [Worker-Main-7/INFO] (Minecraft) Found unifont_jp_patch-15.1.05.hex, loading
+[16:44:01] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:44:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:overworld
+[16:44:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_nether
+[16:44:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_end
+[16:44:02] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:item.goat_horn.play
+[16:44:02] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[16:44:02] [Render thread/WARN] (Minecraft) Missing sound for event: minecraft:block.potent_sulfur.geyser_continuous_eruption_start
+[16:44:02] [Render thread/INFO] (Minecraft) OpenAL initialized on device OpenAL Soft on Headphones (3- EDIFIER W820NB)
+[16:44:02] [Render thread/INFO] (Minecraft) Sound engine started
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 1024x1024x4 minecraft:textures/atlas/blocks.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 2048x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/chest.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 512x256x0 minecraft:textures/atlas/particles.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 256x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 64x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[16:44:02] [Render thread/INFO] (Minecraft) Created: 1024x512x0 minecraft:textures/atlas/gui.png-atlas
+[16:44:02] [Render thread/WARN] (Minecraft) Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[16:44:02] [Render thread/INFO] (VanillaBackport) Loaded 2 custom leaf color(s)
+[16:44:25] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:44:25] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:overworld
+[16:44:25] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_nether
+[16:44:25] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_end
+[16:45:01] [Server thread/INFO] (Minecraft) Saving and pausing game...
+[16:45:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:overworld
+[16:45:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_nether
+[16:45:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_end
+[16:45:01] [Server thread/INFO] (Minecraft) Player492 lost connection: Disconnected
+[16:45:01] [Server thread/INFO] (Minecraft) Player492 left the game
+[16:45:01] [Server thread/INFO] (Minecraft) Stopping singleplayer server as player logged out
+[16:45:01] [Server thread/INFO] (Minecraft) Stopping server
+[16:45:01] [Server thread/INFO] (Minecraft) Saving players
+[16:45:01] [Server thread/INFO] (Minecraft) Saving worlds
+[16:45:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:overworld
+[16:45:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_nether
+[16:45:01] [Server thread/INFO] (Minecraft) Saving chunks for level 'ServerLevel[Musical Feature Test]'/minecraft:the_end
+[16:45:01] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (Musical Feature Test): All chunks are saved
+[16:45:01] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[16:45:01] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[16:45:01] [Server thread/INFO] (Minecraft) ThreadedAnvilChunkStorage: All dimensions are saved
+[16:45:02] [Render thread/INFO] (Minecraft) Stopping!
