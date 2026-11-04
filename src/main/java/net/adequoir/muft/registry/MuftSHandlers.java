@@ -4,17 +4,16 @@ import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.api.registry.Registrar;
 import net.adequoir.muft.api.registry.Registrars;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
-import net.minecraft.registry.Registries;
-import net.minecraft.resource.featuretoggle.FeatureFlags;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import java.util.function.Supplier;
 
 public sealed interface MuftSHandlers permits RegistryLoader {
-    Registrar<ScreenHandlerType<?>> REGISTRAR = Registrars.create(MusicalFeature.MOD_ID, Registries.SCREEN_HANDLER);
+    Registrar<MenuType<?>> REGISTRAR = Registrars.create(MusicalFeature.MOD_ID, BuiltInRegistries.MENU);
 
-    Supplier<ScreenHandlerType<DiscPressScreenHandler>> DISC_PRESS = REGISTRAR.register(
+    Supplier<MenuType<DiscPressScreenHandler>> DISC_PRESS = REGISTRAR.register(
         "disc_press",
         MuftSHandlers::create,
         factory(DiscPressScreenHandler::new)
@@ -22,11 +21,11 @@ public sealed interface MuftSHandlers permits RegistryLoader {
 
     static void init() {}
 
-    private static <T extends ScreenHandler> ScreenHandlerType.Factory<T> factory(ScreenHandlerType.Factory<T> factory) {
+    private static <T extends AbstractContainerMenu> MenuType.MenuSupplier<T> factory(MenuType.MenuSupplier<T> factory) {
         return factory;
     }
 
-    private static <T extends ScreenHandler> ScreenHandlerType<T> create(ScreenHandlerType.Factory<T> factory) {
-        return new ScreenHandlerType<>(factory, FeatureFlags.VANILLA_FEATURES);
+    private static <T extends AbstractContainerMenu> MenuType<T> create(MenuType.MenuSupplier<T> factory) {
+        return new MenuType<>(factory, FeatureFlags.VANILLA_SET);
     }
 }

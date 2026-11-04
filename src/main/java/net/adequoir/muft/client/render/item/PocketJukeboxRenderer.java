@@ -4,23 +4,23 @@ import net.adequoir.muft.client.util.RenderHelper;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.adequoir.muft.mixin.client.render.item.AxItemRenderer;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.item.ItemModels;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.ItemModelShaper;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import static net.adequoir.muft.MusicalFeature.LOGGER;
+
+import com.mojang.blaze3d.vertex.PoseStack;
 
 public final class PocketJukeboxRenderer {
     private static final Map<Item, JukeboxModelPair> modelPairs = new IdentityHashMap<>();
@@ -30,26 +30,26 @@ public final class PocketJukeboxRenderer {
         PocketJukeboxItem.POCKET_JUKEBOXES.forEach(i -> modelPairs.computeIfAbsent(
             i,
             j -> {
-                var itemId = Registries.ITEM.getId(i);
-                var frontId = itemId.withSuffixedPath("_open_front");
-                var backId = itemId.withSuffixedPath("_open_back");
+                var itemId = BuiltInRegistries.ITEM.getKey(i);
+                var frontId = itemId.withSuffix("_open_front");
+                var backId = itemId.withSuffix("_open_back");
 
-                return new JukeboxModelPair(ModelIdentifier.ofInventoryVariant(frontId), ModelIdentifier.ofInventoryVariant(backId));
+                return new JukeboxModelPair(ModelResourceLocation.inventory(frontId), ModelResourceLocation.inventory(backId));
             }
         ));
     }
 
-    public static void forEachModelId(BiConsumer<ModelIdentifier, ModelIdentifier> consumer) {
+    public static void forEachModelId(BiConsumer<ModelResourceLocation, ModelResourceLocation> consumer) {
         for (var modelPair: modelPairs.values()) consumer.accept(modelPair.front, modelPair.back);
     }
 
     public static boolean render(
-        ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded,
-        MatrixStack matrices, VertexConsumerProvider vertexProvider,
+        ItemStack stack, ItemDisplayContext renderMode, boolean leftHanded,
+        PoseStack matrices, MultiBufferSource vertexProvider,
         int light, int overlay,
-        ItemRenderer renderer, ItemModels models
+        ItemRenderer renderer, ItemModelShaper models
     ) {
-        if (renderMode != ModelTransformationMode.GUI) return false;
+        if (renderMode != ItemDisplayContext.GUI) return false;
         var component = PocketJukeboxComponent.get(stack);
         if (!component.hasSelected()) return false;
         var modelPair = modelPairs.get(stack.getItem());
@@ -66,21 +66,21 @@ public final class PocketJukeboxRenderer {
     }
 
     private static void renderModel(
-        MatrixStack matrices,VertexConsumerProvider provider,
-        ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, BakedModel model,
+        PoseStack matrices,MultiBufferSource provider,
+        ItemStack stack, ItemDisplayContext renderMode, boolean leftHanded, BakedModel model,
         ItemRenderer renderer, int light, int overlay
     ) {
-        matrices.push();
-        model.getTransformation().getTransformation(renderMode).apply(leftHanded, matrices);
+        matrices.pushPose();
+        model.getTransforms().getTransform(renderMode).apply(leftHanded, matrices);
         matrices.translate(-0.5F, -0.5F, -0.5F);
 
-        var renderLayer = RenderLayers.getItemLayer(stack, true);
-        var vertices = ItemRenderer.getDirectItemGlintConsumer(provider, renderLayer, true, stack.hasGlint());
+        var renderLayer = ItemBlockRenderTypes.getRenderType(stack, true);
+        var vertices = ItemRenderer.getFoilBufferDirect(provider, renderLayer, true, stack.hasFoil());
         ((AxItemRenderer) renderer).axRenderBakedItemModel(model, stack, light, overlay, matrices, vertices);
-        matrices.pop();
+        matrices.popPose();
     }
 
-    private record JukeboxModelPair(ModelIdentifier front, ModelIdentifier back) {}
+    private record JukeboxModelPair(ModelResourceLocation front, ModelResourceLocation back) {}
 
     private PocketJukeboxRenderer() {}
 }

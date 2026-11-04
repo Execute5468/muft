@@ -6,16 +6,15 @@ import net.adequoir.muft.client.gui.tooltip.PocketJukeboxTooltipSubmenu;
 import net.adequoir.muft.client.gui.tooltip.TooltipSubmenu;
 import net.adequoir.muft.mixin.client.gui.screen.AxScreen;
 import net.adequoir.muft.mixutils.client.gui.screen.ingame.IHandledScreen;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipData;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,11 +30,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Mixin(HandledScreen.class)
+@Mixin(AbstractContainerScreen.class)
 public abstract class MxHandledScreen implements IHandledScreen {
-    @Shadow protected @Nullable Slot focusedSlot;
+    @Shadow protected @Nullable Slot hoveredSlot;
 
-    @Shadow protected @Final ScreenHandler handler;
+    @Shadow protected @Final AbstractContainerMenu menu;
     @Unique private final List<TooltipSubmenu> tooltipSubmenus = new ArrayList<>();
     @Unique private @Nullable Slot lastFocusedSlot;
 
@@ -49,24 +48,24 @@ public abstract class MxHandledScreen implements IHandledScreen {
     public @Override void muft_addTooltipSubmenu(TooltipSubmenu submenu) { tooltipSubmenus.add(submenu); }
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void onRenderHead(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        lastFocusedSlot = this.focusedSlot;
+    private void onRenderHead(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        lastFocusedSlot = this.hoveredSlot;
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void onRenderTail(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        if (lastFocusedSlot != null && lastFocusedSlot != focusedSlot) {
+    private void onRenderTail(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        if (lastFocusedSlot != null && lastFocusedSlot != hoveredSlot) {
             resetTooltipSubmenus(lastFocusedSlot);
         }
         lastFocusedSlot = null;
     }
 
     public @Override boolean muft_mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        if (focusedSlot == null || !focusedSlot.hasStack()) return false;
+        if (hoveredSlot == null || !hoveredSlot.hasItem()) return false;
         for (int i = 0; i < tooltipSubmenus.size(); i++) {
             var submenu = tooltipSubmenus.get(i);
-            if (!submenu.isApplicableTo(focusedSlot)) continue;
-            if (!submenu.onScroll(horizontalAmount, verticalAmount, focusedSlot.id, focusedSlot.getStack())) continue;
+            if (!submenu.isApplicableTo(hoveredSlot)) continue;
+            if (!submenu.onScroll(horizontalAmount, verticalAmount, hoveredSlot.index, hoveredSlot.getItem())) continue;
             return true;
         }
         return false;
@@ -74,7 +73,7 @@ public abstract class MxHandledScreen implements IHandledScreen {
 
     @Unique
     private void resetTooltipSubmenus(Slot slot) {
-        if (!slot.hasStack()) return;
+        if (!slot.hasItem()) return;
         for (int i = 0; i < tooltipSubmenus.size(); i++) {
             var submenu = tooltipSubmenus.get(i);
             if (submenu.isApplicableTo(slot)) submenu.reset(slot);
@@ -82,14 +81,14 @@ public abstract class MxHandledScreen implements IHandledScreen {
     }
 
     @Inject(
-        method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
+        method = "slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ClickType;)V",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;clickSlot(IIILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V"
+            target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handleInventoryMouseClick(IIILnet/minecraft/world/inventory/ClickType;Lnet/minecraft/world/entity/player/Player;)V"
         )
     )
-    private void whenMouseClick(@Nullable Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo ci) {
-        if (slot == null || !slot.hasStack()) return;
+    private void whenMouseClick(@Nullable Slot slot, int slotId, int button, ClickType actionType, CallbackInfo ci) {
+        if (slot == null || !slot.hasItem()) return;
         for (int i = 0; i < tooltipSubmenus.size(); i++) {
             var submenu = tooltipSubmenus.get(i);
             if (submenu.isApplicableTo(slot)) submenu.onMouseClick(slot, actionType);
@@ -97,19 +96,19 @@ public abstract class MxHandledScreen implements IHandledScreen {
     }
 
     @Inject(
-        method = "close",
+        method = "onClose",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screen/Screen;close()V"
+            target = "Lnet/minecraft/client/gui/screens/Screen;onClose()V"
         )
     )
-    private void onClose(CallbackInfo ci) { if (focusedSlot != null) resetTooltipSubmenus(focusedSlot); }
+    private void onClose(CallbackInfo ci) { if (hoveredSlot != null) resetTooltipSubmenus(hoveredSlot); }
 
     @Redirect(
-        method = "drawMouseoverTooltip",
+        method = "renderTooltip",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/item/ItemStack;isEmpty()Z",
+            target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z",
             ordinal = 0
         )
     )
@@ -117,23 +116,23 @@ public abstract class MxHandledScreen implements IHandledScreen {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Redirect(
-        method = "drawMouseoverTooltip",
+        method = "renderTooltip",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/DrawContext;drawTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Ljava/util/Optional;II)V"
+            target = "Lnet/minecraft/client/gui/GuiGraphics;renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;Ljava/util/Optional;II)V"
         )
     )
     private void mouseoverDrawRedirect(
-        DrawContext context, TextRenderer textRenderer, List<Text> text, Optional<TooltipData> data, int x, int y,
+        GuiGraphics context, Font textRenderer, List<Component> text, Optional<TooltipComponent> data, int x, int y,
         @Local ItemStack stack
     ) {
-        if (!handler.getCursorStack().isEmpty() && !isItemTooltipSticky(stack)) return;
-        context.drawTooltip(textRenderer, text, data, x, y);
+        if (!menu.getCarried().isEmpty() && !isItemTooltipSticky(stack)) return;
+        context.renderTooltip(textRenderer, text, data, x, y);
     }
 
     @Unique
     private boolean isItemTooltipSticky(ItemStack item) {
-        var data = item.getTooltipData().orElse(null);
+        var data = item.getTooltipImage().orElse(null);
         return data instanceof PocketJukeboxTooltipComponent;
     }
 }

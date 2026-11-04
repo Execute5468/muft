@@ -1,9 +1,9 @@
 package net.adequoir.muft.registry.misc;
 
 import net.adequoir.muft.api.item.CreativeMenuEntries;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 
 import static net.adequoir.muft.registry.MuftItems.*;
 import static net.adequoir.muft.registry.MuftBlocks.*;
@@ -12,7 +12,7 @@ public final class MuftItemEntries {
 
     static {
         CreativeMenuEntries.addBefore(
-            ItemGroups.TOOLS, Items.MUSIC_DISC_13,
+            CreativeModeTabs.TOOLS_AND_UTILITIES, Items.MUSIC_DISC_13,
             POCKET_JUKEBOX,
             WHITE_POCKET_JUKEBOX,
             LIGHT_GRAY_POCKET_JUKEBOX,
@@ -31,9 +31,9 @@ public final class MuftItemEntries {
             MAGENTA_POCKET_JUKEBOX,
             PINK_POCKET_JUKEBOX
         );
-        CreativeMenuEntries.addAfter(ItemGroups.TOOLS, Items.MUSIC_DISC_PIGSTEP, BLANK_DISC);
-        CreativeMenuEntries.addAfter(ItemGroups.INGREDIENTS, Items.IRON_NUGGET, COPPER_NUGGET);
-        CreativeMenuEntries.addAfter(ItemGroups.FUNCTIONAL, Blocks.BLAST_FURNACE, DISC_PRESS);
+        CreativeMenuEntries.addAfter(CreativeModeTabs.TOOLS_AND_UTILITIES, Items.MUSIC_DISC_PIGSTEP, BLANK_DISC);
+        CreativeMenuEntries.addAfter(CreativeModeTabs.INGREDIENTS, Items.IRON_NUGGET, COPPER_NUGGET);
+        CreativeMenuEntries.addAfter(CreativeModeTabs.FUNCTIONAL_BLOCKS, Blocks.BLAST_FURNACE, DISC_PRESS);
     }
 
     public static void init() {}

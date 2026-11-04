@@ -3,9 +3,9 @@ package net.adequoir.muft.fabric.registry;
 import com.mojang.logging.LogUtils;
 import net.adequoir.muft.api.registry.Registrar;
 import net.adequoir.muft.api.registry.RegistrarFactory;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 
 import java.util.function.Consumer;
@@ -19,8 +19,8 @@ public final class FabricRegistrar<T> extends Registrar<T> {
     FabricRegistrar(String namespace, Registry<T> registry) { super(namespace, registry); }
 
     @SuppressWarnings("unchecked")
-    public @Override <S, U extends T> Supplier<U> registerWith(Identifier id, Function<? super S, U> factory, S value, Consumer<? super U> callback) {
-        var key = RegistryKey.of(registry.getKey(), id);
+    public @Override <S, U extends T> Supplier<U> registerWith(ResourceLocation id, Function<? super S, U> factory, S value, Consumer<? super U> callback) {
+        var key = ResourceKey.create(registry.key(), id);
         var existing = registry.get(key);
         if (existing != null) {
             LOGGER.info("Entry with key '{}' already exists, skipping registration", key);
@@ -31,7 +31,7 @@ public final class FabricRegistrar<T> extends Registrar<T> {
         return supplierOf(entry);
     }
 
-    public @Override <S, U extends T> Supplier<U> registerWith(Identifier id, Function<? super S, U> factory, Supplier<S> deferredValue, Consumer<? super U> callback) {
+    public @Override <S, U extends T> Supplier<U> registerWith(ResourceLocation id, Function<? super S, U> factory, Supplier<S> deferredValue, Consumer<? super U> callback) {
         return registerWith(id, factory, deferredValue.get(), callback);
     }
 

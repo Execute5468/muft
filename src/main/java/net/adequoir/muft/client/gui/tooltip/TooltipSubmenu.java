@@ -1,8 +1,8 @@
 package net.adequoir.muft.client.gui.tooltip;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public interface TooltipSubmenu {
     boolean isApplicableTo(Slot slot);
@@ -11,5 +11,5 @@ public interface TooltipSubmenu {
 
     void reset(Slot slot);
 
-    void onMouseClick(Slot slot, SlotActionType actionType);
+    void onMouseClick(Slot slot, ClickType actionType);
 }

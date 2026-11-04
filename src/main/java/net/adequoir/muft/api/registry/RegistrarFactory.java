@@ -1,6 +1,6 @@
 package net.adequoir.muft.api.registry;
 
-import net.minecraft.registry.Registry;
+import net.minecraft.core.Registry;
 
 @FunctionalInterface
 public interface RegistrarFactory {

@@ -2,21 +2,20 @@ package net.adequoir.muft.registry;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.component.PocketJukeboxComponent;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.adequoir.muft.api.registry.Registrar;
 import net.adequoir.muft.api.registry.Registrars;
-import net.minecraft.component.ComponentType;
-import net.minecraft.registry.Registries;
-
 import java.util.function.Supplier;
 
 public sealed interface MuftComponentTypes permits RegistryLoader {
-    Registrar<ComponentType<?>> REGISTRAR = Registrars.create(MusicalFeature.MOD_ID, Registries.DATA_COMPONENT_TYPE);
+    Registrar<DataComponentType<?>> REGISTRAR = Registrars.create(MusicalFeature.MOD_ID, BuiltInRegistries.DATA_COMPONENT_TYPE);
 
-    Supplier<ComponentType<PocketJukeboxComponent>> POCKET_JUKEBOX_CONTENTS = REGISTRAR.register(
+    Supplier<DataComponentType<PocketJukeboxComponent>> POCKET_JUKEBOX_CONTENTS = REGISTRAR.register(
         "pocket_jukebox_contents",
-        ComponentType.Builder::build,
-        ComponentType.<PocketJukeboxComponent>builder().codec(PocketJukeboxComponent.CODEC)
-                     .packetCodec(PocketJukeboxComponent.PACKET_CODEC).cache()
+        DataComponentType.Builder::build,
+        DataComponentType.<PocketJukeboxComponent>builder().persistent(PocketJukeboxComponent.CODEC)
+                     .networkSynchronized(PocketJukeboxComponent.PACKET_CODEC).cacheEncoding()
     );
 
     static void init() {}

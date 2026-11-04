@@ -6,17 +6,17 @@ import net.adequoir.muft.client.config.MuftConfigManager;
 import net.adequoir.muft.client.sound.PocketJukeboxManager;
 import net.adequoir.muft.client.util.RenderHelper;
 import net.adequoir.muft.component.PocketJukeboxComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.Item;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.CommonColors;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -36,18 +36,18 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
     private static final int PROGRESS_BAR_HEIGHT = PROGRESS_BORDER_HEIGHT - (2 * PROGRESS_BORDER_MARGIN);
     private static final int Y_MARGIN = 4;
 
-    private static final Identifier PROGRESS_BORDER_TEXTURE = MusicalFeature.id("container/pocket_jukebox/pocket_jukebox_progressbar_border");
-    private static final Identifier PROGRESS_FILL_TEXTURE = MusicalFeature.id("container/pocket_jukebox/pocket_jukebox_progressbar_fill");
-    private static final Identifier PROGRESS_FULL_TEXTURE = MusicalFeature.id("container/pocket_jukebox/pocket_jukebox_progressbar_full");
-    private static final Identifier SLOT_HIGHLIGHT_BACK_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_highlight_back");
-    private static final Identifier SLOT_HIGHLIGHT_FRONT_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_highlight_front");
-    private static final Identifier SLOT_BACKGROUND_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_background");
-    private static final Identifier SLOT_PLAYING_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_playing");
-    private static final Identifier SLOT_PAUSED_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_paused");
+    private static final ResourceLocation PROGRESS_BORDER_TEXTURE = MusicalFeature.id("container/pocket_jukebox/pocket_jukebox_progressbar_border");
+    private static final ResourceLocation PROGRESS_FILL_TEXTURE = MusicalFeature.id("container/pocket_jukebox/pocket_jukebox_progressbar_fill");
+    private static final ResourceLocation PROGRESS_FULL_TEXTURE = MusicalFeature.id("container/pocket_jukebox/pocket_jukebox_progressbar_full");
+    private static final ResourceLocation SLOT_HIGHLIGHT_BACK_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_highlight_back");
+    private static final ResourceLocation SLOT_HIGHLIGHT_FRONT_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_highlight_front");
+    private static final ResourceLocation SLOT_BACKGROUND_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_background");
+    private static final ResourceLocation SLOT_PLAYING_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_playing");
+    private static final ResourceLocation SLOT_PAUSED_TEXTURE = MusicalFeature.id("container/pocket_jukebox/slot_paused");
 
-    private static final Text TEXT_FULL = Text.translatable("item.muft.pocket_jukebox.full");
-    private static final Text TEXT_EMPTY = Text.translatable("item.muft.pocket_jukebox.empty");
-    private static final Text TEXT_EMPTY_DESCRIPTION = Text.translatable("item.muft.pocket_jukebox.empty.description");
+    private static final Component TEXT_FULL = Component.translatable("item.muft.pocket_jukebox.full");
+    private static final Component TEXT_EMPTY = Component.translatable("item.muft.pocket_jukebox.empty");
+    private static final Component TEXT_EMPTY_DESCRIPTION = Component.translatable("item.muft.pocket_jukebox.empty.description");
     private static final int TEXT_COLOR = 0xFFABAAAB;
 
     private final PocketJukeboxComponent jukeboxContents;
@@ -58,33 +58,33 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
     }
 
     public @Override int getHeight() { return jukeboxContents.isEmpty() ? getHeightOfEmpty() : getHeightOfNonEmpty(); }
-    public @Override int getWidth(TextRenderer textRenderer) { return ROW_WIDTH; }
+    public @Override int getWidth(Font textRenderer) { return ROW_WIDTH; }
 
     private int getHeightOfNonEmpty() { return this.getRowsHeight() + PROGRESS_BORDER_HEIGHT + 2 * Y_MARGIN; }
     private int getRowsHeight() { return this.getRows() * SLOT_DIMENSION; }
     private int getXMargin(int width) { return (width - ROW_WIDTH) / 2; }
-    private int getRows() { return MathHelper.ceilDiv(getNumVisibleSlots(), SLOTS_PER_ROW); }
+    private int getRows() { return Mth.positiveCeilDiv(getNumVisibleSlots(), SLOTS_PER_ROW); }
     private int getNumVisibleSlots() { return Math.min(MAX_SLOT_COUNT, jukeboxContents.size()); }
 
-    public @Override void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context) {
+    public @Override void drawItems(Font textRenderer, int x, int y, int width, int height, GuiGraphics context) {
         if (jukeboxContents.isEmpty()) { drawEmptyTooltip(textRenderer, x, y, width, context); return; }
         drawNonEmptyTooltip(textRenderer, x, y, width, context);
     }
 
-    private void drawEmptyTooltip(TextRenderer textRenderer, int x, int y, int width, DrawContext context) {
+    private void drawEmptyTooltip(Font textRenderer, int x, int y, int width, GuiGraphics context) {
         int drawX = x + getXMargin(width);
         drawEmptyDescription(drawX, y, textRenderer, context);
         drawProgressBar(drawX, y + getDescriptionHeight(textRenderer) + Y_MARGIN, textRenderer, context);
     }
 
-    private static void drawEmptyDescription(int x, int y, TextRenderer textRenderer, DrawContext context) {
-        for (OrderedText orderedText: textRenderer.wrapLines(TEXT_EMPTY_DESCRIPTION, ROW_WIDTH)) {
-            context.drawText(textRenderer, orderedText, x, y, TEXT_COLOR, true);
+    private static void drawEmptyDescription(int x, int y, Font textRenderer, GuiGraphics context) {
+        for (FormattedCharSequence orderedText: textRenderer.split(TEXT_EMPTY_DESCRIPTION, ROW_WIDTH)) {
+            context.drawString(textRenderer, orderedText, x, y, TEXT_COLOR, true);
             y += 9;
         }
     }
 
-    private void drawNonEmptyTooltip(TextRenderer textRenderer, int x, int y, int width, DrawContext context) {
+    private void drawNonEmptyTooltip(Font textRenderer, int x, int y, int width, GuiGraphics context) {
         int rowCount = getRows();
 
         int i = x + getXMargin(width) + ROW_WIDTH;
@@ -104,8 +104,8 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
         drawProgressBar(x + getXMargin(width), y + getRowsHeight() + Y_MARGIN, textRenderer, context);
     }
 
-    private void drawPlaying(DrawContext context, int i, int j) {
-        var player = MinecraftClient.getInstance().player;
+    private void drawPlaying(GuiGraphics context, int i, int j) {
+        var player = Minecraft.getInstance().player;
         if (player == null) return;
         var manager = PocketJukeboxManager.get(player);
         var discId = manager.getDiscId(jukeboxContents);
@@ -117,18 +117,18 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
         int n = i - columnIndex * SLOT_DIMENSION;
         int o = j - rowIndex * SLOT_DIMENSION;
 
-        context.drawGuiTexture(texture, n, o, SLOT_DIMENSION, SLOT_DIMENSION);
+        context.blitSprite(texture, n, o, SLOT_DIMENSION, SLOT_DIMENSION);
     }
 
-    private void drawItem(int index, int x, int y, int seed, TextRenderer textRenderer, DrawContext context) {
+    private void drawItem(int index, int x, int y, int seed, Font textRenderer, GuiGraphics context) {
         boolean isSelected = index == jukeboxContents.selectedIndex();
         var itemEntry = jukeboxContents.get(index);
         if (isSelected) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            context.drawGuiTexture(SLOT_HIGHLIGHT_BACK_TEXTURE, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
+            context.blitSprite(SLOT_HIGHLIGHT_BACK_TEXTURE, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
             RenderSystem.disableBlend();
-        } else context.drawGuiTexture(SLOT_BACKGROUND_TEXTURE, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
+        } else context.blitSprite(SLOT_BACKGROUND_TEXTURE, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
 
         RenderHelper.drawItem(context, itemEntry, x + Y_MARGIN, y + Y_MARGIN, seed);
         RenderHelper.drawStackOverlay(context, textRenderer, itemEntry, x + Y_MARGIN, y + Y_MARGIN);
@@ -136,80 +136,80 @@ public class PocketJukeboxTooltipComponent implements MuftTooltipComponent {
         if (!isSelected) return;
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        context.drawGuiTexture(SLOT_HIGHLIGHT_FRONT_TEXTURE, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
+        context.blitSprite(SLOT_HIGHLIGHT_FRONT_TEXTURE, x, y, SLOT_DIMENSION, SLOT_DIMENSION);
         RenderSystem.disableBlend();
     }
 
-    private void drawSelectedItemTooltip(TextRenderer textRenderer, DrawContext drawContext, int x, int y, int width) {
+    private void drawSelectedItemTooltip(Font textRenderer, GuiGraphics drawContext, int x, int y, int width) {
         if (!jukeboxContents.hasSelected()) return;
         state.update(textRenderer, jukeboxContents);
 
         var j = ((width) - state.width) / 2;
-        drawContext.drawTooltip(textRenderer, state.tooltip, x + j - 12, y + state.yOffset - 15);
+        drawContext.renderComponentTooltip(textRenderer, state.tooltip, x + j - 12, y + state.yOffset - 15);
     }
 
-    private void drawProgressBar(int x, int y, TextRenderer textRenderer, DrawContext context) {
-        context.drawGuiTexture(getProgressFillTexture(), x + PROGRESS_BORDER_MARGIN, y + PROGRESS_BORDER_MARGIN, getProgressFill(), PROGRESS_BAR_HEIGHT);
-        context.drawGuiTexture(PROGRESS_BORDER_TEXTURE, x, y, PROGRESS_BORDER_WIDTH, PROGRESS_BORDER_HEIGHT);
-        Text text = getProgressLabel();
-        if (text != null) context.drawCenteredTextWithShadow(textRenderer, text, x + PROGRESS_BORDER_WIDTH / 2, y + 3, Colors.WHITE);
+    private void drawProgressBar(int x, int y, Font textRenderer, GuiGraphics context) {
+        context.blitSprite(getProgressFillTexture(), x + PROGRESS_BORDER_MARGIN, y + PROGRESS_BORDER_MARGIN, getProgressFill(), PROGRESS_BAR_HEIGHT);
+        context.blitSprite(PROGRESS_BORDER_TEXTURE, x, y, PROGRESS_BORDER_WIDTH, PROGRESS_BORDER_HEIGHT);
+        Component text = getProgressLabel();
+        if (text != null) context.drawCenteredString(textRenderer, text, x + PROGRESS_BORDER_WIDTH / 2, y + 3, CommonColors.WHITE);
     }
 
     private static int getHeightOfEmpty() {
-        return getDescriptionHeight(MinecraftClient.getInstance().textRenderer) + PROGRESS_BORDER_HEIGHT + 2 * Y_MARGIN;
+        return getDescriptionHeight(Minecraft.getInstance().font) + PROGRESS_BORDER_HEIGHT + 2 * Y_MARGIN;
     }
 
-    private static int getDescriptionHeight(TextRenderer textRenderer) {
-        return textRenderer.wrapLines(TEXT_EMPTY_DESCRIPTION, ROW_WIDTH).size() * 9;
+    private static int getDescriptionHeight(Font textRenderer) {
+        return textRenderer.split(TEXT_EMPTY_DESCRIPTION, ROW_WIDTH).size() * 9;
     }
 
-    private Identifier getProgressFillTexture() {
+    private ResourceLocation getProgressFillTexture() {
         return jukeboxContents.isFull() ? PROGRESS_FULL_TEXTURE : PROGRESS_FILL_TEXTURE;
     }
 
     private int getProgressFill() {
         float width = PROGRESS_BAR_WIDTH * ((float) jukeboxContents.size() / MAX_SLOT_COUNT);
-        return MathHelper.clamp((int) width, 0, PROGRESS_BAR_WIDTH);
+        return Mth.clamp((int) width, 0, PROGRESS_BAR_WIDTH);
     }
 
-    private @Nullable Text getProgressLabel() {
+    private @Nullable Component getProgressLabel() {
         return jukeboxContents.isEmpty() ? TEXT_EMPTY : (jukeboxContents.isFull() ? TEXT_FULL : null);
     }
 
     private static class RenderState {
         private PocketJukeboxComponent previous;
-        private final Item.TooltipContext tooltipContext = Item.TooltipContext.create(MinecraftClient.getInstance().world);
+        private final Item.TooltipContext tooltipContext = Item.TooltipContext.of(Minecraft.getInstance().level);
 
-        private List<Text> tooltip;
+        private List<Component> tooltip;
         private int yOffset;
         private int width;
 
-        public void update(TextRenderer textRenderer, PocketJukeboxComponent component) {
+        public void update(Font textRenderer, PocketJukeboxComponent component) {
             if (component == previous) return;
             loadTooltip(textRenderer, component);
             previous = component;
         }
 
-        private void loadTooltip(TextRenderer textRenderer, PocketJukeboxComponent component) {
+        private void loadTooltip(Font textRenderer, PocketJukeboxComponent component) {
             var itemEntry = component.getSelected();
-            Text text = itemEntry.name().copy().formatted(itemEntry.rarity().getFormatting());
+            Component text = itemEntry.name().copy().withStyle(itemEntry.rarity().color());
 
             if (MuftConfigManager.config().betterJukeboxTooltip()) {
-                var jukeboxSong = itemEntry.get(DataComponentTypes.JUKEBOX_PLAYABLE);
+                var jukeboxSong = itemEntry.get(DataComponents.JUKEBOX_PLAYABLE);
                 if (jukeboxSong == null) {
                     tooltip = List.of(text);
                     return;
                 }
 
-                tooltip = Arrays.asList(new Text[2]);
+                tooltip = Arrays.asList(new Component[2]);
                 tooltip.set(0, text);
-                jukeboxSong.appendTooltip(tooltipContext, t -> tooltip.set(1, t), TooltipType.BASIC);
-                yOffset = -textRenderer.fontHeight - 4;
+                jukeboxSong.addToTooltip(tooltipContext, t -> tooltip.set(1, t), TooltipFlag.NORMAL);
+                yOffset = -textRenderer.lineHeight - 4;
 
-                width = Math.max(textRenderer.getWidth(text), textRenderer.getWidth(tooltip.get(1)));
+                width = Math.max(textRenderer.width(text), textRenderer.width(tooltip.get(1)));
             } else {
                 tooltip = List.of(text);
-                width = textRenderer.getWidth(text);
+                width = textRenderer.width(text);
                 yOffset = 0;
             }
         }

@@ -3,7 +3,7 @@ package net.adequoir.muft.client.registry;
 import net.adequoir.muft.client.gui.screen.DiscPressScreen;
 
 import static net.adequoir.muft.registry.MuftSHandlers.DISC_PRESS;
-import static net.minecraft.client.gui.screen.ingame.HandledScreens.register;
+import static net.minecraft.client.gui.screens.MenuScreens.register;
 
 public final class MuftScreens {
 

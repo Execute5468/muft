@@ -7,7 +7,7 @@ import net.adequoir.muft.api.resource.PackStorage;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
 
 public class FabricPackHelper extends PackHelper {
@@ -34,7 +34,7 @@ public class FabricPackHelper extends PackHelper {
         });
     }
 
-    private String getPackName(ResourceType type) { return type == ResourceType.CLIENT_RESOURCES ? "Resource Pack" : "Data Pack"; }
+    private String getPackName(PackType type) { return type == PackType.CLIENT_RESOURCES ? "Resource Pack" : "Data Pack"; }
 
     private static ResourcePackActivationType toFabricType(PackState state) {
         return switch (state) {

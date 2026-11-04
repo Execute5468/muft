@@ -3,10 +3,10 @@ package net.adequoir.muft.api.client.config;
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.client.config.MuftConfigManager;
 import net.adequoir.muft.util.StringUtil;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.SimpleOption;
-import net.minecraft.text.Text;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import static net.adequoir.muft.MusicalFeature.MOD_ID;
 
 public final class OptionsHelper {
-    public static @Nullable SimpleOption<?> of(Field field) {
+    public static @Nullable OptionInstance<?> of(Field field) {
         var type = field.getType();
 
         if (type == boolean.class) return ofBool(field);
@@ -25,24 +25,24 @@ public final class OptionsHelper {
         return null;
     }
 
-    public static SimpleOption<Boolean> ofBool(Field field) {
+    public static OptionInstance<Boolean> ofBool(Field field) {
         var fieldName = nameOf(field);
-        return SimpleOption.ofBoolean(fieldName, tooltipOf(field, fieldName), getField(field, fieldName), consumerOf(field, fieldName));
+        return OptionInstance.createBoolean(fieldName, tooltipOf(field, fieldName), getField(field, fieldName), consumerOf(field, fieldName));
     }
 
-    public static SimpleOption<Integer> ofInt(Field field) {
+    public static OptionInstance<Integer> ofInt(Field field) {
         var fieldName = nameOf(field);
 
         var data = field.getAnnotation(Option.Int.class);
         if (data == null) throw new IllegalStateException("Annotation @Option.Int required for int-based options");
         var unitName = prefix(data.unit());
 
-        SimpleOption.ValueTextGetter<Integer> valueTextGetter = (optionText, value) -> GameOptions.getGenericValueText(
-            optionText, Text.translatable(unitName, value)
+        OptionInstance.CaptionBasedToString<Integer> valueTextGetter = (optionText, value) -> Options.genericValueLabel(
+            optionText, Component.translatable(unitName, value)
         );
-        var slider = new SimpleOption.ValidatingIntSliderCallbacks(data.min(), data.max(), false);
+        var slider = new OptionInstance.IntRange(data.min(), data.max(), false);
 
-        return new SimpleOption<>(
+        return new OptionInstance<>(
             fieldName,
             tooltipOf(field, fieldName),
             valueTextGetter,
@@ -52,17 +52,17 @@ public final class OptionsHelper {
         );
     }
 
-    private static SimpleOption<?> ofEnumSliderImpl(Field field) {
+    private static OptionInstance<?> ofEnumSliderImpl(Field field) {
         var fieldName = nameOf(field);
         var type = field.getType();
         var enumName = StringUtil.lowercaseFirst(type.getSimpleName());
 
         var values = List.of(type.getEnumConstants());
-        SimpleOption.ValueTextGetter<Integer> valueTextGetter = (optionText, value) -> Text.translatable(enumKeyOf(enumName, values.get(value)));
-        var slider = new SimpleOption.ValidatingIntSliderCallbacks(0, values.size() - 1, false);
+        OptionInstance.CaptionBasedToString<Integer> valueTextGetter = (optionText, value) -> Component.translatable(enumKeyOf(enumName, values.get(value)));
+        var slider = new OptionInstance.IntRange(0, values.size() - 1, false);
         Consumer<Integer> consumer = i -> setField(field, fieldName, values.get(i));
 
-        return new SimpleOption<>(
+        return new OptionInstance<>(
             fieldName,
             tooltipOf(field, fieldName),
             valueTextGetter,
@@ -72,23 +72,23 @@ public final class OptionsHelper {
         );
     }
 
-    public static SimpleOption<?> ofEnum(Field field) {
+    public static OptionInstance<?> ofEnum(Field field) {
         var enumOption = field.getAnnotation(Option.Enum.class);
         if (enumOption == null) throw new IllegalStateException("Annotation @Option.Enum required for enum-based options");
         return enumOption.type() == OptionType.CYCLIC ? ofEnumCycleImpl(field) : ofEnumSliderImpl(field);
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends Enum<E>> SimpleOption<E> ofEnumCycleImpl(Field field) {
+    private static <E extends Enum<E>> OptionInstance<E> ofEnumCycleImpl(Field field) {
         var fieldName = nameOf(field);
         var type = (Class<E>) field.getType();
         var enumName = StringUtil.lowercaseFirst(type.getSimpleName());
 
-        SimpleOption.ValueTextGetter<E> valueTextGetter = (optionText, value) -> Text.translatable(enumKeyOf(enumName, value));
+        OptionInstance.CaptionBasedToString<E> valueTextGetter = (optionText, value) -> Component.translatable(enumKeyOf(enumName, value));
         var values = List.of(type.getEnumConstants());
-        var callback = new SimpleOption.PotentialValuesBasedCallbacks<>(values, null);
+        var callback = new OptionInstance.Enum<>(values, null);
 
-        return new SimpleOption<>(
+        return new OptionInstance<>(
             fieldName,
             tooltipOf(field, fieldName),
             valueTextGetter,
@@ -107,10 +107,10 @@ public final class OptionsHelper {
     private static String prefix(String string) { return MOD_ID + ".options." + string; }
     private static String nameOf(Field field) { return MOD_ID + ".options." + field.getName(); }
 
-    private static <T> SimpleOption.TooltipFactory<T> tooltipOf(Field field, String fieldName) {
+    private static <T> OptionInstance.TooltipSupplier<T> tooltipOf(Field field, String fieldName) {
         var hasTooltip = field.getAnnotation(HasTooltip.class);
-        if (hasTooltip == null) return SimpleOption.emptyTooltip();
-        var tooltip = Tooltip.of(Text.translatable(fieldName + ".tooltip"));
+        if (hasTooltip == null) return OptionInstance.noTooltip();
+        var tooltip = Tooltip.create(Component.translatable(fieldName + ".tooltip"));
         return v -> tooltip;
     }
 

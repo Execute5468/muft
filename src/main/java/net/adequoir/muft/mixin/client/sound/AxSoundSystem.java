@@ -1,15 +1,15 @@
 package net.adequoir.muft.mixin.client.sound;
 
-import net.minecraft.client.sound.Channel;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.client.sound.SoundSystem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.Map;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.ChannelAccess;
+import net.minecraft.client.sounds.SoundEngine;
 
-@Mixin(SoundSystem.class)
+@Mixin(SoundEngine.class)
 public interface AxSoundSystem {
-    @Accessor("sources")
-    Map<SoundInstance, Channel.SourceManager> axSources();
+    @Accessor("instanceToChannel")
+    Map<SoundInstance, ChannelAccess.ChannelHandle> axSources();
 }

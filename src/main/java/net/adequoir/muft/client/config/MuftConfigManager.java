@@ -4,8 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.api.client.config.OptionsHelper;
-import net.minecraft.client.option.SimpleOption;
-
+import net.minecraft.client.OptionInstance;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,14 +40,14 @@ public final class MuftConfigManager {
         }
     }
 
-    public static SimpleOption<?>[] asOptions() {
-        var options = new ArrayList<SimpleOption<?>>();
+    public static OptionInstance<?>[] asOptions() {
+        var options = new ArrayList<OptionInstance<?>>();
         for (var field: MuftConfig.class.getDeclaredFields()) {
             if (Modifier.isStatic(field.getModifiers())) continue;
             var option = OptionsHelper.of(field);
             if (option != null) options.add(option);
         }
-        return options.toArray(SimpleOption[]::new);
+        return options.toArray(OptionInstance[]::new);
     }
 
     public static void init() {}

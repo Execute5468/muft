@@ -3,18 +3,17 @@ package net.adequoir.muft.registry;
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.adequoir.muft.api.registry.Registrar;
 import net.adequoir.muft.api.registry.Registrars;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
 import java.util.function.Supplier;
 
 public sealed interface MuftItems permits RegistryLoader {
-    Registrar<Item> REGISTRAR = Registrars.create(MusicalFeature.MOD_ID, Registries.ITEM);
+    Registrar<Item> REGISTRAR = Registrars.create(MusicalFeature.MOD_ID, BuiltInRegistries.ITEM);
 
-    Supplier<Item> COPPER_NUGGET = REGISTRAR.register(Identifier.ofVanilla("copper_nugget"), Item::new, new Item.Settings());
+    Supplier<Item> COPPER_NUGGET = REGISTRAR.register(ResourceLocation.withDefaultNamespace("copper_nugget"), Item::new, new Item.Properties());
 
     Supplier<Item> POCKET_JUKEBOX = registerPocketJukebox("pocket_jukebox");
     Supplier<Item> WHITE_POCKET_JUKEBOX = registerPocketJukebox("white_pocket_jukebox");
@@ -34,7 +33,7 @@ public sealed interface MuftItems permits RegistryLoader {
     Supplier<Item> MAGENTA_POCKET_JUKEBOX = registerPocketJukebox("magenta_pocket_jukebox");
     Supplier<Item> PINK_POCKET_JUKEBOX = registerPocketJukebox("pink_pocket_jukebox");
 
-    Supplier<Item> BLANK_DISC = REGISTRAR.register("blank_disc", Item::new, new Item.Settings());
+    Supplier<Item> BLANK_DISC = REGISTRAR.register("blank_disc", Item::new, new Item.Properties());
 
     Supplier<Item> TRACK_DISC = registerUnstackable("track_disc");
     Supplier<Item> WHITE_TRACK_DISC = registerUnstackable("white_track_disc");
@@ -64,9 +63,9 @@ public sealed interface MuftItems permits RegistryLoader {
         return REGISTRAR.register(name, Item::new, unstackableSettings());
     }
 
-    private static Supplier<Item.Settings> pocketJukeboxSettings() {
-        return () -> new Item.Settings().maxCount(1)
+    private static Supplier<Item.Properties> pocketJukeboxSettings() {
+        return () -> new Item.Properties().stacksTo(1)
                                         .component(MuftComponentTypes.POCKET_JUKEBOX_CONTENTS.get(), PocketJukeboxComponent.DEFAULT);
     }
-    private static Item.Settings unstackableSettings() { return new Item.Settings().maxCount(1); }
+    private static Item.Properties unstackableSettings() { return new Item.Properties().stacksTo(1); }
 }

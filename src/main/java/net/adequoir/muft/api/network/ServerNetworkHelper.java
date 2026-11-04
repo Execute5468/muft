@@ -1,15 +1,15 @@
 package net.adequoir.muft.api.network;
 
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class ServerNetworkHelper {
     private static @Nullable ServerNetworkHelper instance;
 
-    protected abstract void sendPayload(ServerPlayerEntity player, CustomPayload payload);
+    protected abstract void sendPayload(ServerPlayer player, CustomPacketPayload payload);
 
-    public static void send(ServerPlayerEntity player, CustomPayload payload) {
+    public static void send(ServerPlayer player, CustomPacketPayload payload) {
         if (instance != null) { instance.sendPayload(player, payload); return; }
         throw new IllegalStateException("ServerNetworkHelper has not been bootstrapped!");
     }

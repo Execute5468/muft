@@ -5,21 +5,21 @@ import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.adequoir.muft.api.client.network.ClientNetworkHelper;
 import net.adequoir.muft.network.PocketJukeboxItemSelectedPayload;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class PocketJukeboxTooltipSubmenu implements TooltipSubmenu {
-    private final MinecraftClient client;
+    private final Minecraft client;
     private final Scroller scroller;
 
-    public PocketJukeboxTooltipSubmenu(MinecraftClient client) {
+    public PocketJukeboxTooltipSubmenu(Minecraft client) {
         this.client = client;
         this.scroller = new Scroller();
     }
 
-    public @Override boolean isApplicableTo(Slot slot) { return slot.getStack().getItem() instanceof PocketJukeboxItem; }
+    public @Override boolean isApplicableTo(Slot slot) { return slot.getItem().getItem() instanceof PocketJukeboxItem; }
 
     public @Override boolean onScroll(double horizontal, double vertical, int slotId, ItemStack item) {
         var component = PocketJukeboxComponent.get(item);
@@ -35,11 +35,11 @@ public class PocketJukeboxTooltipSubmenu implements TooltipSubmenu {
         return true;
     }
 
-    public @Override void reset(Slot slot) { reset(slot.getStack(), slot.id); }
+    public @Override void reset(Slot slot) { reset(slot.getItem(), slot.index); }
 
-    public @Override void onMouseClick(Slot slot, SlotActionType actionType) {
-        if (actionType != SlotActionType.QUICK_MOVE & actionType != SlotActionType.SWAP) return;
-        reset(slot.getStack(), slot.id);
+    public @Override void onMouseClick(Slot slot, ClickType actionType) {
+        if (actionType != ClickType.QUICK_MOVE & actionType != ClickType.SWAP) return;
+        reset(slot.getItem(), slot.index);
     }
 
     private void sendPacket(ItemStack item, int slotId, int selectedIndex) {

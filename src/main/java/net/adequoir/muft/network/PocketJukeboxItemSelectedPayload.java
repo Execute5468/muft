@@ -2,28 +2,28 @@ package net.adequoir.muft.network;
 
 import net.adequoir.muft.MusicalFeature;
 import net.adequoir.muft.mixutils.screen.MuftSHandler;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.player.Player;
 import net.adequoir.muft.api.network.PlayerPayload;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.CustomPayload;
 
 public record PocketJukeboxItemSelectedPayload(int slotId, int selectedIndex) implements PlayerPayload {
-    public static final CustomPayload.Id<PocketJukeboxItemSelectedPayload> ID = new CustomPayload.Id<>(
+    public static final CustomPacketPayload.Type<PocketJukeboxItemSelectedPayload> ID = new CustomPacketPayload.Type<>(
         MusicalFeature.id("pocket_jukebox_item_selected")
     );
 
-    public @Override Id<? extends CustomPayload> getId() { return ID; }
+    public @Override Type<? extends CustomPacketPayload> type() { return ID; }
 
-    public static PocketJukeboxItemSelectedPayload read(PacketByteBuf buf) {
+    public static PocketJukeboxItemSelectedPayload read(FriendlyByteBuf buf) {
         return new PocketJukeboxItemSelectedPayload(buf.readVarInt(), buf.readVarInt());
     }
 
-    public void write(PacketByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
         buf.writeVarInt(slotId);
         buf.writeVarInt(selectedIndex);
     }
 
-    public @Override void handle(PlayerEntity player) {
-        ((MuftSHandler) player.currentScreenHandler).muft_selectPocketJukeboxStack(slotId, selectedIndex);
+    public @Override void handle(Player player) {
+        ((MuftSHandler) player.containerMenu).muft_selectPocketJukeboxStack(slotId, selectedIndex);
     }
 }

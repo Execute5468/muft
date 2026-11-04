@@ -1,6 +1,6 @@
 package net.adequoir.muft.api.registry;
 
-import net.minecraft.registry.Registry;
+import net.minecraft.core.Registry;
 import org.jetbrains.annotations.Nullable;
 
 public final class Registrars {

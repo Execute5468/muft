@@ -1,9 +1,9 @@
 package net.adequoir.muft.registry.tag;
 
 import net.adequoir.muft.MusicalFeature;
-import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 
 public final class MuftItemTags {
 
@@ -11,7 +11,7 @@ public final class MuftItemTags {
     public static final TagKey<Item> TRACK_DISCS = of("track_discs");
 
     private static TagKey<Item> of(String id) {
-        return TagKey.of(RegistryKeys.ITEM, MusicalFeature.id(id));
+        return TagKey.create(Registries.ITEM, MusicalFeature.id(id));
     }
 
     public static void init() {}

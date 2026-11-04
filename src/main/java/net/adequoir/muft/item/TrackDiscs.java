@@ -1,8 +1,8 @@
 package net.adequoir.muft.item;
 
 import net.adequoir.muft.registry.MuftItems;
-import net.minecraft.item.Item;
-import net.minecraft.util.DyeColor;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 
 public final class TrackDiscs {

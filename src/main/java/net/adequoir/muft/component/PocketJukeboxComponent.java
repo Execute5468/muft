@@ -4,21 +4,21 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import net.adequoir.muft.registry.MuftComponentTypes;
 import net.adequoir.muft.util.ItemEntry;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipData;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.Pair;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class PocketJukeboxComponent implements TooltipData {
+public class PocketJukeboxComponent implements TooltipComponent {
     public static final int MAX_COLUMN_LENGTH = 4;
     public static final int MAX_ROW_LENGTH = 5;
     public static final int MAX_SLOT_COUNT = MAX_COLUMN_LENGTH * MAX_ROW_LENGTH;
@@ -32,21 +32,21 @@ public class PocketJukeboxComponent implements TooltipData {
          PocketJukeboxComponent::serialize,
          component -> DataResult.success(component.isEmpty() ? EMPTY_LIST : Arrays.asList(component.entries))
     );
-    public static final PacketCodec<RegistryByteBuf, PocketJukeboxComponent> PACKET_CODEC = new PacketCodec<>() {
-        private static final PacketCodec<RegistryByteBuf, List<ItemEntry>> ITEM_LIST_CODEC = ItemEntry.PACKET_CODEC.collect(PacketCodecs.toList());
+    public static final StreamCodec<RegistryFriendlyByteBuf, PocketJukeboxComponent> PACKET_CODEC = new StreamCodec<>() {
+        private static final StreamCodec<RegistryFriendlyByteBuf, List<ItemEntry>> ITEM_LIST_CODEC = ItemEntry.PACKET_CODEC.apply(ByteBufCodecs.list());
 
-        public @Override PocketJukeboxComponent decode(RegistryByteBuf buf) {
+        public @Override PocketJukeboxComponent decode(RegistryFriendlyByteBuf buf) {
             var entries = ITEM_LIST_CODEC.decode(buf).toArray(EMPTY_ENTRIES);
             return new PocketJukeboxComponent(entries, -1, buf.readVarInt());
         }
 
-        public @Override void encode(RegistryByteBuf buf, PocketJukeboxComponent value) {
+        public @Override void encode(RegistryFriendlyByteBuf buf, PocketJukeboxComponent value) {
             ITEM_LIST_CODEC.encode(buf, Arrays.asList(value.entries));
             buf.writeVarInt(value.playbackId);
         }
     };
 
-    private static final Pair<PocketJukeboxComponent, @Nullable ItemStack> EMPTY_REMOVED = new Pair<>(DEFAULT, null);
+    private static final Tuple<PocketJukeboxComponent, @Nullable ItemStack> EMPTY_REMOVED = new Tuple<>(DEFAULT, null);
 
     private final ItemEntry[] entries;
     private final int selectedIndex;
@@ -61,7 +61,7 @@ public class PocketJukeboxComponent implements TooltipData {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean canInsert(ItemStack stack) {
-        return !stack.isEmpty() && stack.getComponents().contains(DataComponentTypes.JUKEBOX_PLAYABLE);
+        return !stack.isEmpty() && stack.getComponents().has(DataComponents.JUKEBOX_PLAYABLE);
     }
 
     public static PocketJukeboxComponent get(ItemStack stack) {
@@ -110,12 +110,12 @@ public class PocketJukeboxComponent implements TooltipData {
         return new PocketJukeboxComponent(newStacks, selectedIndex, playbackId);
     }
 
-    public PocketJukeboxComponent withAdded(Slot slot, PlayerEntity player) {
-        var stack = slot.getStack();
+    public PocketJukeboxComponent withAdded(Slot slot, Player player) {
+        var stack = slot.getItem();
         if (stack.isEmpty()) return this;
         if (isFull()) throwFull();
         if (!canInsert(stack)) throwUnsupportedStack(stack);
-        return this.withAdded(slot.takeStackRange(1, 1, player));
+        return this.withAdded(slot.safeTake(1, 1, player));
     }
 
     public PocketJukeboxComponent withSelected(int slotIndex) {
@@ -127,13 +127,13 @@ public class PocketJukeboxComponent implements TooltipData {
         return playbackId == this.playbackId ? this : new PocketJukeboxComponent(entries, selectedIndex, playbackId);
     }
 
-    public Pair<PocketJukeboxComponent, @Nullable ItemStack> withRemoved() {
+    public Tuple<PocketJukeboxComponent, @Nullable ItemStack> withRemoved() {
         if (entries.length == 0) return EMPTY_REMOVED;
         int i = inBounds(selectedIndex) ? selectedIndex : 0;
         var removedStack = entries[i].toStack();
-        if (entries.length == 1) return new Pair<>(DEFAULT, removedStack);
+        if (entries.length == 1) return new Tuple<>(DEFAULT, removedStack);
 
-        return new Pair<>(new PocketJukeboxComponent(copyOmit(entries, i), -1, playbackId), removedStack);
+        return new Tuple<>(new PocketJukeboxComponent(copyOmit(entries, i), -1, playbackId), removedStack);
     }
 
     public @Override boolean equals(Object obj) {

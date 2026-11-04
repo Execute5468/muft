@@ -8,21 +8,21 @@ import net.adequoir.muft.mixutils.client.entity.player.IClientPE;
 import net.adequoir.muft.network.PocketJukeboxPlayPayload;
 import net.adequoir.muft.api.network.ServerNetworkHelper;
 import net.adequoir.muft.registry.MuftItems;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.StackReference;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipData;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ClickType;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,18 +34,18 @@ public class PocketJukeboxItem extends Item {
     private static final List<PocketJukeboxItem> pocketJukeboxes = new ArrayList<>();
     public static final List<PocketJukeboxItem> POCKET_JUKEBOXES = Collections.unmodifiableList(pocketJukeboxes);
 
-    public PocketJukeboxItem(Item.Settings settings) {
+    public PocketJukeboxItem(Item.Properties settings) {
         super(settings);
         pocketJukeboxes.add(this);
     }
 
-    public @Override void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (!world.isClient || !(entity instanceof PlayerEntity player)) return;
+    public @Override void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
+        if (!world.isClientSide || !(entity instanceof Player player)) return;
         var invType = findInvType(stack, slot, player);
         if (invType >= 0) ((IClientPE) player).muft_pocketJukeboxTicker().tickStack(stack, invType, slot);
     }
 
-    private static int findInvType(ItemStack stack, int slotId, PlayerEntity player) {
+    private static int findInvType(ItemStack stack, int slotId, Player player) {
         final var combinedInv = ((AxPlayerInventory) player.getInventory()).axCombinedInventory();
         for (int i = 0; i < combinedInv.size(); i++) {
             var inv = combinedInv.get(i);
@@ -55,13 +55,13 @@ public class PocketJukeboxItem extends Item {
         return -1;
     }
 
-    public @Override boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
+    public @Override boolean overrideStackedOnOther(ItemStack stack, Slot slot, ClickAction clickType, Player player) {
         var component = PocketJukeboxComponent.getOrNull(stack);
         if (component == null) return false;
 
-        var itemStack = slot.getStack();
+        var itemStack = slot.getItem();
 
-        if (clickType == ClickType.LEFT && !itemStack.isEmpty()) {
+        if (clickType == ClickAction.PRIMARY && !itemStack.isEmpty()) {
             if (!component.isFull() && PocketJukeboxComponent.canInsert(itemStack)) {
                 playInsertSound(player);
                 var newComponent = component.withAdded(slot, player);
@@ -70,18 +70,18 @@ public class PocketJukeboxItem extends Item {
             return true;
         }
 
-        if (clickType == ClickType.RIGHT && itemStack.isEmpty()) {
+        if (clickType == ClickAction.SECONDARY && itemStack.isEmpty()) {
             if (!component.isEmpty()) {
                 var pair = component.withRemoved();
-                var outStack = pair.getRight();
+                var outStack = pair.getB();
                 if (outStack != null) {
-                    slot.insertStack(outStack);
+                    slot.safeInsert(outStack);
                     playRemoveOneSound(player);
-                    PocketJukeboxComponent.set(stack, pair.getLeft());
+                    PocketJukeboxComponent.set(stack, pair.getA());
                     onContentChanged(player);
                 }
-                if (player.getWorld().isClient) {
-                    PocketJukeboxManager.onRemove(player, stack, PocketJukeboxManager.T_CURSOR_STACK, -1, pair.getLeft(), component.boundSelectedIndex());
+                if (player.level().isClientSide) {
+                    PocketJukeboxManager.onRemove(player, stack, PocketJukeboxManager.T_CURSOR_STACK, -1, pair.getA(), component.boundSelectedIndex());
                 }
             }
             return true;
@@ -90,12 +90,12 @@ public class PocketJukeboxItem extends Item {
         return false;
     }
 
-    public @Override boolean onClicked(
+    public @Override boolean overrideOtherStackedOnMe(
         ItemStack stack, ItemStack otherStack, Slot slot,
-        ClickType clickType, PlayerEntity player,
-        StackReference cursorStackReference
+        ClickAction clickType, Player player,
+        SlotAccess cursorStackReference
     ) {
-        if (clickType == ClickType.LEFT && otherStack.isEmpty()) {
+        if (clickType == ClickAction.PRIMARY && otherStack.isEmpty()) {
             var newComponent = PocketJukeboxComponent.get(stack).withSelected(-1);
             PocketJukeboxComponent.set(stack, newComponent);
             return false;
@@ -103,8 +103,8 @@ public class PocketJukeboxItem extends Item {
         var component = PocketJukeboxComponent.getOrNull(stack);
         if (component == null) return false;
 
-        if (clickType == ClickType.LEFT && !otherStack.isEmpty()) {
-            if (slot.canTakePartial(player) && !component.isFull() && PocketJukeboxComponent.canInsert(otherStack)) {
+        if (clickType == ClickAction.PRIMARY && !otherStack.isEmpty()) {
+            if (slot.allowModification(player) && !component.isFull() && PocketJukeboxComponent.canInsert(otherStack)) {
                 playInsertSound(player);
                 PocketJukeboxComponent.set(stack, component.withAdded(otherStack.split(1)));
                 onContentChanged(player);
@@ -112,18 +112,18 @@ public class PocketJukeboxItem extends Item {
             return true;
         }
 
-        if (clickType == ClickType.RIGHT && otherStack.isEmpty()) {
-            if (slot.canTakePartial(player)) {
+        if (clickType == ClickAction.SECONDARY && otherStack.isEmpty()) {
+            if (slot.allowModification(player)) {
                 var pair = component.withRemoved();
-                var removedStack = pair.getRight();
+                var removedStack = pair.getB();
                 if (removedStack != null) {
                     playRemoveOneSound(player);
                     cursorStackReference.set(removedStack);
-                    PocketJukeboxComponent.set(stack, pair.getLeft());
+                    PocketJukeboxComponent.set(stack, pair.getA());
                     onContentChanged(player);
                 }
-                if (player.getWorld().isClient) {
-                    PocketJukeboxManager.onRemove(player, stack, slot, pair.getLeft(), component.boundSelectedIndex());
+                if (player.level().isClientSide) {
+                    PocketJukeboxManager.onRemove(player, stack, slot, pair.getA(), component.boundSelectedIndex());
                 }
             }
             return true;
@@ -134,29 +134,29 @@ public class PocketJukeboxItem extends Item {
         return false;
     }
 
-    public @Override TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        var stack = user.getStackInHand(hand);
+    public @Override InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+        var stack = user.getItemInHand(hand);
         var component = PocketJukeboxComponent.get(stack);
-        if (component.isEmpty()) return TypedActionResult.fail(stack);
+        if (component.isEmpty()) return InteractionResultHolder.fail(stack);
 
-        if (!world.isClient) {
-            var selectedSlot = hand == Hand.MAIN_HAND ? user.getInventory().selectedSlot : -1;
+        if (!world.isClientSide) {
+            var selectedSlot = hand == InteractionHand.MAIN_HAND ? user.getInventory().selected : -1;
             var playbackId = PocketJukeboxIndexer.INSTANCE.getId();
 
             var newComponent = component.withPlaying(playbackId);
             PocketJukeboxComponent.set(stack, newComponent);
 
-            ServerNetworkHelper.send((ServerPlayerEntity) user, new PocketJukeboxPlayPayload(selectedSlot, playbackId));
+            ServerNetworkHelper.send((ServerPlayer) user, new PocketJukeboxPlayPayload(selectedSlot, playbackId));
         }
-        return TypedActionResult.success(stack);
+        return InteractionResultHolder.success(stack);
     }
 
-    public @Override boolean isItemBarVisible(ItemStack stack) { return !PocketJukeboxComponent.get(stack).isEmpty(); }
-    public @Override int getItemBarStep(ItemStack stack) { return PocketJukeboxComponent.sizeItemBarStep(stack); }
-    public @Override int getItemBarColor(ItemStack stack) { return PocketJukeboxComponent.colorItemBar(stack); }
+    public @Override boolean isBarVisible(ItemStack stack) { return !PocketJukeboxComponent.get(stack).isEmpty(); }
+    public @Override int getBarWidth(ItemStack stack) { return PocketJukeboxComponent.sizeItemBarStep(stack); }
+    public @Override int getBarColor(ItemStack stack) { return PocketJukeboxComponent.colorItemBar(stack); }
 
-    public @Override Optional<TooltipData> getTooltipData(ItemStack stack) {
-        return stack.contains(DataComponentTypes.HIDE_TOOLTIP) || stack.contains(DataComponentTypes.HIDE_ADDITIONAL_TOOLTIP)
+    public @Override Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        return stack.has(DataComponents.HIDE_TOOLTIP) || stack.has(DataComponents.HIDE_ADDITIONAL_TOOLTIP)
                 ? Optional.empty()
                 : Optional.ofNullable(PocketJukeboxComponent.getOrNull(stack));
     }
@@ -184,19 +184,19 @@ public class PocketJukeboxItem extends Item {
     }
 
     private static void playRemoveOneSound(Entity entity) {
-        entity.playSound(SoundEvents.ITEM_BUNDLE_REMOVE_ONE, 0.8F, 0.8F + entity.getWorld().getRandom().nextFloat() * 0.4F);
+        entity.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
     }
 
     private static void playInsertSound(Entity entity) {
-        entity.playSound(SoundEvents.ITEM_BUNDLE_INSERT, 0.8F, 0.8F + entity.getWorld().getRandom().nextFloat() * 0.4F);
+        entity.playSound(SoundEvents.BUNDLE_INSERT, 0.8F, 0.8F + entity.level().getRandom().nextFloat() * 0.4F);
     }
 
     private static void playInsertFailSound(Entity entity) {
-        entity.playSound(SoundEvents.ITEM_BUNDLE_INSERT, 1.0F, 1.0F);
+        entity.playSound(SoundEvents.BUNDLE_INSERT, 1.0F, 1.0F);
     }
 
-    private void onContentChanged(PlayerEntity user) {
-        var screenHandler = user.currentScreenHandler;
-        if (screenHandler != null) screenHandler.onContentChanged(user.getInventory());
+    private void onContentChanged(Player user) {
+        var screenHandler = user.containerMenu;
+        if (screenHandler != null) screenHandler.slotsChanged(user.getInventory());
     }
 }

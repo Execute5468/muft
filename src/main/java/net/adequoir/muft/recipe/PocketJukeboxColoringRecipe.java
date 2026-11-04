@@ -2,25 +2,25 @@ package net.adequoir.muft.recipe;
 
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.adequoir.muft.registry.MuftRecipeSerializers;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.SpecialCraftingRecipe;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.world.World;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 
-public class PocketJukeboxColoringRecipe extends SpecialCraftingRecipe {
-    public PocketJukeboxColoringRecipe(CraftingRecipeCategory category) { super(category); }
+public class PocketJukeboxColoringRecipe extends CustomRecipe {
+    public PocketJukeboxColoringRecipe(CraftingBookCategory category) { super(category); }
 
 
-    public @Override boolean matches(CraftingRecipeInput input, World world) {
+    public @Override boolean matches(CraftingInput input, Level world) {
         boolean hasPocketJukebox = false;
         boolean hasDye = false;
 
-        for (int i = 0; i < input.getSize(); i++) {
-            var stack = input.getStackInSlot(i);
+        for (int i = 0; i < input.size(); i++) {
+            var stack = input.getItem(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() instanceof PocketJukeboxItem) {
                 if (hasPocketJukebox) return false;
@@ -33,12 +33,12 @@ public class PocketJukeboxColoringRecipe extends SpecialCraftingRecipe {
         return hasPocketJukebox && hasDye;
     }
 
-    public @Override ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
+    public @Override ItemStack assemble(CraftingInput input, HolderLookup.Provider lookup) {
         var stack = ItemStack.EMPTY;
         DyeItem dye = null;
 
-        for (int i = 0; i < input.getSize(); i++) {
-            var slotStack = input.getStackInSlot(i);
+        for (int i = 0; i < input.size(); i++) {
+            var slotStack = input.getItem(i);
             if (slotStack.isEmpty()) continue;
             var slotItem = slotStack.getItem();
             if (slotItem instanceof PocketJukeboxItem) {
@@ -48,10 +48,10 @@ public class PocketJukeboxColoringRecipe extends SpecialCraftingRecipe {
             }
         }
 
-        var dyedItem = PocketJukeboxItem.get(dye == null ? null : dye.getColor());
-        return stack.copyComponentsToNewStack(dyedItem, 1);
+        var dyedItem = PocketJukeboxItem.get(dye == null ? null : dye.getDyeColor());
+        return stack.transmuteCopy(dyedItem, 1);
     }
 
-    public @Override boolean fits(int width, int height) { return width * height >= 2; }
+    public @Override boolean canCraftInDimensions(int width, int height) { return width * height >= 2; }
     public @Override RecipeSerializer<?> getSerializer() { return MuftRecipeSerializers.POCKET_JUKEBOX_COLORING.get(); }
 }

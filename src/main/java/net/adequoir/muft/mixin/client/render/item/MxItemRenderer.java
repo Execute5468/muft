@@ -1,14 +1,14 @@
 package net.adequoir.muft.mixin.client.render.item;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.adequoir.muft.client.render.item.PocketJukeboxRenderer;
 import net.adequoir.muft.item.PocketJukeboxItem;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.item.ItemModels;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.ItemModelShaper;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,17 +18,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemRenderer.class)
 public class MxItemRenderer {
-    @Shadow private @Final ItemModels models;
+    @Shadow private @Final ItemModelShaper itemModelShaper;
 
     @Inject(
-        method = "renderItem(Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/render/model/json/ModelTransformationMode;ZLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;IILnet/minecraft/client/render/model/BakedModel;)V",
+        method = "render(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/client/resources/model/BakedModel;)V",
         at = @At("HEAD"),
         order = 1,
         cancellable = true
     )
     private void onRenderItem(
-        ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded,
-        MatrixStack matrices, VertexConsumerProvider vertexConsumers,
+        ItemStack stack, ItemDisplayContext renderMode, boolean leftHanded,
+        PoseStack matrices, MultiBufferSource vertexConsumers,
         int light, int overlay, BakedModel model,
         CallbackInfo ci
     ) {
@@ -37,7 +37,7 @@ public class MxItemRenderer {
             stack, renderMode, leftHanded,
             matrices, vertexConsumers,
             light, overlay,
-            (ItemRenderer) (Object) this, models
+            (ItemRenderer) (Object) this, itemModelShaper
         );
         if (bl) ci.cancel();
     }

@@ -1,5 +1,6 @@
 package net.adequoir.muft.client.sound;
 
+import com.mojang.blaze3d.audio.Channel;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.adequoir.muft.client.render.WorldRenderUtil;
@@ -13,55 +14,59 @@ import net.adequoir.muft.mixutils.client.sound.ISource;
 import net.adequoir.muft.api.client.network.ClientNetworkHelper;
 import net.adequoir.muft.network.PocketJukeboxResetPayload;
 import net.adequoir.muft.util.ItemEntry;
-import net.minecraft.block.jukebox.JukeboxSong;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.sound.*;
-import net.minecraft.client.util.ClientPlayerTickable;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.sounds.AmbientSoundHandler;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.*;
+import net.minecraft.client.sounds.ChannelAccess;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.JukeboxSong;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public final class PocketJukeboxManager implements ClientPlayerTickable {
+public final class PocketJukeboxManager implements AmbientSoundHandler {
     public static final int T_CURSOR_STACK = PocketJukeboxResetPayload.T_CURSOR_STACK;
-    private static final Consumer<Source> PAUSE_ACTION = source -> ((ISource) source).muft_setSoundPaused(true);
-    private static final Consumer<Source> RESUME_ACTION = source -> ((ISource) source).muft_setSoundPaused(false);
-    private static final Text SONG_PAUSED = Text.translatable("pocket_jukebox.music_paused");
+    private static final Consumer<Channel> PAUSE_ACTION = source -> ((ISource) source).muft_setSoundPaused(true);
+    private static final Consumer<Channel> RESUME_ACTION = source -> ((ISource) source).muft_setSoundPaused(false);
+    private static final Component SONG_PAUSED = Component.translatable("pocket_jukebox.music_paused");
 
-    private final ClientPlayerEntity player;
+    private final LocalPlayer player;
 
-    private final Random random = Random.createLocal();
+    private final RandomSource random = RandomSource.createNewThreadLocalInstance();
     private final IntOpenHashSet tickingPlayIds = new IntOpenHashSet();
     private final Int2ObjectOpenHashMap<SongEntry> playingSongs = new Int2ObjectOpenHashMap<>();
     private int playingId = 0;
 
-    public PocketJukeboxManager(ClientPlayerEntity player) { this.player = player; }
+    public PocketJukeboxManager(LocalPlayer player) { this.player = player; }
 
-    public static PocketJukeboxManager get(ClientPlayerEntity player) { return ((IClientPE) player).muft_pocketJukeboxTicker(); }
+    public static PocketJukeboxManager get(LocalPlayer player) { return ((IClientPE) player).muft_pocketJukeboxTicker(); }
 
     public static void onRemove(
-        PlayerEntity player,
+        Player player,
         ItemStack stack, int invType, int invSlot,
         PocketJukeboxComponent component, int discIndex
-    ) { get((ClientPlayerEntity) player).onRemove(stack, invType, invSlot, component, discIndex); }
+    ) { get((LocalPlayer) player).onRemove(stack, invType, invSlot, component, discIndex); }
 
-    public static void onRemove(PlayerEntity player, ItemStack stack, Slot slot, PocketJukeboxComponent component, int discIndex) {
-        if (!(slot.inventory instanceof PlayerInventory)) return;
+    public static void onRemove(Player player, ItemStack stack, Slot slot, PocketJukeboxComponent component, int discIndex) {
+        if (!(slot.container instanceof Inventory)) return;
         var combinedInv = ((AxPlayerInventory) player.getInventory()).axCombinedInventory();
 
-        var invSlot = slot.getIndex();
+        var invSlot = slot.getContainerSlot();
         for (int i = 0; i < combinedInv.size(); i++) {
             var invSize = combinedInv.get(i).size();
             if (invSlot >= invSize) { invSlot -= invSize; continue; }
@@ -124,7 +129,7 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
         playingId = 0;
         var entry = playingSongs.get(playId);
         var srcManager = sourceManagerOf(entry);
-        if (srcManager != null) srcManager.run(PAUSE_ACTION);
+        if (srcManager != null) srcManager.execute(PAUSE_ACTION);
     }
 
     private void pauseAndUpdateCurrentSong(int newPlaybackId) {
@@ -134,7 +139,7 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
         var entry = playingSongs.remove(playId);
         var srcManager = sourceManagerOf(entry);
         if (srcManager == null) return;
-        srcManager.run(PAUSE_ACTION);
+        srcManager.execute(PAUSE_ACTION);
         WorldRenderUtil.setAllJukeboxMute(false);
         playingSongs.put(newPlaybackId, entry);
         playPaused();
@@ -171,7 +176,7 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
         } else {
             var srcManager = sourceManagerOf(prevEntry);
             if (srcManager != null) {
-                srcManager.run(RESUME_ACTION);
+                srcManager.execute(RESUME_ACTION);
             } else soundManager().play(prevEntry.soundInstance);
             songEntry = prevEntry;
         }
@@ -189,7 +194,7 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
     }
 
     public @Override void tick() {
-        tickStack(player.currentScreenHandler.getCursorStack(), T_CURSOR_STACK, -1);
+        tickStack(player.containerMenu.getCarried(), T_CURSOR_STACK, -1);
         tickSongs();
     }
 
@@ -246,14 +251,14 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
         playingSongs.put(playingId, nextSongEntry);
     }
 
-    private static void playDescription(RegistryEntry<JukeboxSong> entry) { client().inGameHud.setRecordPlayingOverlay(entry.value().description()); }
+    private static void playDescription(Holder<JukeboxSong> entry) { client().gui.setNowPlaying(entry.value().description()); }
     private static void playPaused() {
-        client().inGameHud.setOverlayMessage(PocketJukeboxManager.SONG_PAUSED, true);
-        client().getNarratorManager().narrate(PocketJukeboxManager.SONG_PAUSED);
+        client().gui.setOverlayMessage(PocketJukeboxManager.SONG_PAUSED, true);
+        client().getNarrator().sayNow(PocketJukeboxManager.SONG_PAUSED);
     }
-    private static MinecraftClient client() { return MinecraftClient.getInstance();  }
-    private static SoundManager soundManager() { return MinecraftClient.getInstance().getSoundManager(); }
-    private static @Nullable Channel.SourceManager sourceManagerOf(@Nullable SongEntry songEntry) {
+    private static Minecraft client() { return Minecraft.getInstance();  }
+    private static SoundManager soundManager() { return Minecraft.getInstance().getSoundManager(); }
+    private static @Nullable ChannelAccess.ChannelHandle sourceManagerOf(@Nullable SongEntry songEntry) {
         if (songEntry == null) return null;
         return ((AxSoundSystem) ((AxSoundManager) soundManager()).axSoundSystem()).axSources().get(songEntry.soundInstance);
     }
@@ -261,10 +266,10 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
     private static class SongEntry {
         int ticks;
         int discIndex;
-        final RegistryEntry<JukeboxSong> songEntry;
+        final Holder<JukeboxSong> songEntry;
         final SoundInstance soundInstance;
 
-        public SongEntry(ClientPlayerEntity player, PocketJukeboxComponent component, int discIndex) {
+        public SongEntry(LocalPlayer player, PocketJukeboxComponent component, int discIndex) {
             var songEntry = getSongEntry(player, component.get(discIndex));
             Objects.requireNonNull(songEntry);
 
@@ -278,38 +283,38 @@ public final class PocketJukeboxManager implements ClientPlayerTickable {
             this.soundInstance = soundInstance;
         }
 
-        boolean playing() { return !songEntry.value().shouldStopPlaying(ticks); }
+        boolean playing() { return !songEntry.value().hasFinished(ticks); }
 
         void stop() { soundManager().stop(soundInstance); }
 
-        private static PositionedSoundInstance createSoundInstance(SoundEvent sound) {
-            return new PositionedSoundInstance(
-                sound.getId(),
-                SoundCategory.RECORDS,
+        private static SimpleSoundInstance createSoundInstance(SoundEvent sound) {
+            return new SimpleSoundInstance(
+                sound.getLocation(),
+                SoundSource.RECORDS,
                 4.0f, 1.0F,
-                SoundInstance.createRandom(),
+                SoundInstance.createUnseededRandom(),
                 false, 0,
-                SoundInstance.AttenuationType.NONE,
+                SoundInstance.Attenuation.NONE,
                 0.0, 0.0, 0.0,
                 true
             );
         }
 
         @SuppressWarnings("OptionalIsPresent")
-        private static @Nullable RegistryEntry<JukeboxSong> getSongEntry(ClientPlayerEntity player, ItemEntry entry) {
-            var jukeboxComponent = entry.get(DataComponentTypes.JUKEBOX_PLAYABLE);
+        private static @Nullable Holder<JukeboxSong> getSongEntry(LocalPlayer player, ItemEntry entry) {
+            var jukeboxComponent = entry.get(DataComponents.JUKEBOX_PLAYABLE);
             if (jukeboxComponent == null) return null;
             var registryPair = jukeboxComponent.song();
 
-            var songEntry = registryPair.entry();
+            var songEntry = registryPair.holder();
             var songKey = registryPair.key();
             if (songEntry.isPresent()) return songEntry.get();
 
-            return wrapperLookup(player).getWrapperOrThrow(songKey.getRegistryRef()).getOptional(songKey).orElse(null);
+            return wrapperLookup(player).lookupOrThrow(songKey.registryKey()).get(songKey).orElse(null);
         }
 
-        private static RegistryWrapper.WrapperLookup wrapperLookup(ClientPlayerEntity player) {
-            return player.clientWorld.getRegistryManager();
+        private static HolderLookup.Provider wrapperLookup(LocalPlayer player) {
+            return player.clientLevel.registryAccess();
         }
     }
 }

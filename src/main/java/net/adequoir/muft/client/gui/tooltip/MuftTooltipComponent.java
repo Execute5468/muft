@@ -1,13 +1,13 @@
 package net.adequoir.muft.client.gui.tooltip;
 
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 
-public interface MuftTooltipComponent extends TooltipComponent {
+public interface MuftTooltipComponent extends ClientTooltipComponent {
 
 
-    default void drawItems(TextRenderer textRenderer, int x, int y, int width, int height, DrawContext context) {
-        TooltipComponent.super.drawItems(textRenderer, x, y, context);
+    default void drawItems(Font textRenderer, int x, int y, int width, int height, GuiGraphics context) {
+        ClientTooltipComponent.super.renderImage(textRenderer, x, y, context);
     }
 }
