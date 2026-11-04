@@ -20,4 +20,4 @@ plugins {
 rootProject.name = 'muft'
 include('common')
 include('fabric')
-//include('neoforge')
+include('neoforge')

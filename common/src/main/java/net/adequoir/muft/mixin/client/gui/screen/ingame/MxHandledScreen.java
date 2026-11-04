@@ -1,5 +1,7 @@
 package net.adequoir.muft.mixin.client.gui.screen.ingame;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.adequoir.muft.client.gui.tooltip.PocketJukeboxTooltipComponent;
 import net.adequoir.muft.client.gui.tooltip.PocketJukeboxTooltipSubmenu;
@@ -27,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Mixin(AbstractContainerScreen.class)
@@ -115,19 +116,20 @@ public abstract class MxHandledScreen implements IHandledScreen {
     private boolean mouseoverHandlerCursorStackRedirect(ItemStack instance) { return true; }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    @Redirect(
+    @WrapOperation(
         method = "renderTooltip",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/gui/GuiGraphics;renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;Ljava/util/Optional;II)V"
-        )
+        ),
+        require = 0
     )
     private void mouseoverDrawRedirect(
-        GuiGraphics context, Font textRenderer, List<Component> text, Optional<TooltipComponent> data, int x, int y,
+        GuiGraphics context, Font font, List<Component> tooltipLines, Optional<TooltipComponent> visualTooltipComponent, int mouseX, int mouseY, Operation<Void> original,
         @Local ItemStack stack
     ) {
         if (!menu.getCarried().isEmpty() && !isItemTooltipSticky(stack)) return;
-        context.renderTooltip(textRenderer, text, data, x, y);
+        original.call(context, font, tooltipLines, visualTooltipComponent, mouseX, mouseY);
     }
 
     @Unique
