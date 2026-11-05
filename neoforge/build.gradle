@@ -32,4 +32,9 @@ neoForge {
     }
 }
 
+dependencies {
+    implementation files("../libs/Platform-neoforge-1.21.1-1.4.2.jar")
+    implementation files("../libs/VanillaBackport-neoforge-1.21.1-1.2.2.jar")
+}
+
 sourceSets.main.resources { srcDir 'src/generated/resources' }

@@ -5,6 +5,7 @@ import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.adequoir.muft.api.registry.Registrar;
 import net.adequoir.muft.api.registry.Registrars;
@@ -12,8 +13,7 @@ import java.util.function.Supplier;
 
 public sealed interface MuftItems permits RegistryLoader {
     Registrar<Item> REGISTRAR = Registrars.create(Muft.MOD_ID, BuiltInRegistries.ITEM);
-
-    Supplier<Item> COPPER_NUGGET = REGISTRAR.register(ResourceLocation.withDefaultNamespace("copper_nugget"), Item::new, new Item.Properties());
+    Registrar<Item> VANILLA_REGISTRAR = Registrars.create("minecraft", BuiltInRegistries.ITEM);
 
     Supplier<Item> POCKET_JUKEBOX = registerPocketJukebox("pocket_jukebox");
     Supplier<Item> WHITE_POCKET_JUKEBOX = registerPocketJukebox("white_pocket_jukebox");
@@ -52,6 +52,15 @@ public sealed interface MuftItems permits RegistryLoader {
     Supplier<Item> PURPLE_TRACK_DISC = registerUnstackable("purple_track_disc");
     Supplier<Item> MAGENTA_TRACK_DISC = registerUnstackable("magenta_track_disc");
     Supplier<Item> PINK_TRACK_DISC = registerUnstackable("pink_track_disc");
+
+    Supplier<Item> DISC_PRESS = REGISTRAR.register(
+        "disc_press",
+        settings -> new BlockItem(MuftBlocks.DISC_PRESS.get(), settings),
+        new Item.Properties()
+    );
+
+
+    Supplier<Item> COPPER_NUGGET = VANILLA_REGISTRAR.register("copper_nugget", Item::new, new Item.Properties());
 
     static void init() {}
 

@@ -6,7 +6,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 
 import static net.adequoir.muft.registry.MuftItems.*;
-import static net.adequoir.muft.registry.MuftBlocks.*;
 
 public final class MuftItemEntries {
 

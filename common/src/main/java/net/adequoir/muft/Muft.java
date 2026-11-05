@@ -1,5 +1,10 @@
 package net.adequoir.muft;
 
+import net.adequoir.muft.registry.RegistryLoader;
+import net.adequoir.muft.registry.misc.MuftItemEntries;
+import net.adequoir.muft.registry.misc.MuftPacks;
+import net.adequoir.muft.registry.misc.MuftPayloads;
+import net.adequoir.muft.registry.tag.MuftItemTags;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +14,13 @@ public class Muft {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("MusicalFeature");
 
-
+	public static void init() {
+		RegistryLoader.init();
+		MuftItemEntries.init();
+		MuftItemTags.init();
+		MuftPayloads.init();
+		MuftPacks.init();
+	}
 
 	public static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }
 }

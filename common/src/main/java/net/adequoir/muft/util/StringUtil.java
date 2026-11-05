@@ -11,7 +11,7 @@ public final class StringUtil {
         if (source.isBlank()) return target.isBlank();
         if (target.isBlank()) return true;
         if (source.length() < target.length()) return false;
-        if (source.length() == target.length()) return matchesInsensitive(source, target);
+        if (source.length() == target.length()) return source.equalsIgnoreCase(target);
 
         int i = 0;
         final int end = source.length() - target.length();
@@ -24,16 +24,6 @@ public final class StringUtil {
             i++;
         }
         return false;
-    }
-
-    public static boolean matchesInsensitive(String first, String second) {
-        if (first.length() != second.length()) return false;
-        for (int i = 0; i < first.length(); i++) {
-            char a = Character.toLowerCase(first.charAt(i));
-            char b = Character.toLowerCase(second.charAt(i));
-            if (a != b) return false;
-        }
-        return true;
     }
 
     public static boolean matchesAtInsensitive(String source, int offset, String target) {

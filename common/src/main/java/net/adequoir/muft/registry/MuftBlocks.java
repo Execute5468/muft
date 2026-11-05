@@ -16,7 +16,7 @@ public sealed interface MuftBlocks permits RegistryLoader {
     BlockBehaviour.StatePredicate NEVER = (a, b, c) -> false;
     Registrar<Block> REGISTRAR = Registrars.create(Muft.MOD_ID, BuiltInRegistries.BLOCK);
 
-    Supplier<Block> DISC_PRESS = REGISTRAR.registerWith(
+    Supplier<Block> DISC_PRESS = REGISTRAR.register(
         "disc_press",
         DiscPressBlock::new,
         BlockBehaviour.Properties.of()
@@ -26,8 +26,7 @@ public sealed interface MuftBlocks permits RegistryLoader {
                               .isSuffocating(NEVER)
                               .isViewBlocking(NEVER)
                               .sound(SoundType.COPPER)
-                              .instrument(NoteBlockInstrument.BASEDRUM),
-        Items::registerBlock
+                              .instrument(NoteBlockInstrument.BASEDRUM)
     );
 
     static void init() {}
