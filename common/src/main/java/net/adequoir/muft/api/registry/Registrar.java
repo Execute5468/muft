@@ -15,6 +15,8 @@ public abstract class Registrar<T> {
         this.registry = registry;
     }
 
+    public String namespace() { return this.namespace; }
+
     public <U extends T> Supplier<U> register(String path, U entry) { return register(path, Function.identity(), entry); }
 
     public <S, U extends T> Supplier<U> register(String path, Function<? super S, U> factory, S value) {

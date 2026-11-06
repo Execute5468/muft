@@ -6,7 +6,8 @@ public final class RegistryLoader implements
         MuftItems,
         MuftRecipeSerializers,
         MuftSHandlers,
-        MuftSoundEvents
+        MuftSoundEvents,
+        MuftStats
 {
     static {
         MuftComponentTypes.init();
@@ -15,6 +16,7 @@ public final class RegistryLoader implements
         MuftRecipeSerializers.init();
         MuftSHandlers.init();
         MuftSoundEvents.init();
+        MuftStats.init();
     }
 
     public static void init() {}

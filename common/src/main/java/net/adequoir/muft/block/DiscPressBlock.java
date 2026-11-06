@@ -1,6 +1,7 @@
 package net.adequoir.muft.block;
 
 import com.mojang.serialization.MapCodec;
+import net.adequoir.muft.registry.MuftStats;
 import net.adequoir.muft.screen.DiscPressScreenHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -10,6 +11,7 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -30,7 +32,8 @@ public class DiscPressBlock extends HorizontalDirectionalBlock {
     protected @Override InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        player.openMenu(state.getMenuProvider(world, pos)); //TODO increment stat
+        player.openMenu(state.getMenuProvider(world, pos));
+        player.awardStat(MuftStats.INTERACT_WITH_DISC_PRESS.get());
         return InteractionResult.CONSUME;
     }
 
@@ -46,5 +49,5 @@ public class DiscPressBlock extends HorizontalDirectionalBlock {
     }
     protected @Override void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING); }
 
-    protected @Override boolean useShapeForLightOcclusion(BlockState state) { return true; }
+    protected @Override float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) { return 1.0F; }
 }

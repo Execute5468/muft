@@ -68,5 +68,6 @@
     "jukebox_song.muft.moog_city_2": "C418 - Moog City 2",
     "jukebox_song.muft.mutation": "C418 - Mutation",
     "jukebox_song.muft.nightly": "fingerspit - Nightly",
-    "jukebox_song.muft.shores": "fingerspit - Shores"
+    "jukebox_song.muft.shores": "fingerspit - Shores",
+    "stat.muft.interacted_with_disc_press": "Interactions with Disc Press"
 }
