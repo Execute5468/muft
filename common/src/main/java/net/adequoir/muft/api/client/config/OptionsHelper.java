@@ -110,8 +110,11 @@ public final class OptionsHelper {
     private static <T> OptionInstance.TooltipSupplier<T> tooltipOf(Field field, String fieldName) {
         var hasTooltip = field.getAnnotation(HasTooltip.class);
         if (hasTooltip == null) return OptionInstance.noTooltip();
-        var tooltip = Tooltip.create(Component.translatable(fieldName + ".tooltip"));
-        return v -> tooltip;
+        if (!hasTooltip.valueBased()) {
+            var tooltip = Tooltip.create(Component.translatable(fieldName + ".tooltip"));
+            return v -> tooltip;
+        }
+        return v -> Tooltip.create(Component.translatable(fieldName + ".tooltip." + v.toString().toLowerCase()));
     }
 
     private static void setField(Field field, String name, Object value) {

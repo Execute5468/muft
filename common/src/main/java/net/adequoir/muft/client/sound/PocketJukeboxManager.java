@@ -3,6 +3,7 @@ package net.adequoir.muft.client.sound;
 import com.mojang.blaze3d.audio.Channel;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import net.adequoir.muft.client.config.MuftConfigManager;
 import net.adequoir.muft.client.render.WorldRenderUtil;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
@@ -19,7 +20,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.AmbientSoundHandler;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.sounds.*;
 import net.minecraft.client.sounds.ChannelAccess;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
@@ -149,7 +149,7 @@ public final class PocketJukeboxManager implements AmbientSoundHandler {
         var entry = playingSongs.remove(playingId);
         //noinspection ConstantValue
         if (entry != null) entry.stop();
-        var nextSong = pickRandom(component, entry.discIndex);
+        var nextSong = pickSong(component, entry.discIndex);
         var songEntry = new SongEntry(player, component, nextSong);
         soundManager().play(songEntry.soundInstance);
         playDescription(songEntry.songEntry);
@@ -166,11 +166,11 @@ public final class PocketJukeboxManager implements AmbientSoundHandler {
 
         if (sneaking && prevEntry != null) {
             prevEntry.stop();
-            var randomSong = pickRandom(component, prevEntry.discIndex);
+            var randomSong = pickSong(component, prevEntry.discIndex);
             songEntry = new SongEntry(player, component, randomSong);
             soundManager().play(songEntry.soundInstance);
         } else if (prevId == 0 || prevEntry == null) {
-            var randomSong = pickRandom(component, -1);
+            var randomSong = pickSong(component, -1);
             songEntry = new SongEntry(player, component, randomSong);
             soundManager().play(songEntry.soundInstance);
         } else {
@@ -186,11 +186,21 @@ public final class PocketJukeboxManager implements AmbientSoundHandler {
         playingId = newPlaybackId;
     }
 
+    private int pickSong(PocketJukeboxComponent component, int lastSong) {
+        return MuftConfigManager.config().songOrder() == SongOrder.RANDOM
+                ? pickRandom(component, lastSong)
+                : pickSequential(component, lastSong);
+    }
+
     private int pickRandom(PocketJukeboxComponent component, int lastSong) {
         if (component.size() == 1) return 0;
         if (lastSong < 0) return random.nextInt(component.size());
         var randomInt = random.nextInt(component.size() - 1);
         return randomInt >= lastSong ? randomInt + 1 : randomInt;
+    }
+
+    private int pickSequential(PocketJukeboxComponent component, int lastSong) {
+        return lastSong < 0 ? 0 : (lastSong + 1) % component.size();
     }
 
     public @Override void tick() {
@@ -244,7 +254,7 @@ public final class PocketJukeboxManager implements AmbientSoundHandler {
         songEntry.ticks++;
         if (songEntry.playing()) return;
         songEntry.stop();
-        var nextDiscIndex = pickRandom(component, songEntry.discIndex);
+        var nextDiscIndex = pickSong(component, songEntry.discIndex);
         var nextSongEntry = new SongEntry(player, component, nextDiscIndex);
         soundManager().play(nextSongEntry.soundInstance);
         playDescription(nextSongEntry.songEntry);
@@ -317,4 +327,6 @@ public final class PocketJukeboxManager implements AmbientSoundHandler {
             return player.clientLevel.registryAccess();
         }
     }
+
+    public enum SongOrder { RANDOM, SEQUENTIAL }
 }
