@@ -1,6 +1,7 @@
 package net.adequoir.muft.api;
 
 import net.adequoir.muft.FabricLoaderUtil;
+import net.adequoir.muft.Muft;
 import net.adequoir.muft.api.item.CreativeMenuEntries;
 import net.adequoir.muft.api.network.PayloadRegistrar;
 import net.adequoir.muft.api.network.ServerNetworkHelper;
@@ -17,7 +18,10 @@ import org.jetbrains.annotations.NotNullByDefault;
 public class BootstrapperImpl extends Bootstrapper {
     public @Override LoaderUtil loaderUtil() { return new FabricLoaderUtil(); }
     public @Override RegistrarFactory registrarFactory() { return FabricRegistrar.FACTORY; }
-    public @Override PayloadRegistrar payloadRegistrar() { return new FabricPayloadRegistrar(); }
+    public @Override PayloadRegistrar payloadRegistrar() {
+        var registrar = new FabricPayloadRegistrar();
+        return registrar;
+    }
     public @Override ServerNetworkHelper serverNetworkHelper() { return new FabricServerNetworkHelper(); }
     public @Override PackHelper packHelper() { return new FabricPackHelper(); }
     public @Override CreativeMenuEntries creativeMenuEntries() { return new FabricCreativeMenuEntries(); }

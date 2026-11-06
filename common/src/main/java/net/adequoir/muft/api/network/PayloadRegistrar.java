@@ -1,5 +1,6 @@
 package net.adequoir.muft.api.network;
 
+import net.adequoir.muft.Muft;
 import net.adequoir.muft.api.Bootstrapper;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
