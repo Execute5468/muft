@@ -140,7 +140,7 @@ public class DiscPressScreenHandler extends AbstractContainerMenu {
             slot.onQuickCraft(otherStack, stack);
         } else if (slotId != dyeSlot.index && slotId != discSlot.index) {
             var otherItem = otherStack.getItem();
-            if (otherItem == MuftItems.BLANK_DISC) {
+            if (otherItem == MuftItems.BLANK_DISC.get()) {
                 if (!moveItemStackTo(otherStack, discSlot.index, discSlot.index + 1, false)) return ItemStack.EMPTY;
             } else if (otherItem instanceof DyeItem) {
                 if (!moveItemStackTo(otherStack, dyeSlot.index, dyeSlot.index + 1, false)) return ItemStack.EMPTY;
@@ -180,7 +180,7 @@ public class DiscPressScreenHandler extends AbstractContainerMenu {
         private static final int INDEX = 1;
 
         DiscSlot(Container inventory) { super(inventory, INDEX, X_OFFSET, Y_OFFSET); }
-        public @Override boolean mayPlace(ItemStack stack) { return stack.getItem() == MuftItems.BLANK_DISC; }
+        public @Override boolean mayPlace(ItemStack stack) { return stack.getItem() == MuftItems.BLANK_DISC.get(); }
     }
 
     private class OutputSlot extends Slot {

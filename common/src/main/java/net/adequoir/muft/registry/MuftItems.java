@@ -1,9 +1,13 @@
 package net.adequoir.muft.registry;
 
+import com.google.common.base.Suppliers;
 import net.adequoir.muft.Muft;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.PocketJukeboxItem;
+import net.adequoir.muft.util.GameState;
+import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -59,8 +63,14 @@ public sealed interface MuftItems permits RegistryLoader {
         new Item.Properties()
     );
 
+    Supplier<Item> COPPER_NUGGET = Util.make(() -> {
+        if (!GameState.hasBackport()) return VANILLA_REGISTRAR.register("copper_nugget", Item::new, new Item.Properties());
+        Muft.LOGGER.info("VanillaBackport detected. Falling back on Copper Nugget");
+        var id = ResourceLocation.withDefaultNamespace("copper_nugget");
+        var key = ResourceKey.create(BuiltInRegistries.ITEM.key(), id);
 
-    Supplier<Item> COPPER_NUGGET = VANILLA_REGISTRAR.register("copper_nugget", Item::new, new Item.Properties());
+        return Suppliers.memoize(() -> BuiltInRegistries.ITEM.get(key));
+    });
 
     static void init() {}
 

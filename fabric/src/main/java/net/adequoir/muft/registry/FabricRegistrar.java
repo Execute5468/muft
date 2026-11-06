@@ -1,5 +1,6 @@
 package net.adequoir.muft.registry;
 
+import com.google.common.base.Suppliers;
 import com.mojang.logging.LogUtils;
 import net.adequoir.muft.api.registry.Registrar;
 import net.adequoir.muft.api.registry.RegistrarFactory;
@@ -23,10 +24,10 @@ public final class FabricRegistrar<T> extends Registrar<T> {
     @SuppressWarnings("unchecked")
     public @Override <S, U extends T> Supplier<U> registerWith(String path, Function<? super S, U> factory, S value, Consumer<? super U> callback) {
         var key = ResourceKey.create(registry.key(), ResourceLocation.fromNamespaceAndPath(namespace, path));
-        var existing = registry.get(key);
-        if (existing != null) {
+        var existing = registry.containsKey(key);
+        if (existing) {
             LOGGER.info("Entry with key '{}' already exists, skipping registration", key);
-            return supplierOf((U) existing);
+            return Suppliers.memoize(() -> (U) registry.get(key));
         }
         var entry = Registry.register(registry, key, factory.apply(value));
         callback.accept(entry);
