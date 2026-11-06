@@ -11,12 +11,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.jetbrains.annotations.NotNullByDefault;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 @NotNullByDefault
 @EventBusSubscriber(modid = Muft.MOD_ID)
 public class NeoForgePayloadRegistrar extends PayloadRegistrar {
-    private static final ArrayList<Entry<?>> payloads = new ArrayList<>();
+    private static final ArrayDeque<Entry<?>> payloads = new ArrayDeque<>();
 
     protected @Override <T extends PlayerPayload> void registerC2SPayload(
         CustomPacketPayload.Type<T> id,
@@ -33,12 +34,8 @@ public class NeoForgePayloadRegistrar extends PayloadRegistrar {
         if (payloads.isEmpty()) return;
         Muft.LOGGER.info("Registering payloads");
         final var registrar = event.registrar("1");
-        var itr = payloads.iterator();
-        while (itr.hasNext()) {
-            var payload = itr.next();
-            payload.register(registrar);
-            itr.remove();
-        }
+        var payloads = NeoForgePayloadRegistrar.payloads;
+        while (!payloads.isEmpty()) payloads.pop().register(registrar);
     }
 
     private interface Entry<T extends PlayerPayload> {

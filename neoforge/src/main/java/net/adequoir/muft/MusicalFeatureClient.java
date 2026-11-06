@@ -11,7 +11,6 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 public class MusicalFeatureClient {
     @SubscribeEvent
     public static void initialize(FMLClientSetupEvent event) {
-        MuftClientBootstrapper.init();
         MuftConfigManager.init();
         MuftScreens.init();
     }

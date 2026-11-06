@@ -1,5 +1,7 @@
 package net.adequoir.muft.item;
 
+import net.adequoir.muft.api.LoaderUtil;
+import net.adequoir.muft.api.Platform;
 import net.adequoir.muft.client.sound.PocketJukeboxManager;
 import net.adequoir.muft.component.PocketJukeboxComponent;
 import net.adequoir.muft.item.util.PocketJukeboxIndexer;
@@ -46,11 +48,28 @@ public class PocketJukeboxItem extends Item {
     }
 
     private static int findInvType(ItemStack stack, int slotId, Player player) {
+        return LoaderUtil.platform() == Platform.FABRIC
+                ? findInvTypeFabric(stack, slotId, player)
+                : findInvTypeNeoForge(slotId, player);
+    }
+
+    private static int findInvTypeFabric(ItemStack stack, int slotId, Player player) {
         final var combinedInv = ((AxPlayerInventory) player.getInventory()).axCombinedInventory();
         for (int i = 0; i < combinedInv.size(); i++) {
             var inv = combinedInv.get(i);
             if (slotId >= inv.size()) continue;
             if (inv.get(slotId) == stack) return i;
+        }
+        return -1;
+    }
+
+    private static int findInvTypeNeoForge(int globalSlotId, Player player) {
+        final var combinedInv = ((AxPlayerInventory) player.getInventory()).axCombinedInventory();
+        var slotId = globalSlotId;
+        for (int i = 0; i < combinedInv.size(); i++) {
+            var invSize = combinedInv.get(i).size();
+            if (slotId < invSize) return i;
+            slotId -= invSize;
         }
         return -1;
     }

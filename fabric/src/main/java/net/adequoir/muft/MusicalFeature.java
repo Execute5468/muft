@@ -4,8 +4,5 @@ import net.fabricmc.api.ModInitializer;
 
 public class MusicalFeature implements ModInitializer {
 
-    public @Override void onInitialize() {
-        MuftBootstrapper.init();
-        Muft.init();
-    }
+    public @Override void onInitialize() { Muft.init(); }
 }

@@ -7,7 +7,6 @@ import net.fabricmc.api.ClientModInitializer;
 public class MusicalFeatureClient implements ClientModInitializer  {
 
     public @Override void onInitializeClient() {
-        MuftClientBootstrapper.init();
         MuftConfigManager.init();
         MuftScreens.init();
     }

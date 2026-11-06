@@ -1,21 +1,12 @@
 package net.adequoir.muft.api;
 
-import org.jetbrains.annotations.Nullable;
-
 public abstract class LoaderUtil {
-    private static @Nullable LoaderUtil instance;
+    private static final LoaderUtil INSTANCE = Bootstrapper.instance().loaderUtil();
 
     protected abstract boolean hasModId(String modId);
+    protected abstract Platform getPlatform();
 
-    public static boolean isLoaded(String modId) { return instance().hasModId(modId); }
+    public static boolean isLoaded(String modId) { return INSTANCE.hasModId(modId); }
 
-    public static void bootstrap(LoaderUtil util) {
-        if (instance == null) { instance = util; return; }
-        throw new IllegalStateException("LoaderUtil already bootstrapped!");
-    }
-
-    private static LoaderUtil instance() {
-        if (instance != null) return instance;
-        throw new IllegalStateException("LoaderUtil has not been bootstrapped!");
-    }
+    public static Platform platform() { return INSTANCE.getPlatform(); }
 }

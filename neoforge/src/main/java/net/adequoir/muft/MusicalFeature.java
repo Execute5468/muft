@@ -15,11 +15,8 @@ import java.util.function.Consumer;
 
 @Mod(Muft.MOD_ID)
 public class MusicalFeature {
-    static ModContainer modContainer;
 
     public MusicalFeature(IEventBus modEventBus, ModContainer modContainer) {
-        MusicalFeature.modContainer = modContainer;
-        MuftBootstrapper.init(modEventBus);
         modEventBus.addListener(NeoForgePayloadRegistrar::initialize);
         modEventBus.addListener(NeoForgeCreativeMenuEntries::initialize);
         modEventBus.addListener(NeoForgePackHelper::initialize);

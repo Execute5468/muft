@@ -1,18 +1,10 @@
 package net.adequoir.muft.api.registry;
 
+import net.adequoir.muft.api.Bootstrapper;
 import net.minecraft.core.Registry;
-import org.jetbrains.annotations.Nullable;
 
 public final class Registrars {
-    private static @Nullable RegistrarFactory registrarFactory;
+    private static final RegistrarFactory FACTORY = Bootstrapper.instance().registrarFactory();
 
-    public static <T> Registrar<T> create(String namespace, Registry<T> registry) {
-        if (registrarFactory != null) return registrarFactory.create(namespace, registry);
-        throw new IllegalStateException("RegistrarFactory has not been bootstrapped!");
-    }
-
-    public static void bootstrap(RegistrarFactory factory) {
-        if (registrarFactory == null) { registrarFactory = factory; return; }
-        throw new IllegalStateException("RegistrarFactory already bootstrapped!");
-    }
+    public static <T> Registrar<T> create(String namespace, Registry<T> registry) { return FACTORY.create(namespace, registry); }
 }
