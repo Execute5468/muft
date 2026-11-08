@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.StatFormatter;
 import net.minecraft.stats.Stats;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public sealed interface MuftStats permits RegistryLoader {
@@ -17,10 +18,8 @@ public sealed interface MuftStats permits RegistryLoader {
 
     private static Supplier<ResourceLocation> register(String name) { return register(name ,StatFormatter.DEFAULT); }
     private static Supplier<ResourceLocation> register(String name, StatFormatter formatter) {
-        var id = ResourceLocation.fromNamespaceAndPath(REGISTRAR.namespace(), name);
-        var stat = REGISTRAR.register(name, id);
-        Stats.CUSTOM.get(id, formatter);
-        return stat;
+        var id = Muft.id(name);
+        return REGISTRAR.registerWith(name, Function.identity(), id, identifier -> Stats.CUSTOM.get(identifier, formatter));
     }
 
     static void init() {}
